@@ -103,13 +103,13 @@ export default function SignupPage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
             </div>
-            <span className="text-2xl font-bold text-pink-600">BookMeBz</span>
+            <span className="font-display text-2xl font-semibold tracking-tight text-pink-600">BookMeBz</span>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Create Business Account</h1>
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-gray-800 mb-2">Create Business Account</h1>
           <p className="text-gray-600 text-sm">Sign up to manage your business with BookMeBz</p>
         </div>
 
-        <Card className="rounded-[22px] border-2 border-pink-300 shadow-sm">
+        <Card className="animate-fade-up rounded-[22px] border border-pink-200/70 shadow-sm">
           <CardHeader className="space-y-1 pb-4">
             <CardTitle className="text-xl font-semibold text-gray-800">Business Owner Sign Up</CardTitle>
             <CardDescription className="text-gray-600">

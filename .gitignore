@@ -38,3 +38,5 @@ next-env.d.ts
 # uploaded payment/refund attachments (keep folder via .gitkeep)
 /public/uploads/bookme/*
 !/public/uploads/bookme/.gitkeep
+
+.vercel

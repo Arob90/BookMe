@@ -32,8 +32,9 @@
 
 @layer base {
   :root {
-    /* Accent color (used to replace app pink highlights). Stored as H S L (no commas). */
-    --app-accent: 329 78% 58%;
+    /* Accent color (used to replace app pink highlights). Stored as H S L (no commas).
+       Softer, less-saturated blush rose — modern, calmer than the old hot pink. */
+    --app-accent: 340 60% 62%;
     --background: 0 0% 100%;
     --foreground: 222.2 47% 11.2%;
     --card: 0 0% 100%;
@@ -92,10 +93,11 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
+    /* Much softer than before — two faint blush washes on a clean white base.
+       Reads as white; just enough for frosted surfaces to catch. */
     background:
-      radial-gradient(42rem 42rem at 12% -8%, hsla(var(--app-accent) / 0.10), transparent 60%),
-      radial-gradient(38rem 38rem at 110% 8%, hsla(210 90% 60% / 0.08), transparent 60%),
-      radial-gradient(46rem 46rem at 88% 112%, hsla(var(--app-accent) / 0.07), transparent 60%),
+      radial-gradient(50rem 50rem at 8% -12%, hsla(var(--app-accent) / 0.055), transparent 62%),
+      radial-gradient(48rem 48rem at 104% 110%, hsla(var(--app-accent) / 0.045), transparent 62%),
       #ffffff;
   }
 }
@@ -106,60 +108,90 @@
  * ------------------------------------------------------------------------- */
 @layer utilities {
   .glass {
-    background-color: hsla(0 0% 100% / 0.6);
-    backdrop-filter: blur(16px) saturate(150%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%);
-    border: 1px solid hsla(0 0% 100% / 0.65);
+    background-color: hsla(0 0% 100% / 0.55);
+    backdrop-filter: blur(22px) saturate(135%);
+    -webkit-backdrop-filter: blur(22px) saturate(135%);
+    border: 1px solid hsla(0 0% 100% / 0.7);
     box-shadow:
-      0 8px 32px -10px hsla(222 47% 30% / 0.14),
-      inset 0 1px 0 0 hsla(0 0% 100% / 0.7);
+      0 8px 30px -12px hsla(340 30% 40% / 0.10),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.75);
   }
 
   /* Card surface — a touch more opaque so dense content stays legible. */
   .glass-card {
-    background-color: hsla(0 0% 100% / 0.72);
-    backdrop-filter: blur(18px) saturate(150%);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    border: 1px solid hsla(220 30% 90% / 0.7);
+    background-color: hsla(0 0% 100% / 0.62);
+    backdrop-filter: blur(26px) saturate(135%);
+    -webkit-backdrop-filter: blur(26px) saturate(135%);
+    border: 1px solid hsla(0 0% 100% / 0.6);
     box-shadow:
-      0 10px 34px -12px hsla(222 47% 30% / 0.16),
-      inset 0 1px 0 0 hsla(0 0% 100% / 0.8);
+      0 12px 40px -16px hsla(340 30% 40% / 0.12),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.75);
   }
 
   /* Strongest variant — for dialogs/menus that overlay busy content. */
   .glass-strong {
-    background-color: hsla(0 0% 100% / 0.85);
-    backdrop-filter: blur(24px) saturate(160%);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    border: 1px solid hsla(220 30% 90% / 0.8);
+    background-color: hsla(0 0% 100% / 0.8);
+    backdrop-filter: blur(30px) saturate(140%);
+    -webkit-backdrop-filter: blur(30px) saturate(140%);
+    border: 1px solid hsla(0 0% 100% / 0.7);
     box-shadow:
-      0 24px 60px -18px hsla(222 47% 25% / 0.28),
+      0 24px 60px -20px hsla(340 30% 35% / 0.22),
       inset 0 1px 0 0 hsla(0 0% 100% / 0.85);
   }
 
   /* Navigation / topbar — wide translucent bar. */
   .glass-nav {
-    background-color: hsla(0 0% 100% / 0.7);
-    backdrop-filter: blur(20px) saturate(150%);
-    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    background-color: hsla(0 0% 100% / 0.62);
+    backdrop-filter: blur(24px) saturate(135%);
+    -webkit-backdrop-filter: blur(24px) saturate(135%);
   }
 
   /* Subtle interactive lift for glass cards/buttons. */
   .glass-hover {
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, background-color 0.25s ease;
   }
   .glass-hover:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    background-color: hsla(0 0% 100% / 0.72);
     box-shadow:
-      0 18px 44px -14px hsla(222 47% 30% / 0.22),
-      inset 0 1px 0 0 hsla(0 0% 100% / 0.85);
+      0 20px 48px -16px hsla(340 30% 38% / 0.18),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.9);
   }
+
+  /* Staggered entrance helpers (pair with animate-fade-up). */
+  .delay-75 { animation-delay: 75ms; }
+  .delay-150 { animation-delay: 150ms; }
+  .delay-225 { animation-delay: 225ms; }
+  .delay-300 { animation-delay: 300ms; }
+  .delay-500 { animation-delay: 500ms; }
+
+  /* Moving blush blob — decorative, very soft. Place behind hero content. */
+  .ambient-blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(60px);
+    opacity: 0.5;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, hsla(var(--app-accent) / 0.5), transparent 70%);
+    will-change: transform;
+  }
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-blob-drift,
+  .animate-sheen {
+    animation: none !important;
+  }
+  .glass-hover { transition: none; }
 }
 
 @layer base {
   /* Accent color as an RGB triplet (for libraries that don't support CSS var HSL). */
   :root {
-    --app-accent-rgb: 236 72 153; /* fallback to pink */
+    --app-accent-rgb: 216 100 139; /* matches --app-accent (soft blush rose) */
   }
 
   /* -----------------------------------------------------------------------
