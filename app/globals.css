@@ -1,0 +1,333 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-100%) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(5deg);
+  }
+}
+
+.birthday-confetti {
+  animation: confetti-fall 3s linear infinite;
+}
+
+.birthday-float {
+  animation: float 2s ease-in-out infinite;
+}
+
+@layer base {
+  :root {
+    /* Accent color (used to replace app pink highlights). Stored as H S L (no commas). */
+    --app-accent: 329 78% 58%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 47% 11.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47% 11.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47% 11.2%;
+    --primary: var(--app-accent);
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 222.2 47% 11.2%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 20% 96%;
+    --accent-foreground: 222.2 47% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: var(--app-accent);
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 222.2 47% 8%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Ambient backdrop — keeps the page reading as WHITE while giving the
+     frosted-glass surfaces something soft to blur over. Fixed + behind all
+     content, very low opacity tints in the accent + a cool blue. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(42rem 42rem at 12% -8%, hsla(var(--app-accent) / 0.10), transparent 60%),
+      radial-gradient(38rem 38rem at 110% 8%, hsla(210 90% 60% / 0.08), transparent 60%),
+      radial-gradient(46rem 46rem at 88% 112%, hsla(var(--app-accent) / 0.07), transparent 60%),
+      #ffffff;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Glassmorphism / frosted-glass utilities.
+ * Use on cards, nav, dialogs, popovers, and hero surfaces app-wide.
+ * ------------------------------------------------------------------------- */
+@layer utilities {
+  .glass {
+    background-color: hsla(0 0% 100% / 0.6);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid hsla(0 0% 100% / 0.65);
+    box-shadow:
+      0 8px 32px -10px hsla(222 47% 30% / 0.14),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.7);
+  }
+
+  /* Card surface — a touch more opaque so dense content stays legible. */
+  .glass-card {
+    background-color: hsla(0 0% 100% / 0.72);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid hsla(220 30% 90% / 0.7);
+    box-shadow:
+      0 10px 34px -12px hsla(222 47% 30% / 0.16),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.8);
+  }
+
+  /* Strongest variant — for dialogs/menus that overlay busy content. */
+  .glass-strong {
+    background-color: hsla(0 0% 100% / 0.85);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid hsla(220 30% 90% / 0.8);
+    box-shadow:
+      0 24px 60px -18px hsla(222 47% 25% / 0.28),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.85);
+  }
+
+  /* Navigation / topbar — wide translucent bar. */
+  .glass-nav {
+    background-color: hsla(0 0% 100% / 0.7);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+  }
+
+  /* Subtle interactive lift for glass cards/buttons. */
+  .glass-hover {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+  .glass-hover:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 18px 44px -14px hsla(222 47% 30% / 0.22),
+      inset 0 1px 0 0 hsla(0 0% 100% / 0.85);
+  }
+}
+
+@layer base {
+  /* Accent color as an RGB triplet (for libraries that don't support CSS var HSL). */
+  :root {
+    --app-accent-rgb: 236 72 153; /* fallback to pink */
+  }
+
+  /* -----------------------------------------------------------------------
+   * Accent overrides for existing Tailwind pink utilities in the UI.
+   * This lets "anything pink" follow the selected accent without refactors.
+   * --------------------------------------------------------------------- */
+  /* Text */
+  .text-pink-300,
+  .text-pink-400,
+  .text-pink-500,
+  .text-pink-600,
+  .text-pink-700,
+  .text-pink-800,
+  .text-pink-900,
+  .text-pink-600\/80 {
+    color: hsl(var(--app-accent)) !important;
+  }
+
+  /* Backgrounds */
+  .bg-pink-50,
+  .bg-pink-50\/30,
+  .bg-pink-50\/40,
+  .bg-pink-50\/50,
+  .bg-pink-50\/80,
+  .bg-pink-50\/90 {
+    background-color: hsla(var(--app-accent) / 0.10) !important;
+  }
+  .bg-pink-100 {
+    background-color: hsla(var(--app-accent) / 0.16) !important;
+  }
+  .bg-pink-200 {
+    background-color: hsla(var(--app-accent) / 0.22) !important;
+  }
+  .bg-pink-300\/75 {
+    background-color: hsla(var(--app-accent) / 0.30) !important;
+  }
+  .bg-pink-500,
+  .bg-pink-600,
+  .bg-pink-700 {
+    background-color: hsl(var(--app-accent)) !important;
+  }
+
+  /* Borders */
+  .border-l-pink-500,
+  .border-pink-100,
+  .border-pink-200,
+  .border-pink-200\/50,
+  .border-pink-200\/80,
+  .border-pink-200\/90,
+  .border-pink-300,
+  .border-pink-400,
+  .border-pink-500,
+  .border-pink-600 {
+    border-color: hsl(var(--app-accent)) !important;
+  }
+
+  /* Rings */
+  .ring-pink-100,
+  .ring-pink-200,
+  .ring-pink-200\/60,
+  .ring-pink-300,
+  .ring-pink-400,
+  .ring-pink-400\/40,
+  .ring-pink-500,
+  .focus\:ring-pink-500:focus,
+  .focus-visible\:ring-pink-500:focus-visible,
+  .focus-visible\:ring-pink-400:focus-visible {
+    --tw-ring-color: hsl(var(--app-accent)) !important;
+  }
+
+  /* Focus border helpers used in inputs */
+  .focus\:border-pink-500:focus {
+    border-color: hsl(var(--app-accent)) !important;
+  }
+
+  /* SVG fill/stroke helpers */
+  .fill-pink-600 {
+    fill: hsl(var(--app-accent)) !important;
+  }
+  .stroke-pink-600 {
+    stroke: hsl(var(--app-accent)) !important;
+  }
+
+  /* Gradient stops */
+  .from-pink-50,
+  .from-pink-50\/30,
+  .from-pink-50\/40,
+  .from-pink-50\/50,
+  .from-pink-50\/60,
+  .from-pink-50\/70,
+  .from-pink-100 {
+    --tw-gradient-from: hsla(var(--app-accent) / 0.10) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: hsla(var(--app-accent) / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  .from-pink-400 {
+    --tw-gradient-from: hsla(var(--app-accent) / 0.45) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: hsla(var(--app-accent) / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  .from-pink-500,
+  .hover\:from-pink-600:hover {
+    --tw-gradient-from: hsl(var(--app-accent)) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: hsla(var(--app-accent) / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+  .to-pink-50 {
+    --tw-gradient-to: hsla(var(--app-accent) / 0.10) var(--tw-gradient-to-position) !important;
+  }
+  .to-pink-200 {
+    --tw-gradient-to: hsla(var(--app-accent) / 0.22) var(--tw-gradient-to-position) !important;
+  }
+  .to-pink-600 {
+    --tw-gradient-to: hsl(var(--app-accent)) var(--tw-gradient-to-position) !important;
+  }
+
+  /* Hover / state variants (Tailwind escapes ":" in CSS selectors). */
+  .hover\:bg-pink-50:hover {
+    background-color: hsla(var(--app-accent) / 0.10) !important;
+  }
+  .hover\:bg-pink-100:hover {
+    background-color: hsla(var(--app-accent) / 0.16) !important;
+  }
+  .hover\:bg-pink-200:hover {
+    background-color: hsla(var(--app-accent) / 0.22) !important;
+  }
+  .hover\:bg-pink-50\/40:hover {
+    background-color: hsla(var(--app-accent) / 0.10) !important;
+  }
+  .hover\:bg-pink-50\/50:hover {
+    background-color: hsla(var(--app-accent) / 0.10) !important;
+  }
+  .hover\:bg-pink-500:hover,
+  .hover\:bg-pink-600:hover,
+  .group:hover .group-hover\:bg-pink-600 {
+    background-color: hsl(var(--app-accent)) !important;
+  }
+  .hover\:text-pink-600:hover {
+    color: hsl(var(--app-accent)) !important;
+  }
+  .hover\:text-pink-700:hover,
+  .hover\:text-pink-800:hover {
+    color: hsl(var(--app-accent)) !important;
+  }
+  .hover\:border-pink-200:hover,
+  .hover\:border-pink-300:hover,
+  .hover\:border-pink-500:hover {
+    border-color: hsl(var(--app-accent)) !important;
+  }
+  .data-\[state\=active\]\:text-pink-600[data-state='active'] {
+    color: hsl(var(--app-accent)) !important;
+  }
+  .data-\[state\=open\]\:bg-pink-50[data-state='open'] {
+    background-color: hsla(var(--app-accent) / 0.10) !important;
+  }
+  .data-\[state\=open\]\:text-pink-600[data-state='open'] {
+    color: hsl(var(--app-accent)) !important;
+  }
+  .data-\[state\=checked\]\:bg-pink-500[data-state='checked'] {
+    background-color: hsl(var(--app-accent)) !important;
+  }
+  .data-\[state\=checked\]\:border-pink-500[data-state='checked'] {
+    border-color: hsl(var(--app-accent)) !important;
+  }
+  .data-\[highlighted\]\:bg-pink-50[data-highlighted] {
+    background-color: hsla(var(--app-accent) / 0.10) !important;
+  }
+  .data-\[highlighted\]\:text-pink-900[data-highlighted] {
+    color: hsl(var(--app-accent)) !important;
+  }
+}

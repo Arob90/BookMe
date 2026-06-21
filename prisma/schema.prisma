@@ -1,0 +1,546 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         UserRole  @default(ADMIN)
+  userName     String?   @map("user_name")
+  businessName String?   @map("business_name")
+  district     String?   @map("district") // Belize: COROZAL | ORANGE_WALK | BELIZE | CAYO | STANN_CREEK | TOLEDO | SAN_PEDRO | CAYE_CAULKER
+  firstName    String?   @map("first_name")
+  lastName     String?   @map("last_name")
+  phone        String?
+  birthday     DateTime?
+  address      String?   @db.Text
+  profilePhoto String?   @map("profile_photo")
+  isPaused     Boolean   @default(false) @map("is_paused")
+  /// Primary business user id; null = top-level account (owner). Set for extra logins under a business.
+  ownerUserId  String?   @map("owner_user_id")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  accounts            Account[]
+  sessions            Session[]
+  passwordResetTokens PasswordResetToken[]
+  owner               User?   @relation("BusinessMembers", fields: [ownerUserId], references: [id], onDelete: Cascade)
+  members             User[]  @relation("BusinessMembers")
+  projectAssignments  ProjectAssignee[]
+
+  @@index([ownerUserId])
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @map("user_id")
+  type              String
+  provider          String
+  providerAccountId String  @map("provider_account_id")
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @map("session_token")
+  userId       String   @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expires   DateTime
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("password_reset_tokens")
+}
+
+enum UserRole {
+  ADMIN
+  STAFF
+}
+
+model Client {
+  id          String      @id @default(cuid())
+  /// Business tenant (owner user id). Team logins use the same id via getSessionStaffId.
+  staffId     String?     @map("staff_id")
+  type        ClientType  @default(INDIVIDUAL) @map("type")
+  firstName   String      @map("first_name")
+  lastName    String      @map("last_name")
+  companyName String?     @map("company_name")
+  taxId       String?     @map("tax_id")
+  contactName String?     @map("contact_name")
+  companyId   String?     @map("company_id")
+  addressLine1  String?   @map("address_line1")
+  addressLine2  String?   @map("address_line2")
+  city        String?     @map("city")
+  state       String?     @map("state")
+  postalCode  String?     @map("postal_code")
+  country     String?     @map("country")
+  phone       String?
+  email       String?
+  birthday    DateTime?
+  /// For COMPANY clients: used in generated client ID middle segment (founding year), like birthday for individuals.
+  companyFoundedAt DateTime? @map("company_founded_at")
+  notes       String?     @db.Text
+  tags        String[]    @default([])
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  company            Client?   @relation("ClientCompany", fields: [companyId], references: [id], onDelete: SetNull)
+  contacts           Client[]  @relation("ClientCompany")
+  appointments       Appointment[]
+  loyaltyAccount     LoyaltyAccount?
+  loyaltyTransactions LoyaltyTransaction[]
+  strikeEvents       StrikeEvent[]
+  payments           Payment[]
+
+  @@index([companyId])
+  @@index([staffId])
+  @@map("clients")
+}
+
+enum ClientType {
+  INDIVIDUAL
+  COMPANY
+}
+
+model ServiceCategory {
+  id        String   @id @default(cuid())
+  name      String   @unique // Keep unique on name for now (will be per-business after migration)
+  staffId   String?  @map("staff_id") // Categories are per-business (optional for backward compatibility)
+  /// Display order on public booking + admin (lower first)
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  services Service[]
+
+  @@index([staffId])
+  @@index([staffId, sortOrder])
+  @@map("service_categories")
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  name            String
+  categoryId      String   @map("category_id")
+  staffId         String?  @map("staff_id")
+  description     String?  @db.Text
+  imageUrl        String?  @map("image_url")
+  durationMinutes Int      @map("duration_minutes")
+  durationUnit    String?  @default("MINUTES") @map("duration_unit") // MINUTES | HOURS | DAYS | MONTHS | YEARS
+  price           Decimal  @db.Decimal(10, 2)
+  pointsWorth     Int?     @map("points_worth")
+  colorTag        String   @default("blue") @map("color_tag")
+  isActive        Boolean  @default(true) @map("is_active")
+  isArchived      Boolean  @default(false) @map("is_archived")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  category            ServiceCategory      @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  appointmentServices AppointmentService[]
+
+  @@index([staffId])
+  @@map("services")
+}
+
+model Appointment {
+  id         String            @id @default(cuid())
+  clientId   String            @map("client_id")
+  staffId    String            @map("staff_id")
+  startAt    DateTime          @map("start_at")
+  endAt      DateTime          @map("end_at")
+  status     AppointmentStatus @default(BOOKED)
+  totalPrice Decimal           @map("total_price") @db.Decimal(10, 2)
+  notes      String?           @db.Text
+  source     String?           @map("source") // 'PUBLIC_BOOKING' = from website, null = from backend
+  createdAt  DateTime          @default(now()) @map("created_at")
+
+  client              Client               @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  appointmentServices AppointmentService[]
+  loyaltyTransactions LoyaltyTransaction[]
+  strikeEvents        StrikeEvent[]
+  payments            Payment[]
+  tasks               Task[]
+  reminders           Reminder[]
+
+  @@index([startAt])
+  @@index([staffId, startAt])
+  @@index([clientId])
+  @@map("appointments")
+}
+
+enum AppointmentStatus {
+  BOOKED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  LATE_CANCEL
+  NO_SHOW
+}
+
+model AppointmentService {
+  id             String  @id @default(cuid())
+  appointmentId  String  @map("appointment_id")
+  serviceId      String  @map("service_id")
+  priceAtTime    Decimal @map("price_at_time") @db.Decimal(10, 2)
+  durationAtTime Int     @map("duration_at_time")
+
+  appointment     Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  service         Service     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  /// At most one pipeline card per booked line (optional).
+  pipelineProject Project?
+
+  @@map("appointment_services")
+}
+
+model LoyaltyAccount {
+  id            String @id @default(cuid())
+  clientId      String @unique @map("client_id")
+  pointsBalance Int    @default(0) @map("points_balance")
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("loyalty_accounts")
+}
+
+model LoyaltyTransaction {
+  id            String   @id @default(cuid())
+  clientId      String   @map("client_id")
+  appointmentId String?  @map("appointment_id")
+  deltaPoints   Int      @map("delta_points")
+  reason        String
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@map("loyalty_transactions")
+}
+
+model StrikeEvent {
+  id            String     @id @default(cuid())
+  clientId      String     @map("client_id")
+  appointmentId String?    @map("appointment_id")
+  type          StrikeType
+  delta         Int        @default(1)
+  createdAt     DateTime   @default(now()) @map("created_at")
+
+  client      Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@map("strike_events")
+}
+
+model Payment {
+  id               String     @id @default(cuid())
+  appointmentId    String     @map("appointment_id")
+  clientId         String     @map("client_id")
+  amount           Decimal    @db.Decimal(10, 2)
+  /// When true, `amount` is a refund (reduces net paid). Stored as positive value.
+  isRefund         Boolean    @default(false) @map("is_refund")
+  paymentMethod    String?    @map("payment_method") // CASH, BANK, WALLET, WIRE
+  paymentAccountId String?    @map("payment_account_id") // Which bank/wallet/wire when applicable
+  notes            String?    @db.Text
+  /// Public paths from /uploads/bookme/... attached to this payment or refund
+  attachmentUrls   String[] @default([]) @map("attachment_urls")
+  paidAt           DateTime   @default(now()) @map("paid_at")
+  createdAt        DateTime   @default(now()) @map("created_at")
+
+  appointment Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  client      Client      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId])
+  @@index([clientId])
+  @@index([paidAt])
+  @@map("payments")
+}
+
+model PaymentAccount {
+  id             String   @id @default(cuid())
+  staffId        String   @map("staff_id")
+  type           String   @map("type") // BANK, WALLET, WIRE
+  name           String   @map("name")
+  accountNumber  String?  @map("account_number") // Bank account #, wallet id, or wire place details
+  sortOrder      Int      @default(0) @map("sort_order")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  @@index([staffId])
+  @@index([staffId, type])
+  @@map("payment_accounts")
+}
+
+enum StrikeType {
+  LATE_CANCEL
+  NO_SHOW
+  MANUAL
+}
+
+model InventoryCategory {
+  id        String   @id @default(cuid())
+  name      String
+  staffId   String?  @map("staff_id") // Per-business categories (optional for backward compatibility)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  items InventoryItem[]
+
+  @@unique([name, staffId])
+  @@index([staffId])
+  @@map("inventory_categories")
+}
+
+model InventoryItem {
+  id            String    @id @default(cuid())
+  name          String
+  categoryId    String?   @map("category_id")
+  category      String?   // Keep for backward compatibility during migration
+  staffId       String?   @map("staff_id")
+  description   String?   @db.Text
+  imageUrl      String?   @map("image_url")
+  quantity      Int       @default(0)
+  minQuantity   Int       @default(0) @map("min_quantity")
+  unit          String    @default("unit") // unit, box, bottle, etc.
+  cost          Decimal?  @db.Decimal(10, 2)
+  supplier      String?
+  expiryDate    DateTime? @map("expiry_date")
+  location      String?   // where it's stored
+  notes         String?   @db.Text
+  isActive      Boolean   @default(true) @map("is_active")
+  isArchived    Boolean   @default(false) @map("is_archived")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  inventoryCategory InventoryCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([staffId])
+  @@map("inventory_items")
+}
+
+model Settings {
+  id                     String   @id @default(cuid())
+  staffId                String?  @unique @map("staff_id") // Each business has its own settings (optional for backward compatibility)
+  businessHours          Json?    @map("business_hours") // { "MONDAY": { "start": "09:00", "end": "18:00" }, ... }
+  businessDays           String[] @default(["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]) @map("business_days")
+  currency               String   @default("USD") @map("currency")
+  currencySymbol         String   @default("$") @map("currency_symbol")
+  timezone               String   @default("America/New_York") @map("timezone")
+  dateFormat             String   @default("MM/DD/YYYY") @map("date_format")
+  loyaltyEarnMode       String   @default("PER_DOLLAR") @map("loyalty_earn_mode") // PER_DOLLAR | PER_VISIT
+  loyaltyPointsPerDollar Decimal? @map("loyalty_points_per_dollar") @db.Decimal(10, 2)
+  loyaltyPointsPerVisit  Int?     @map("loyalty_points_per_visit")
+  strikeLateCancel       Int      @default(1) @map("strike_late_cancel")
+  strikeNoShow           Int      @default(2) @map("strike_no_show")
+  strikeExpirationDays   Int      @default(90) @map("strike_expiration_days")
+  strikeThreshold        Int      @default(3) @map("strike_threshold")
+  strikeThresholdAction  String   @default("REQUIRES_DEPOSIT") @map("strike_threshold_action") // REQUIRES_DEPOSIT | REQUIRES_APPROVAL
+  paymentMethodsEnabled  Json?    @map("payment_methods_enabled") // { CASH: true, BANK: true, WALLET: true, WIRE: true }
+  notificationSettings   Json?    @map("notification_settings") // { emailReminders, smsReminders, appointmentConfirmations, etc }
+  maxUsers              Int      @default(1) @map("max_users") // Plan: 1 = single user, 5 = multi-user, etc
+
+  @@index([staffId])
+  @@map("settings")
+}
+
+model PendingAccountRequest {
+  id           String   @id @default(cuid())
+  email        String   @unique @map("email")
+  passwordHash String   @map("password_hash")
+  businessName String   @map("business_name")
+  district     String?  @map("district")
+  firstName    String   @map("first_name")
+  lastName     String   @map("last_name")
+  phone        String?  @map("phone")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("pending_account_requests")
+}
+
+model Holiday {
+  id         String   @id @default(cuid())
+  staffId    String   @map("staff_id")
+  date       DateTime @db.Date
+  name       String   @map("name")
+  type       String   @map("type") // PUBLIC | BANK | CUSTOM
+  repeatYearly Boolean @default(false) @map("repeat_yearly")
+  /// false = closed all day; true = open with openAt / closeAt (24h HH:MM strings)
+  isOpen     Boolean  @default(false) @map("is_open")
+  openAt     String?  @map("open_at")
+  closeAt    String?  @map("close_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([staffId])
+  @@index([staffId, date])
+  @@map("holidays")
+}
+
+model PipelineStage {
+  id        String   @id @default(cuid())
+  /// Business tenant (owner user id). Team logins use the same id via getSessionStaffId.
+  staffId   String?  @map("staff_id")
+  name      String   @map("name")
+  color    String   @default("gray") @map("color")
+  sortOrder Int      @default(0) @map("sort_order")
+  isFolded  Boolean  @default(false) @map("is_folded")
+
+  projects Project[]
+
+  @@index([staffId])
+  @@map("pipeline_stages")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  /// Business tenant (owner user id). Team logins use the same id via getSessionStaffId.
+  staffId     String?  @map("staff_id")
+  title       String   @map("title")
+  description String?  @db.Text @map("description")
+  clientName  String?  @map("client_name")
+  amount      Decimal? @map("amount") @db.Decimal(10, 2)
+  notes       String?  @db.Text @map("notes")
+  stageId     String   @map("stage_id")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  /// Manual / non-appointment cards: planned effort and target date (shown on pipeline cards).
+  plannedDurationMinutes Int?     @map("planned_duration_minutes")
+  plannedDurationUnit   String?  @default("MINUTES") @map("planned_duration_unit")
+  estimatedDueAt         DateTime? @map("estimated_due_at")
+
+  /// When set, this card was created from this appointment service line (one card per line).
+  appointmentServiceId String? @unique @map("appointment_service_id")
+  appointmentService   AppointmentService? @relation(fields: [appointmentServiceId], references: [id], onDelete: SetNull)
+
+  stage     PipelineStage     @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+  reminders Reminder[]
+  assignees ProjectAssignee[]
+
+  @@index([staffId])
+  @@index([stageId])
+  @@map("projects")
+}
+
+/// Staff/admin users assigned to work a pipeline project (many per project).
+model ProjectAssignee {
+  id        String   @id @default(cuid())
+  projectId String   @map("project_id")
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+  @@map("project_assignees")
+}
+
+model Task {
+  id         String    @id @default(cuid())
+  staffId    String    @map("staff_id")
+  projectId  String?   @map("project_id")
+  /// Optional link to a booking — shows on calendar next to context; due date stays independent.
+  appointmentId String? @map("appointment_id")
+  title      String    @map("title")
+  notes      String?   @db.Text @map("notes")
+  dueAt      DateTime  @map("due_at")
+  /// General task vs meeting / call / email follow-up (see metadata for participants).
+  actionType String    @default("task") @map("action_type")
+  metadata   Json?     @map("metadata")
+  isCompleted Boolean  @default(false) @map("is_completed")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@index([staffId])
+  @@index([projectId])
+  @@index([appointmentId])
+  @@index([dueAt])
+  @@map("tasks")
+}
+
+model Reminder {
+  id         String   @id @default(cuid())
+  staffId    String   @map("staff_id")
+  projectId  String?  @map("project_id")
+  appointmentId String? @map("appointment_id")
+  title      String   @map("title")
+  notes      String?  @db.Text @map("notes")
+  dueAt      DateTime @map("due_at")
+  actionType String   @default("task") @map("action_type")
+  metadata   Json?    @map("metadata")
+  isCompleted Boolean @default(false) @map("is_completed")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  project     Project?     @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  appointment Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+
+  @@index([staffId])
+  @@index([projectId])
+  @@index([appointmentId])
+  @@index([dueAt])
+  @@map("reminders")
+}
+
+// Production rate limiting: shared across instances, survives restarts
+model RateLimitEntry {
+  id        String   @id @default(cuid())
+  key       String   @unique @map("key")
+  count     Int      @default(0)
+  resetAt   DateTime  @map("reset_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("rate_limit_entries")
+}
+
+/// Plan / subscription timeline for a business (owner `staffId`). Extend when payment gateways are integrated.
+model BillingHistoryEvent {
+  id          String   @id @default(cuid())
+  staffId     String   @map("staff_id")
+  eventType   String   @map("event_type")
+  title       String
+  detail      String?  @db.Text
+  metadata    Json?
+  actorUserId String?  @map("actor_user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([staffId, createdAt(sort: Desc)])
+  @@map("billing_history_events")
+}
