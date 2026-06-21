@@ -41,20 +41,32 @@ Click **Deploy**. Vercel runs `npm install` (which runs `prisma generate`) and `
 Your Neon database already has the schema, so no migration step is required for the first deploy.
 (If you later change `prisma/schema.prisma`, run `npx prisma migrate deploy` against Neon.)
 
-## 5. Attach the domain bookme.bz
+## 5. Attach the domain bookme.bz (DNS is on GoDaddy)
+
+Keep GoDaddy as the DNS host — you only add two records there. Do NOT change nameservers.
 
 1. In Vercel → Project → **Settings → Domains**, add `bookme.bz` and `www.bookme.bz`.
-2. Vercel shows the DNS records to create. At your domain registrar (where you bought bookme.bz):
-   - **A record**: `@` → `76.76.21.21`
-   - **CNAME**: `www` → `cname.vercel-dns.com`
-   (Use whatever Vercel displays — it's authoritative.)
-3. Wait for DNS to propagate (minutes to a couple of hours). Vercel issues the SSL certificate automatically.
-4. Set `bookme.bz` as the **primary** domain so `www` redirects to it.
+   Vercel will show the exact records it wants — use those if they differ from below.
+2. In **GoDaddy → My Products → bookme.bz → DNS → Manage DNS**:
+   - **Apex / root** — add or edit an **A** record:
+     - Type `A`, Name `@`, Value `76.76.21.21`, TTL `1 Hour`
+     - Delete GoDaddy's default "Parked" A record if present.
+   - **www** — add or edit a **CNAME** record:
+     - Type `CNAME`, Name `www`, Value `cname.vercel-dns.com`, TTL `1 Hour`
+   - Turn **OFF** any GoDaddy **Domain Forwarding** on bookme.bz (it conflicts with the A record).
+3. Back in Vercel, the domains flip to **Valid / SSL** once DNS propagates (usually minutes,
+   up to a couple of hours). SSL is issued automatically.
+4. Set `bookme.bz` as the **primary** domain so `www.bookme.bz` redirects to it.
+
+> GoDaddy note: the apex must be an **A record** (GoDaddy can't CNAME the root) — that's why
+> Vercel gives an IP for `@` and a CNAME only for `www`.
 
 ## 6. Set up Resend (so password reset works)
 
 1. Create a free account at https://resend.com.
-2. **Domains → Add Domain → bookme.bz**, then add the DNS records Resend gives you (SPF/DKIM).
+2. **Domains → Add Domain → bookme.bz**. Resend shows ~3 records (SPF TXT, DKIM CNAME/TXT,
+   and an optional DMARC TXT). Add each one in **GoDaddy → Manage DNS** exactly as shown,
+   then click **Verify** in Resend. These are separate from the Vercel records above and don't conflict.
 3. Create an **API key** and put it in Vercel as `RESEND_API_KEY`.
 4. Set `EMAIL_FROM` to an address on the verified domain, e.g. `no-reply@bookme.bz`.
 
