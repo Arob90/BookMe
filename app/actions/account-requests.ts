@@ -61,6 +61,10 @@ export async function approveAccountRequest(id: string, plan: PlanType) {
       maxUsers,
       businessHours: defaultBusinessHours,
       businessDays: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
+      // Start the 14-day free trial on approval. Account locks after this unless
+      // an admin assigns a paid plan (which sets planStatus = 'active').
+      planStatus: 'trialing',
+      trialEndsAt: new Date(Date.now() + 14 * 86_400_000),
     },
   })
 

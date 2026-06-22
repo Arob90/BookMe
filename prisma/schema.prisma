@@ -371,6 +371,12 @@ model Settings {
   paymentMethodsEnabled  Json?    @map("payment_methods_enabled") // { CASH: true, BANK: true, WALLET: true, WIRE: true }
   notificationSettings   Json?    @map("notification_settings") // { emailReminders, smsReminders, appointmentConfirmations, etc }
   maxUsers              Int      @default(1) @map("max_users") // Plan: 1 = single user, 5 = multi-user, etc
+  /// Subscription lifecycle. "active" = paid/grandfathered, "trialing" = inside 14-day free trial.
+  /// Locked = planStatus == 'trialing' && now > trialEndsAt (computed). Default active so existing
+  /// accounts are never locked; new signups are set to 'trialing'.
+  planStatus            String   @default("active") @map("plan_status")
+  planTier              String?  @map("plan_tier") // basic | pro | business (display only)
+  trialEndsAt           DateTime? @map("trial_ends_at")
 
   @@index([staffId])
   @@map("settings")

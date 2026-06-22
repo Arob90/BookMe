@@ -84,7 +84,12 @@ const DEFAULT_BUSINESS_DAYS = [
   'SATURDAY',
 ] as const
 
+const TRIAL_DAYS = 14
+
 async function upsertSettingsMaxUsers(staffId: string, maxUsers: number) {
+  // New business → starts a 14-day free trial. Admin re-saving the seat plan for an
+  // existing business counts as assigning a paid plan, so it flips to active.
+  const trialEndsAt = new Date(Date.now() + TRIAL_DAYS * 86_400_000)
   await db.settings.upsert({
     where: { staffId },
     create: {
@@ -92,8 +97,10 @@ async function upsertSettingsMaxUsers(staffId: string, maxUsers: number) {
       maxUsers,
       businessHours: DEFAULT_BUSINESS_HOURS,
       businessDays: [...DEFAULT_BUSINESS_DAYS],
+      planStatus: 'trialing',
+      trialEndsAt,
     },
-    update: { maxUsers },
+    update: { maxUsers, planStatus: 'active', trialEndsAt: null },
   })
 }
 
