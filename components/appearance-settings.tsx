@@ -50,11 +50,10 @@ function hexToHsl(hex: string): string | null {
   return `${h} ${S}% ${L}%`
 }
 
-function applyTheme(mode: ThemeMode) {
-  const root = document.documentElement
-  const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
-  const dark = mode === 'dark' || (mode === 'system' && prefersDark)
-  root.classList.toggle('dark', dark)
+function applyTheme(_mode: ThemeMode) {
+  // BookMeBz ships a light-only UI. Dark mode was half-implemented and produced
+  // a broken light/dark mix (and illegible dropdown text), so we force light.
+  document.documentElement.classList.remove('dark')
 }
 
 function applyAccent(hsl: string) {
@@ -215,19 +214,6 @@ export function AppearanceSettings() {
       </CardHeader>
       <CardContent className="pt-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Label>Theme</Label>
-            <Select value={themeMode} onValueChange={(v) => onThemeChange(v as ThemeMode)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="system">System</SelectItem>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
           <div>
             <Label>Accent</Label>
             <Select value={accentPreset} onValueChange={onAccentPresetChange}>

@@ -43,10 +43,6 @@ export default function HomePage() {
 
       {/* Hero Section */}
       <main className="relative overflow-hidden max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex-1 flex flex-col min-h-0">
-        {/* Decorative drifting blush blobs */}
-        <div aria-hidden="true" className="ambient-blob animate-blob-drift hidden sm:block" style={{ width: '22rem', height: '22rem', top: '-4rem', left: '-3rem' }} />
-        <div aria-hidden="true" className="ambient-blob animate-blob-drift hidden sm:block" style={{ width: '18rem', height: '18rem', bottom: '-2rem', right: '-2rem', animationDelay: '6s' }} />
-
         <div className="relative text-center max-w-4xl mx-auto flex-1 flex flex-col justify-center">
           <div className="animate-fade-up mb-4 flex justify-center">
             <span className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-gray-600">
@@ -77,9 +73,9 @@ export default function HomePage() {
             </a>
             <a
               href="/signup"
-              className="glass glass-hover text-pink-600 text-sm px-6 py-3 rounded-full font-medium"
+              className="border-2 border-pink-500 bg-white text-pink-600 text-sm px-6 py-3 rounded-full font-semibold flex items-center justify-center transition-all hover:bg-pink-50 hover:-translate-y-0.5"
             >
-              Create Account
+              Create Account — Free 14-day trial
             </a>
           </div>
 

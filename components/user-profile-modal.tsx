@@ -12,7 +12,7 @@ import { getUserProfile, updateUserProfile, updateUserPassword } from '@/app/act
 import { useToast } from '@/components/ui/use-toast'
 import { Upload, X, User as UserIcon, Lock } from 'lucide-react'
 import Image from 'next/image'
-import { format } from 'date-fns'
+import { formatUtcDateToYmd } from '@/lib/date-only'
 import { getInitials } from '@/lib/utils'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
@@ -83,7 +83,7 @@ export function ProfileModal({ open, onOpenChange, userId, onProfileUpdated }: P
         lastName: userProfile.lastName || '',
         email: userProfile.email || '',
         phone: userProfile.phone || '',
-        birthday: userProfile.birthday ? format(new Date(userProfile.birthday), 'yyyy-MM-dd') : '',
+        birthday: userProfile.birthday ? formatUtcDateToYmd(userProfile.birthday) : '',
         address: userProfile.address || '',
         profilePhoto: userProfile.profilePhoto || '',
       })

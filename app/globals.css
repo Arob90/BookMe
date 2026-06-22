@@ -96,8 +96,8 @@
     /* Much softer than before — two faint blush washes on a clean white base.
        Reads as white; just enough for frosted surfaces to catch. */
     background:
-      radial-gradient(50rem 50rem at 8% -12%, hsla(var(--app-accent) / 0.055), transparent 62%),
-      radial-gradient(48rem 48rem at 104% 110%, hsla(var(--app-accent) / 0.045), transparent 62%),
+      radial-gradient(54rem 54rem at 6% -16%, hsla(var(--app-accent) / 0.03), transparent 60%),
+      radial-gradient(50rem 50rem at 106% 114%, hsla(var(--app-accent) / 0.025), transparent 60%),
       #ffffff;
   }
 }

@@ -6,6 +6,7 @@ import { authOptions } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
+import { parseYmdToUtcNoon } from '@/lib/date-only'
 
 const updateProfileSchema = z.object({
   userName: z.string().optional(),
@@ -192,7 +193,9 @@ export async function updateUserProfile(data: z.infer<typeof updateProfileSchema
     if (validated.lastName !== undefined) updateData.lastName = validated.lastName || null
     if (validated.phone !== undefined) updateData.phone = validated.phone || null
     if (validated.birthday !== undefined) {
-      updateData.birthday = validated.birthday ? new Date(validated.birthday) : null
+      // Store as noon UTC so the calendar day the user picked never shifts
+      // across timezones (Belize is UTC-6, which was saving a day behind).
+      updateData.birthday = validated.birthday ? parseYmdToUtcNoon(validated.birthday) : null
     }
     if (validated.address !== undefined) updateData.address = validated.address || null
     if (validated.profilePhoto !== undefined) updateData.profilePhoto = validated.profilePhoto || null
