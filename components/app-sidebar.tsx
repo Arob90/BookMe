@@ -48,6 +48,15 @@ export function AppSidebar() {
     setIsMobileOpen(false)
   }, [pathname])
 
+  // Keep the main content's left margin in sync with the sidebar width so
+  // collapsing the sidebar doesn't leave a dead gap.
+  useEffect(() => {
+    document.documentElement.style.setProperty('--sidebar-w', isCollapsed ? '4rem' : '16rem')
+    return () => {
+      document.documentElement.style.setProperty('--sidebar-w', '16rem')
+    }
+  }, [isCollapsed])
+
   return (
     <>
       {/* Mobile menu button */}

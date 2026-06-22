@@ -70,7 +70,7 @@ export default async function AppLayout({
       <SyncListener />
       <div className="flex h-screen overflow-hidden">
         <AppSidebar />
-        <main className="flex-1 flex flex-col overflow-hidden lg:ml-64 w-full">
+        <main className="flex-1 flex flex-col overflow-hidden lg:ml-[var(--sidebar-w)] w-full transition-[margin] duration-300">
           {showTrialBanner && (
             <Link
               href="/app/billing"

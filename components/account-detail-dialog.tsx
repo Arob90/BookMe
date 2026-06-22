@@ -259,13 +259,17 @@ export function AccountDetailDialog(props: {
     }
     setSaving(true)
     try {
-      await createTeamMemberForAccount(ownerId, {
+      const res = await createTeamMemberForAccount(ownerId, {
         email: teamEmail.trim(),
         password: teamPassword,
         role: teamRole,
         firstName: teamFirstName.trim() || undefined,
         lastName: teamLastName.trim() || undefined,
       })
+      if (res && (res as any).ok === false) {
+        toast({ title: 'Cannot add user', description: (res as any).error, variant: 'destructive' })
+        return
+      }
       toast({ title: 'User added' })
       setTeamEmail('')
       setTeamPassword('')

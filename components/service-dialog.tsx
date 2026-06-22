@@ -617,7 +617,9 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
                 <Input
                   id="durationAmount"
                   type="number"
-                  min="0.01"
+                  // min must align with step, else whole numbers fail validation
+                  // (min 0.01 + step 1 made "30" invalid → only X.01 allowed).
+                  min={formData.durationUnit === 'MINUTES' ? 1 : 0.01}
                   // Snap to 0.01 for non-minute units to avoid float drift (e.g. 24.00 -> 24.01)
                   step={formData.durationUnit === 'MINUTES' ? 1 : 0.01}
                   value={formData.durationAmount}

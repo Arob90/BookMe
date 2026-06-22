@@ -649,23 +649,26 @@ export async function createTeamMemberForAccount(ownerId: string, data: z.infer<
     where: { id: ownerId },
     select: { id: true, businessName: true, district: true, email: true },
   })
-  if (!owner) throw new Error('Business account not found')
+  // Expected validation failures are RETURNED (not thrown) so the message
+  // survives Next.js's production error masking and reaches the user.
+  if (!owner) return { ok: false as const, error: 'Business account not found.' }
   if (isSuperAdminEmail(owner.email)) {
-    throw new Error('Cannot add team members to the platform administrator account.')
+    return { ok: false as const, error: 'You can’t add team logins to the platform administrator account. Add them to a regular business account instead.' }
   }
 
   await assertOwnerRowForTeamAdd(ownerId)
 
   const existing = await db.user.findUnique({ where: { email: v.email } })
-  if (existing) throw new Error('Email already exists')
+  if (existing) return { ok: false as const, error: 'That email is already in use.' }
 
   const teamCount = await countTeamMembersForOwner(ownerId)
   const usedSeats = 1 + teamCount
   const maxUsers = await getMaxUsersForStaffId(ownerId)
   if (!canAddTeamMember({ memberCount: usedSeats, maxUsers })) {
-    throw new Error(
-      `Seat limit reached (${resolveSeatCap(maxUsers)} seat plan). Increase plan seats or remove a user.`
-    )
+    return {
+      ok: false as const,
+      error: `Seat limit reached (${resolveSeatCap(maxUsers)}-seat plan). Increase the plan seats above and Save changes, then add the user.`,
+    }
   }
 
   const passwordHash = await bcrypt.hash(v.password, 10)
@@ -685,12 +688,12 @@ export async function createTeamMemberForAccount(ownerId: string, data: z.infer<
       select: teamMemberSelect,
     })
     revalidatePath('/app/accounts')
-    return member
+    return { ok: true as const, member }
   } catch (e) {
     if (isPrismaOwnerUserIdUnsupportedError(e) || isPrismaUnsupportedFieldError(e, 'ownerUserId')) {
       const member = await createTeamMemberRawInsert(ownerId, v, passwordHash, owner)
       revalidatePath('/app/accounts')
-      return member
+      return { ok: true as const, member }
     }
     throw e
   }

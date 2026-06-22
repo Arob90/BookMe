@@ -55,6 +55,9 @@
     --input: 220 13% 91%;
     --ring: var(--app-accent);
     --radius: 0.75rem;
+    /* Desktop sidebar width; the sidebar updates this when collapsed so the
+       main content margin follows it (no dead gap). */
+    --sidebar-w: 16rem;
   }
 
   .dark {
