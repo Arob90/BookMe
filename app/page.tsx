@@ -28,6 +28,10 @@ export default function HomePage() {
                 BookMeBz
               </span>
             </a>
+            <div className="flex items-center gap-2 sm:gap-4">
+            <a href="/pricing" className="text-sm font-medium text-gray-600 hover:text-pink-600 transition-colors px-2">
+              Pricing
+            </a>
             <a
               href="/login"
               className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-full flex items-center gap-2 text-sm font-medium shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5"
@@ -37,6 +41,7 @@ export default function HomePage() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </a>
+            </div>
           </div>
         </div>
       </header>
