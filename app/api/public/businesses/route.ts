@@ -1,7 +1,10 @@
 import { getPublicBusinesses } from '@/app/actions/public-booking'
 import { NextResponse } from 'next/server'
 
-export const revalidate = 60
+// Always reflect the current DB — a deleted/added business should show
+// immediately, not linger in an edge cache for minutes.
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
 
 /** User-facing message; avoid leaking full Prisma internals in the JSON body. */
 function publicBusinessesErrorMessage(error: unknown): string {
@@ -25,9 +28,9 @@ export async function GET() {
       { businesses },
       {
         headers: {
-          // Helps the browser reuse results on quick back/forward/refresh,
-          // and allows edge/CDN caching in production.
-          'Cache-Control': 'public, max-age=30, s-maxage=60, stale-while-revalidate=300',
+          // No caching: the public list must always reflect the live DB so
+          // deleted businesses disappear and new signups appear immediately.
+          'Cache-Control': 'no-store, max-age=0, must-revalidate',
         },
       }
     )
