@@ -1,4 +1,4 @@
-import { lookupClientByClientId } from '@/app/actions/public-booking'
+import { lookupClientByClientId, lookupClientByPhone } from '@/app/actions/public-booking'
 import { generateClientId } from '@/lib/utils'
 import { tenantClientWhereClause } from '@/lib/client-tenant'
 import { db } from '@/lib/db'
@@ -10,17 +10,20 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const clientId = searchParams.get('clientId')
+    const phone = searchParams.get('phone')
     const businessId = searchParams.get('businessId')
 
-    if (!clientId || !businessId) {
+    if ((!clientId && !phone) || !businessId) {
       return NextResponse.json(
-        { error: 'Client ID and Business ID are required' },
+        { error: 'A client ID or phone number, plus business ID, are required' },
         { status: 400 }
       )
     }
 
-    const client = await lookupClientByClientId(clientId, businessId)
-    
+    const client = phone
+      ? await lookupClientByPhone(phone, businessId)
+      : await lookupClientByClientId(clientId as string, businessId)
+
     if (!client) {
       return NextResponse.json({ client: null })
     }

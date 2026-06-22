@@ -332,6 +332,58 @@ export async function lookupClientByClientId(clientId: string, businessId: strin
   return null
 }
 
+/**
+ * Look up a returning client by phone number (for people who don't remember
+ * their client ID). Returns the same shape as lookupClientByClientId, or null
+ * when there's no unambiguous single match. Matching is on normalized digits,
+ * tolerating country-code / formatting differences.
+ */
+export async function lookupClientByPhone(phone: string, businessId: string) {
+  const owner = await db.user.findFirst({
+    where: { id: businessId, ownerUserId: null },
+    select: { id: true },
+  })
+  if (!owner) return null
+
+  const digits = (phone || '').replace(/\D/g, '')
+  if (digits.length < 7) return null // too short to identify safely
+
+  const tenantWhere = await tenantClientWhereClause(businessId)
+  const clients = await db.client.findMany({
+    where: { ...tenantWhere, phone: { not: null } },
+    select: {
+      id: true,
+      type: true,
+      firstName: true,
+      lastName: true,
+      birthday: true,
+      companyFoundedAt: true,
+      phone: true,
+    },
+  })
+
+  const norm = (p: string | null) => (p || '').replace(/\D/g, '')
+  const matches = clients.filter((c) => {
+    const cd = norm(c.phone)
+    if (!cd) return false
+    if (cd === digits) return true
+    // tolerate a country code on either side (e.g. 5016101234 vs 6101234)
+    return cd.endsWith(digits) || digits.endsWith(cd)
+  })
+
+  if (matches.length === 1) {
+    const { phone: _omit, ...rest } = matches[0]
+    return rest
+  }
+  // If several loosely match, only return on an exact normalized match that's unique.
+  const exact = matches.filter((c) => norm(c.phone) === digits)
+  if (exact.length === 1) {
+    const { phone: _omit, ...rest } = exact[0]
+    return rest
+  }
+  return null
+}
+
 const createClientForBookingSchema = z.object({
   businessId: z.string().min(1, 'Business is required'),
   firstName: z.string().min(1).max(200).trim(),

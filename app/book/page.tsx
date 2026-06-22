@@ -161,6 +161,8 @@ export default function BookPage() {
   const [pendingServiceQuantities, setPendingServiceQuantities] = useState<Record<string, number>>({})
   const [isReturning, setIsReturning] = useState(false)
   const [clientId, setClientId] = useState('')
+  const [lookupPhone, setLookupPhone] = useState('')
+  const [lookupMode, setLookupMode] = useState<'id' | 'phone'>('id')
   const [client, setClient] = useState<Client | null>(null)
   const [newClient, setNewClient] = useState({
     firstName: '',
@@ -715,11 +717,16 @@ export default function BookPage() {
   }
 
   const handleClientIdLookup = async () => {
-    if (!clientId.trim() || !selectedBusiness) return
+    if (!selectedBusiness) return
+    const byPhone = lookupMode === 'phone'
+    if (byPhone ? !lookupPhone.trim() : !clientId.trim()) return
 
     setIsLoading(true)
     try {
-      const response = await fetch(`/api/public/lookup-client?clientId=${encodeURIComponent(clientId)}&businessId=${selectedBusiness.id}`)
+      const query = byPhone
+        ? `phone=${encodeURIComponent(lookupPhone.trim())}`
+        : `clientId=${encodeURIComponent(clientId)}`
+      const response = await fetch(`/api/public/lookup-client?${query}&businessId=${selectedBusiness.id}`)
       const contentType = response.headers.get('content-type') || ''
       if (!response.ok) {
         // Next.js can return HTML error pages; don't try to parse them as JSON.
@@ -752,7 +759,9 @@ export default function BookPage() {
       } else {
         toast({
           title: 'Client Not Found',
-          description: 'Please check your Client ID or create a new account.',
+          description: lookupMode === 'phone'
+            ? 'No match for that phone number. Try your Client ID, or create a new account.'
+            : 'Please check your Client ID or phone number, or create a new account.',
           variant: 'destructive',
         })
       }
@@ -1893,24 +1902,67 @@ export default function BookPage() {
 
                   {isReturning ? (
                     <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="clientId">Client ID</Label>
-                        <div className="flex gap-2 mt-1">
-                          <Input
-                            id="clientId"
-                            placeholder="e.g., AR-1990-1"
-                            value={clientId}
-                            onChange={(e) => setClientId(e.target.value.toUpperCase())}
-                            className="font-mono"
-                          />
-                          <Button onClick={handleClientIdLookup} disabled={isLoading || !clientId.trim()}>
-                            <Search className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-1">
-                          Enter your Client ID from a previous booking
-                        </p>
+                      {/* Look up by Client ID or phone — some people don't remember their ID. */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          type="button"
+                          variant={lookupMode === 'id' ? 'default' : 'outline'}
+                          onClick={() => setLookupMode('id')}
+                          className="w-full"
+                        >
+                          Client ID
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={lookupMode === 'phone' ? 'default' : 'outline'}
+                          onClick={() => setLookupMode('phone')}
+                          className="w-full"
+                        >
+                          Phone number
+                        </Button>
                       </div>
+
+                      {lookupMode === 'id' ? (
+                        <div>
+                          <Label htmlFor="clientId">Client ID</Label>
+                          <div className="flex gap-2 mt-1">
+                            <Input
+                              id="clientId"
+                              placeholder="e.g., AR-1990-1"
+                              value={clientId}
+                              onChange={(e) => setClientId(e.target.value.toUpperCase())}
+                              onKeyDown={(e) => { if (e.key === 'Enter') handleClientIdLookup() }}
+                              className="font-mono"
+                            />
+                            <Button onClick={handleClientIdLookup} disabled={isLoading || !clientId.trim()}>
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Enter your Client ID from a previous booking
+                          </p>
+                        </div>
+                      ) : (
+                        <div>
+                          <Label htmlFor="lookupPhone">Phone number</Label>
+                          <div className="flex gap-2 mt-1">
+                            <Input
+                              id="lookupPhone"
+                              type="tel"
+                              placeholder="e.g., 610-1234"
+                              value={lookupPhone}
+                              onChange={(e) => setLookupPhone(e.target.value)}
+                              onKeyDown={(e) => { if (e.key === 'Enter') handleClientIdLookup() }}
+                            />
+                            <Button onClick={handleClientIdLookup} disabled={isLoading || !lookupPhone.trim()}>
+                              <Search className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Use the phone number you booked with before
+                          </p>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="space-y-4">
