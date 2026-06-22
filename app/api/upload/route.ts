@@ -1,9 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import { put } from '@vercel/blob'
 import { logUploadFailure, logError } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
@@ -52,19 +50,14 @@ export async function POST(request: NextRequest) {
     const randomString = Math.random().toString(36).substring(2, 15)
     const filename = `${timestamp}-${randomString}.${extension}`
 
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', uploadType)
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-    const filepath = join(uploadsDir, filename)
+    // Store in Vercel Blob (object storage) — the serverless filesystem is
+    // read-only in production, so local writes silently failed before.
+    const blob = await put(`${uploadType}/${filename}`, file, {
+      access: 'public',
+      contentType: file.type,
+    })
 
-    // Convert file to buffer and save
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filepath, buffer)
-
-    const url = `/uploads/${uploadType}/${filename}`
-    return NextResponse.json({ url })
+    return NextResponse.json({ url: blob.url })
   } catch (error: any) {
     logError({ message: 'Upload failed', error, category: 'upload' })
     return NextResponse.json(

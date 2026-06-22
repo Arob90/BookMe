@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { mkdir, writeFile } from 'fs/promises'
+import { put } from '@vercel/blob'
 import path from 'path'
 import { randomUUID } from 'crypto'
 
@@ -35,13 +35,14 @@ export async function POST(request: Request) {
     const originalName =
       typeof (file as File).name === 'string' ? (file as File).name : 'upload'
     const stored = safeStoredName(originalName)
-    const dir = path.join(process.cwd(), 'public', 'uploads', 'bookme')
-    await mkdir(dir, { recursive: true })
-    const buf = Buffer.from(await file.arrayBuffer())
-    await writeFile(path.join(dir, stored), buf)
 
-    const url = `/uploads/bookme/${stored}`
-    return NextResponse.json({ url, originalName })
+    // Object storage — serverless filesystem is read-only in production.
+    const blob = await put(`bookme/${stored}`, file, {
+      access: 'public',
+      contentType: (file as File).type || undefined,
+    })
+
+    return NextResponse.json({ url: blob.url, originalName })
   } catch (e: any) {
     console.error('upload/payment-attachment', e)
     return NextResponse.json(
