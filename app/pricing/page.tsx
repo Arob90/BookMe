@@ -98,6 +98,9 @@ const TIERS = [
   },
 ] as const
 
+// Toggle the advertising/Spotlight section. Hidden until ad pricing is finalized.
+const SHOW_AD_PACKAGES = false
+
 export default function PricingPage() {
   const [billing, setBilling] = useState<Billing>('monthly')
 
@@ -207,7 +210,8 @@ export default function PricingPage() {
         </p>
       </section>
 
-      {/* Advertising / Spotlight add-ons */}
+      {/* Advertising / Spotlight add-ons — hidden until pricing is finalized */}
+      {SHOW_AD_PACKAGES && (
       <section className="border-t border-slate-100 bg-slate-50/60 py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-5 sm:px-8">
           <div className="mx-auto mb-12 max-w-2xl text-center">
@@ -266,6 +270,7 @@ export default function PricingPage() {
           </p>
         </div>
       </section>
+      )}
 
       <MarketingFooter />
     </div>
