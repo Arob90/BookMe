@@ -33,8 +33,8 @@
 @layer base {
   :root {
     /* Accent color (used to replace app pink highlights). Stored as H S L (no commas).
-       Softer, less-saturated blush rose — modern, calmer than the old hot pink. */
-    --app-accent: 340 60% 62%;
+       Violet — matches the marketing brand (violet-600). */
+    --app-accent: 262 83% 58%;
     --background: 0 0% 100%;
     --foreground: 222.2 47% 11.2%;
     --card: 0 0% 100%;
@@ -194,7 +194,7 @@
 @layer base {
   /* Accent color as an RGB triplet (for libraries that don't support CSS var HSL). */
   :root {
-    --app-accent-rgb: 216 100 139; /* matches --app-accent (soft blush rose) */
+    --app-accent-rgb: 124 58 237; /* matches --app-accent (violet-600) */
   }
 
   /* -----------------------------------------------------------------------

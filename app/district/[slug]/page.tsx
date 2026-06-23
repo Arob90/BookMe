@@ -53,7 +53,7 @@ export default async function DistrictPage({ params }: { params: { slug: string 
           <div className="absolute -bottom-20 right-0 h-72 w-72 rounded-full bg-fuchsia-300/20 blur-3xl" />
         </div>
         <div className="relative mx-auto max-w-6xl px-5 py-14 sm:px-8 lg:py-20">
-          <Link href="/#districts" className="inline-flex items-center gap-2 text-sm font-medium text-white/80 transition-colors hover:text-white">
+          <Link href="/districts" className="inline-flex items-center gap-2 text-sm font-medium text-white/80 transition-colors hover:text-white">
             <ArrowLeft className="h-4 w-4" /> All districts
           </Link>
           <div className="mt-5 flex items-center gap-3">

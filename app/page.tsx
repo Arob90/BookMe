@@ -239,24 +239,26 @@ function Districts() {
           Discover and book service businesses near you, anywhere in Belize.
         </p>
       </div>
-      <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-        {DISTRICTS.map((d, i) => (
+      <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {DISTRICTS.map((d) => (
           <Link
             key={d.slug}
             href={`/district/${d.slug}`}
-            className="glass-card group relative overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-600/10"
+            className="glass-card group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-600/10"
           >
-            <div aria-hidden className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-violet-100 opacity-70 transition-transform duration-300 group-hover:scale-150" />
-            <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-sm">
-              <MapPin className="h-5 w-5" />
+            <div aria-hidden className="pointer-events-none absolute -right-5 -top-5 h-14 w-14 rounded-full bg-violet-100 opacity-70 transition-transform duration-300 group-hover:scale-150" />
+            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm">
+              <MapPin className="h-4 w-4" />
             </span>
-            <h3 className="relative mt-4 font-display text-lg font-bold text-slate-900">{d.label}</h3>
-            <p className="relative mt-0.5 text-xs text-slate-400">{d.blurb}</p>
-            <span className="relative mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-600">
-              Explore <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </span>
+            <h3 className="relative mt-3 font-display text-sm font-bold text-slate-900">{d.label}</h3>
+            <p className="relative mt-0.5 text-[11px] text-slate-400">{d.blurb}</p>
           </Link>
         ))}
+      </div>
+      <div className="mt-8 text-center">
+        <Link href="/districts" className="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-700">
+          Browse all districts <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
     </section>
   )

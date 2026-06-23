@@ -22,7 +22,7 @@ export function MarketingNav() {
         <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
           <Link href="/features" className="transition-colors hover:text-violet-700">Features</Link>
           <Link href="/pricing" className="transition-colors hover:text-violet-700">Pricing</Link>
-          <Link href="/#districts" className="transition-colors hover:text-violet-700">Districts</Link>
+          <Link href="/districts" className="transition-colors hover:text-violet-700">Districts</Link>
           <Link href="/book" className="transition-colors hover:text-violet-700">Book now</Link>
         </nav>
         <div className="flex items-center gap-2">
