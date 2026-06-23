@@ -393,6 +393,11 @@ model PendingAccountRequest {
   phone        String?  @map("phone")
   createdAt    DateTime @default(now()) @map("created_at")
 
+  /// Payment activation: client uploads proof of payment; admin verifies then approves.
+  paymentProofUrl    String?   @map("payment_proof_url")
+  paymentStatus      String    @default("awaiting") @map("payment_status") // awaiting | submitted
+  paymentSubmittedAt DateTime? @map("payment_submitted_at")
+
   @@map("pending_account_requests")
 }
 

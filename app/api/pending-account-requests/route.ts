@@ -23,6 +23,9 @@ export async function GET() {
         firstName: true,
         lastName: true,
         createdAt: true,
+        paymentStatus: true,
+        paymentProofUrl: true,
+        paymentSubmittedAt: true,
       },
     })
 

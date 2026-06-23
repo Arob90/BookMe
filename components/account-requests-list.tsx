@@ -40,6 +40,9 @@ export type AccountRequestRow = {
   lastName: string
   phone: string | null
   createdAt: string
+  paymentStatus?: string | null
+  paymentProofUrl?: string | null
+  paymentSubmittedAt?: string | null
 }
 
 export function AccountRequestsList({ initialRequests }: { initialRequests: AccountRequestRow[] }) {
@@ -136,6 +139,27 @@ export function AccountRequestsList({ initialRequests }: { initialRequests: Acco
                       {metaLine && (
                         <div className="text-xs text-gray-500 mt-0.5 truncate">{metaLine}</div>
                       )}
+                      <div className="mt-1.5">
+                        {req.paymentStatus === 'submitted' ? (
+                          <span className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700 ring-1 ring-emerald-200">
+                            💳 Payment uploaded
+                            {req.paymentProofUrl && (
+                              <a
+                                href={req.paymentProofUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="underline decoration-emerald-400 underline-offset-2 hover:text-emerald-900"
+                              >
+                                View proof
+                              </a>
+                            )}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-amber-200">
+                            ⏳ Awaiting payment
+                          </span>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 justify-end">
                       <Button

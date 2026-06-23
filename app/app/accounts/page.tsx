@@ -91,6 +91,11 @@ export default async function AccountsPage({ searchParams }: AccountsPageProps) 
             lastName: r.lastName,
             phone: r.phone,
             createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : String(r.createdAt),
+            paymentStatus: (r as { paymentStatus?: string | null }).paymentStatus ?? null,
+            paymentProofUrl: (r as { paymentProofUrl?: string | null }).paymentProofUrl ?? null,
+            paymentSubmittedAt: (r as { paymentSubmittedAt?: Date | null }).paymentSubmittedAt
+              ? new Date((r as { paymentSubmittedAt: Date }).paymentSubmittedAt).toISOString()
+              : null,
           }))}
         />
       </div>

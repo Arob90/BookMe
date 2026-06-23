@@ -42,7 +42,7 @@ export async function createAccount(data: z.infer<typeof signupSchema>) {
 
   const passwordHash = await bcrypt.hash(validated.password, 10)
 
-  await db.pendingAccountRequest.create({
+  const created = await db.pendingAccountRequest.create({
     data: {
       email: validated.email,
       passwordHash,
@@ -52,12 +52,13 @@ export async function createAccount(data: z.infer<typeof signupSchema>) {
       lastName: validated.lastName,
       phone: validated.phone || null,
     },
+    select: { id: true },
   })
 
   revalidatePath('/api/notifications')
   revalidatePath('/api/pending-account-requests')
 
-  return { success: true, pending: true }
+  return { success: true, pending: true, requestId: created.id, firstName: validated.firstName }
 }
 
 export async function requestPasswordReset(email: string) {
