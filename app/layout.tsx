@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Space_Grotesk } from 'next/font/google'
+import { Inter, Space_Grotesk, Fraunces } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 
@@ -8,6 +8,14 @@ const display = Space_Grotesk({
   subsets: ['latin'],
   weight: ['500', '600', '700'],
   variable: '--font-display',
+  display: 'swap',
+})
+// Editorial serif for the marketing site headlines.
+const serif = Fraunces({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
+  variable: '--font-serif',
   display: 'swap',
 })
 
@@ -22,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable}`}>
+    <html lang="en" className={`${inter.variable} ${display.variable} ${serif.variable}`}>
       <body className={inter.className}>
         {children}
         <Toaster />

@@ -21,6 +21,7 @@ const config = {
       fontFamily: {
         dancing: ['var(--font-dancing)', 'cursive'],
         display: ['var(--font-display)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'ui-serif', 'Georgia', 'serif'],
       },
       colors: {
         border: "hsl(var(--border))",
