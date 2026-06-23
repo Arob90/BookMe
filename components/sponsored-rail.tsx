@@ -83,16 +83,57 @@ function AdCard({ ad }: { ad: Ad }) {
   )
 }
 
+/** Real sponsored advertiser: AR Land Documents & Services. */
+function ArLandAd() {
+  const services = [
+    'Transfer of Land', 'First Registration', 'Land Certificate',
+    'Power of Attorney', 'Deed of Mortgage', 'Lost Title',
+    'Birth & Marriage Certificates', 'Police Report',
+  ]
+  return (
+    <Link
+      href="mailto:alexisrobertsbelize@gmail.com"
+      className="block overflow-hidden rounded-3xl bg-[#efe7e3] p-5 shadow-sm ring-1 ring-[#e2d6d0] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="flex items-center justify-between">
+        <span className="rounded-full bg-white/70 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#9b7d72]">Sponsored</span>
+      </div>
+      <div className="mt-3 text-center">
+        <p className="font-serif text-4xl italic leading-none text-[#2b2622]">AR</p>
+        <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.25em] text-[#6b5b52]">Alexis Roberts</p>
+      </div>
+      <h3 className="mt-3 text-center font-display text-sm font-bold text-[#2b2622]">Land Documents &amp; Services</h3>
+      <ul className="mt-3 space-y-1 text-center text-[11px] leading-relaxed text-[#5e5048]">
+        {services.map((s) => <li key={s}>{s}</li>)}
+        <li className="italic text-[#8a7a70]">…and more</li>
+      </ul>
+      <div className="mt-3 border-t border-[#e2d6d0] pt-3 text-center text-[10px] text-[#6b5b52]">
+        <p className="font-semibold text-[#2b2622]">For more info contact:</p>
+        <p>+501 6220684</p>
+        <p className="break-all">alexisrobertsbelize@gmail.com</p>
+        <p>www.alexisroberts.bz</p>
+      </div>
+    </Link>
+  )
+}
+
 export function SponsoredRail({ district, side }: { district: string; side: 'left' | 'right' }) {
   const ads = adsFor(district)
-  const picks = side === 'left' ? [ads[0], ads[1]] : [ads[2], ads[3]]
   return (
     <aside className="hidden xl:block">
       <div className="sticky top-24 space-y-4">
         <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300">Sponsored</p>
-        {picks.map((ad, i) => (
-          <AdCard key={i} ad={ad} />
-        ))}
+        {side === 'left' ? (
+          <>
+            <ArLandAd />
+            <AdCard ad={ads[0]} />
+          </>
+        ) : (
+          <>
+            <AdCard ad={ads[2]} />
+            <AdCard ad={ads[3]} />
+          </>
+        )}
       </div>
     </aside>
   )

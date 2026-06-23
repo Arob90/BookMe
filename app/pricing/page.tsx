@@ -2,8 +2,48 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Check } from 'lucide-react'
+import { Check, Megaphone } from 'lucide-react'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
+
+const AD_PACKAGES = [
+  {
+    id: 'featured',
+    name: 'Featured Spot',
+    blurb: 'Pin your business to the top of your district.',
+    price: 25,
+    highlight: false,
+    features: [
+      'Top of your district directory',
+      '“Featured” spotlight card',
+      'Verified-on-BookMe badge',
+    ],
+  },
+  {
+    id: 'spotlight',
+    name: 'Spotlight Bundle',
+    blurb: 'Featured listing + sponsored rail, everywhere.',
+    price: 55,
+    highlight: true,
+    features: [
+      'Everything in Featured Spot',
+      'Banner ad in the district side rails',
+      'Priority placement in your district',
+      'Links straight to your booking page',
+    ],
+  },
+  {
+    id: 'rail',
+    name: 'Sidebar Ad',
+    blurb: 'Your banner in the sponsored ad rails.',
+    price: 40,
+    highlight: false,
+    features: [
+      'Ad in the district sponsored rails',
+      'Links to your booking page',
+      '“Sponsored” placement',
+    ],
+  },
+] as const
 
 type Billing = 'monthly' | 'annual'
 
@@ -165,6 +205,66 @@ export default function PricingPage() {
           Prices in USD. Need something custom?{' '}
           <a href="mailto:sasoandco.ltd@gmail.com" className="font-medium text-violet-600 hover:underline">Contact us</a>.
         </p>
+      </section>
+
+      {/* Advertising / Spotlight add-ons */}
+      <section className="border-t border-slate-100 bg-slate-50/60 py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8">
+          <div className="mx-auto mb-12 max-w-2xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-amber-700">
+              <Megaphone className="h-3.5 w-3.5" /> Spotlight ads
+            </span>
+            <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Get seen first
+            </h2>
+            <p className="mt-4 text-slate-600">
+              Want more bookings? Promote your business across BookMe — top of your
+              district, in the sponsored rails, or both. Add-ons to any plan.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
+            {AD_PACKAGES.map((p) => (
+              <div
+                key={p.id}
+                className={`animate-fade-up relative flex flex-col rounded-3xl p-7 shadow-sm transition-all ${
+                  p.highlight ? 'bg-violet-600 text-white shadow-xl shadow-violet-600/25 md:-mt-4 md:mb-4' : 'glass-card'
+                }`}
+              >
+                {p.highlight && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-slate-900 shadow">Best value</span>
+                )}
+                <h3 className={`font-display text-xl font-bold ${p.highlight ? 'text-white' : 'text-slate-900'}`}>{p.name}</h3>
+                <p className={`mt-1 text-sm ${p.highlight ? 'text-white/80' : 'text-slate-500'}`}>{p.blurb}</p>
+                <div className="mt-5 flex items-baseline gap-1">
+                  <span className={`font-display text-4xl font-bold ${p.highlight ? 'text-white' : 'text-slate-900'}`}>${p.price}</span>
+                  <span className={p.highlight ? 'text-white/70' : 'text-slate-400'}>/mo</span>
+                </div>
+                <ul className="mt-6 space-y-3">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2.5 text-sm">
+                      <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${p.highlight ? 'bg-white/20' : 'bg-violet-100'}`}>
+                        <Check className={`h-3 w-3 ${p.highlight ? 'text-white' : 'text-violet-600'}`} />
+                      </span>
+                      <span className={p.highlight ? 'text-white/90' : 'text-slate-700'}>{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a
+                  href="mailto:sasoandco.ltd@gmail.com?subject=BookMe%20advertising"
+                  className={`mt-7 w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition-all hover:-translate-y-0.5 ${
+                    p.highlight ? 'bg-white text-violet-700 shadow hover:shadow-lg' : 'bg-violet-600 text-white shadow-sm hover:shadow-lg'
+                  }`}
+                >
+                  Advertise with us
+                </a>
+              </div>
+            ))}
+          </div>
+          <p className="mx-auto mt-10 max-w-xl text-center text-xs text-slate-400">
+            Ad placements are limited per district to keep them effective. Prices in USD.
+          </p>
+        </div>
       </section>
 
       <MarketingFooter />

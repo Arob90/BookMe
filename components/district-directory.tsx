@@ -149,16 +149,10 @@ export function DistrictDirectory({ businesses }: { businesses: DirectoryBusines
                 </div>
               </div>
 
-              <div className="mt-4 space-y-1.5 text-sm text-slate-500">
-                {b.todayHours && (
-                  <p className="flex items-center gap-2"><Clock className="h-4 w-4 text-slate-400" />{b.todayHours}</p>
-                )}
-                {b.phone && (
-                  <p className="flex items-center gap-2"><Phone className="h-4 w-4 text-slate-400" />{b.phone}</p>
-                )}
-                {b.address && (
-                  <p className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />{b.address}</p>
-                )}
+              <div className="mt-4 flex-1 space-y-1.5 text-sm text-slate-500">
+                <p className="flex items-center gap-2"><Clock className="h-4 w-4 shrink-0 text-slate-400" />{b.todayHours || 'Hours not set'}</p>
+                <p className="flex items-center gap-2"><Phone className="h-4 w-4 shrink-0 text-slate-400" />{b.phone || '—'}</p>
+                <p className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />{b.address || '—'}</p>
               </div>
 
               <Link
