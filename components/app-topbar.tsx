@@ -219,7 +219,7 @@ export function AppTopbar({ title, actionLabel, actionHref }: AppTopbarProps) {
 
   return (
     <header className="flex-shrink-0 flex h-14 sm:h-16 items-center gap-2 sm:gap-4 border-b border-white/40 glass-nav shadow-sm px-3 sm:px-6">
-      <h1 className="font-display text-base sm:text-lg md:text-xl font-semibold text-gray-800 truncate flex-1 pl-12 lg:pl-0">{title}</h1>
+      <h1 className="font-display text-base sm:text-lg md:text-xl font-semibold text-gray-800 truncate flex-1 pl-12 md:pl-0">{title}</h1>
       
       <div className="ml-auto flex items-center gap-2 sm:gap-4">
         {/* Search */}

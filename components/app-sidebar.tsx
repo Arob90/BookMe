@@ -57,13 +57,24 @@ export function AppSidebar() {
     }
   }, [isCollapsed])
 
+  // On first load, start collapsed (icon rail) on tablet-sized screens
+  // (e.g. iPad portrait, 768–1023px) so content gets more room; expanded on
+  // large screens. Below md the sidebar is an overlay, so this doesn't apply.
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    const w = window.innerWidth
+    if (w >= 768 && w < 1024) setIsCollapsed(true)
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   return (
     <>
       {/* Mobile menu button */}
       <Button
         variant="ghost"
         size="icon"
-        className="lg:hidden fixed top-4 left-4 z-50 glass shadow-md rounded-xl"
+        className="md:hidden fixed top-4 left-4 z-50 glass shadow-md rounded-xl"
         onClick={() => setIsMobileOpen(!isMobileOpen)}
       >
         <Menu className="h-5 w-5" />
@@ -72,7 +83,7 @@ export function AppSidebar() {
       {/* Mobile overlay */}
       {isMobileOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-40"
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
@@ -82,9 +93,9 @@ export function AppSidebar() {
         className={cn(
           'fixed left-0 top-0 z-50 h-full glass-nav border-r border-white/40 shadow-sm transition-all duration-300',
           isCollapsed ? 'w-16' : 'w-64',
-          // Mobile: slide in/out
-          'lg:translate-x-0',
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          // Phone (<md): slide in/out as overlay. Tablet/desktop (md+): persistent.
+          'md:translate-x-0',
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         )}
       >
         <div className="flex h-full flex-col">
@@ -106,7 +117,7 @@ export function AppSidebar() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsMobileOpen(false)}
-                className="lg:hidden"
+                className="md:hidden"
               >
                 <X className="h-5 w-5" />
               </Button>
@@ -115,7 +126,7 @@ export function AppSidebar() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsCollapsed(!isCollapsed)}
-                className="hidden lg:flex"
+                className="hidden md:flex"
               >
                 {isCollapsed ? <Menu className="h-5 w-5" /> : <X className="h-5 w-5" />}
               </Button>
