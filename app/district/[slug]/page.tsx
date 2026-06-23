@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, MapPin, Clock3, BadgeCheck, Sparkles } from 'luc
 import { DISTRICTS, districtBySlug } from '@/lib/districts'
 import { getPublicBusinesses } from '@/app/actions/public-booking'
 import { DistrictDirectory, type DirectoryBusiness } from '@/components/district-directory'
+import { SponsoredRail } from '@/components/sponsored-rail'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
 
 export const dynamic = 'force-dynamic'
@@ -79,9 +80,13 @@ export default async function DistrictPage({ params }: { params: { slug: string 
         </div>
       </section>
 
-      {/* Directory */}
-      <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8 lg:py-16">
-        <DistrictDirectory businesses={businesses} />
+      {/* Directory with sponsored rails */}
+      <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:py-16">
+        <div className="grid gap-6 xl:grid-cols-[190px_minmax(0,1fr)_190px]">
+          <SponsoredRail district={district.label} side="left" />
+          <DistrictDirectory businesses={businesses} />
+          <SponsoredRail district={district.label} side="right" />
+        </div>
       </section>
 
       {/* Why book here */}

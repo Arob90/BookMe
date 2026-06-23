@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Search, MapPin, Phone, Clock, ArrowRight } from 'lucide-react'
+import { Search, MapPin, Phone, Clock, ArrowRight, Star, BadgeCheck } from 'lucide-react'
 
 export type DirectoryBusiness = {
   id: string
@@ -14,14 +14,28 @@ export type DirectoryBusiness = {
   todayHours?: string | null
 }
 
+type Filter = 'all' | 'open' | 'az'
+
 export function DistrictDirectory({ businesses }: { businesses: DirectoryBusiness[] }) {
   const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState<Filter>('all')
+
+  // First business doubles as the "featured / sponsored" spotlight.
+  const featured = businesses[0]
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return businesses
-    return businesses.filter((b) => b.name.toLowerCase().includes(q))
-  }, [businesses, query])
+    let list = q ? businesses.filter((b) => b.name.toLowerCase().includes(q)) : businesses.slice()
+    if (filter === 'open') list = list.filter((b) => b.isOpenNow)
+    if (filter === 'az') list = list.slice().sort((a, b) => a.name.localeCompare(b.name))
+    return list
+  }, [businesses, query, filter])
+
+  const chips: { id: Filter; label: string }[] = [
+    { id: 'all', label: 'All' },
+    { id: 'open', label: 'Open now' },
+    { id: 'az', label: 'A–Z' },
+  ]
 
   return (
     <div>
@@ -41,7 +55,57 @@ export function DistrictDirectory({ businesses }: { businesses: DirectoryBusines
           {filtered.length} {filtered.length === 1 ? 'business' : 'businesses'}
           {query ? ' found' : ' listed'}
         </p>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+          {chips.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setFilter(c.id)}
+              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                filter === c.id
+                  ? 'bg-violet-600 text-white shadow-sm'
+                  : 'border border-slate-200 bg-white text-slate-600 hover:border-violet-200 hover:text-violet-700'
+              }`}
+            >
+              {c.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Featured / sponsored spotlight */}
+      {!query && featured && (
+        <div className="mb-8 overflow-hidden rounded-3xl bg-violet-600 p-1 shadow-lg shadow-violet-600/20">
+          <div className="flex flex-col items-start gap-5 rounded-[1.4rem] bg-white p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              {featured.profilePhoto ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={featured.profilePhoto} alt={featured.name} className="h-16 w-16 rounded-2xl object-cover" />
+              ) : (
+                <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-violet-600 text-2xl font-bold text-white">
+                  {featured.name[0]?.toUpperCase()}
+                </span>
+              )}
+              <div>
+                <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-700">
+                  <Star className="h-3 w-3 fill-amber-500 text-amber-500" /> Featured
+                </span>
+                <h3 className="mt-1.5 font-display text-xl font-bold text-slate-900">{featured.name}</h3>
+                <p className="mt-0.5 flex items-center gap-2 text-sm text-slate-500">
+                  <BadgeCheck className="h-4 w-4 text-violet-600" /> Verified on BookMe
+                  {featured.todayHours ? <span className="text-slate-300">·</span> : null}
+                  {featured.todayHours}
+                </p>
+              </div>
+            </div>
+            <Link
+              href={`/book?business=${featured.id}`}
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
+            >
+              Book now <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      )}
 
       {filtered.length === 0 ? (
         <div className="mx-auto max-w-md rounded-3xl border border-slate-100 bg-white p-10 text-center shadow-sm">
@@ -54,7 +118,9 @@ export function DistrictDirectory({ businesses }: { businesses: DirectoryBusines
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((b) => (
+          {filtered
+            .filter((b) => query || !featured || b.id !== featured.id)
+            .map((b) => (
             <div
               key={b.id}
               className="group flex flex-col rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-600/10"
