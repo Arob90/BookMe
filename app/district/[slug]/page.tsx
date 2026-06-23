@@ -43,6 +43,14 @@ export default async function DistrictPage({ params }: { params: { slug: string 
     businesses = []
   }
 
+  // Featured = a paid, rotating placement. This page is force-dynamic, so the
+  // pick changes each load — when several businesses buy "Featured" they share
+  // the slot fairly. (Placeholder rotates among all until the admin Featured
+  // toggle is wired; then this filters to paid/featured businesses only.)
+  const featured = businesses.length
+    ? businesses[Math.floor(Math.random() * businesses.length)]
+    : undefined
+
   return (
     <div className="min-h-screen bg-white text-slate-900 antialiased">
       <MarketingNav />
@@ -84,7 +92,7 @@ export default async function DistrictPage({ params }: { params: { slug: string 
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:py-16">
         <div className="grid gap-6 xl:grid-cols-[190px_minmax(0,1fr)_190px]">
           <SponsoredRail district={district.label} side="left" />
-          <DistrictDirectory businesses={businesses} />
+          <DistrictDirectory businesses={businesses} featured={featured} />
           <SponsoredRail district={district.label} side="right" />
         </div>
       </section>

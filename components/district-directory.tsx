@@ -16,12 +16,16 @@ export type DirectoryBusiness = {
 
 type Filter = 'all' | 'open' | 'az'
 
-export function DistrictDirectory({ businesses }: { businesses: DirectoryBusiness[] }) {
+export function DistrictDirectory({
+  businesses,
+  featured,
+}: {
+  businesses: DirectoryBusiness[]
+  /** A paid "Featured" business, chosen by rotation server-side. Undefined = none sold. */
+  featured?: DirectoryBusiness
+}) {
   const [query, setQuery] = useState('')
   const [filter, setFilter] = useState<Filter>('all')
-
-  // First business doubles as the "featured / sponsored" spotlight.
-  const featured = businesses[0]
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
