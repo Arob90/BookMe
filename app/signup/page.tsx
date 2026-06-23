@@ -97,7 +97,7 @@ export default function SignupPage() {
   return (
     <div className="grid min-h-screen lg:grid-cols-2">
       {/* Brand panel */}
-      <div className="relative hidden overflow-hidden bg-gradient-to-br from-violet-700 via-violet-600 to-fuchsia-600 lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <div className="relative hidden overflow-hidden bg-violet-600 lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute -left-16 -top-16 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-blob-drift" />
           <div className="absolute -bottom-16 right-0 h-80 w-80 rounded-full bg-fuchsia-300/20 blur-3xl animate-blob-drift" style={{ animationDelay: '5s' }} />
@@ -130,7 +130,7 @@ export default function SignupPage() {
       <div className="flex items-center justify-center overflow-y-auto bg-white px-5 py-12 sm:px-8">
         <div className="w-full max-w-md animate-fade-up">
           <Link href="/" className="mb-6 inline-flex items-center gap-2 lg:hidden">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-500">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-600">
               <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
@@ -190,7 +190,7 @@ export default function SignupPage() {
 
             <button
               type="submit" disabled={isLoading}
-              className="h-11 w-full rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60 disabled:hover:translate-y-0"
+              className="h-11 w-full rounded-full bg-violet-600 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl disabled:opacity-60 disabled:hover:translate-y-0"
             >
               {isLoading ? 'Creating account…' : 'Create account — start free'}
             </button>
@@ -219,7 +219,7 @@ export default function SignupPage() {
             <Button asChild variant="outline">
               <Link href="/">Back to home</Link>
             </Button>
-            <Button asChild className="bg-gradient-to-r from-violet-600 to-fuchsia-500 hover:opacity-90">
+            <Button asChild className="bg-violet-600 hover:opacity-90">
               <Link href="/login">Go to sign in</Link>
             </Button>
           </div>

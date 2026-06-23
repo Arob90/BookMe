@@ -1424,21 +1424,21 @@ export default function BookPage() {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-white text-slate-900 antialiased">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-xl">
+        <div className="max-w-6xl mx-auto px-5 sm:px-8 py-3.5">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-xl bg-pink-500 flex items-center justify-center shadow-sm">
-                <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 shadow-sm">
+                <svg className="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-              </div>
-              <span className="text-2xl font-bold text-pink-600">BookMeBz</span>
+              </span>
+              <span className="font-display text-xl font-semibold tracking-tight text-slate-900">BookMe</span>
             </Link>
-            <Link href="/" className="text-sm text-gray-600 hover:text-gray-900">
-              Back to Home
+            <Link href="/" className="rounded-full px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900">
+              Back to home
             </Link>
           </div>
         </div>
@@ -1475,7 +1475,7 @@ export default function BookPage() {
                 Book another appointment
               </Button>
             </div>
-            <div className="rounded-[22px] border border-pink-100 bg-white p-8 text-center shadow-sm">
+            <div className="rounded-[22px] border border-violet-100 bg-white p-8 text-center shadow-sm">
               <CheckCircle2 className="h-12 w-12 text-emerald-500 mx-auto mb-3" />
               <p className="text-lg font-semibold text-slate-900">You&apos;re all set</p>
               <p className="text-sm text-slate-500 mt-1">
@@ -1484,7 +1484,7 @@ export default function BookPage() {
               {bookingReceipt && postBookingPhase === 'none' && (
                 <Button
                   variant="outline"
-                  className="mt-4 rounded-full border-pink-200 text-pink-700 hover:bg-pink-50"
+                  className="mt-4 rounded-full border-violet-200 text-violet-700 hover:bg-violet-50"
                   onClick={() => setPostBookingPhase('details')}
                 >
                   View receipt again
@@ -1500,10 +1500,10 @@ export default function BookPage() {
                 }
               }}
             >
-              <DialogContent className="sm:max-w-md border-pink-100">
+              <DialogContent className="sm:max-w-md border-violet-100">
                 <DialogHeader className="sm:text-center">
-                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-pink-100">
-                    <Sparkles className="h-6 w-6 text-pink-600" />
+                  <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-violet-100">
+                    <Sparkles className="h-6 w-6 text-violet-600" />
                   </div>
                   <DialogTitle className="text-xl">Appointment booked!</DialogTitle>
                   <DialogDescription className="text-base text-slate-600 pt-1">
@@ -1512,7 +1512,7 @@ export default function BookPage() {
                 </DialogHeader>
                 <DialogFooter className="sm:justify-center gap-2">
                   <Button
-                    className="rounded-full bg-pink-500 hover:bg-pink-600"
+                    className="rounded-full bg-violet-500 hover:bg-violet-600"
                     onClick={() => setPostBookingPhase('details')}
                   >
                     View receipt
@@ -1527,12 +1527,12 @@ export default function BookPage() {
                 if (!open) setPostBookingPhase('none')
               }}
             >
-              <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg border-pink-100">
+              <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg border-violet-100">
                 <DialogHeader>
                   <DialogTitle className="text-xl text-slate-900">Booking receipt</DialogTitle>
                   <DialogDescription className="text-slate-600">
                     {bookingReceipt?.businessName} â€” reference{' '}
-                    <span className="font-mono text-pink-700 break-all">
+                    <span className="font-mono text-violet-700 break-all">
                       {bookingReceipt?.appointmentId ?? 'â€”'}
                     </span>
                   </DialogDescription>
@@ -1554,13 +1554,13 @@ export default function BookPage() {
                       </p>
                     </div>
 
-                    <div className="rounded-xl border border-pink-100 bg-pink-50/50 p-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-pink-700">Your account</p>
+                    <div className="rounded-xl border border-violet-100 bg-violet-50/50 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-violet-700">Your account</p>
                       <p className="mt-1 text-slate-900">
                         {bookingReceipt.clientFirstName} {bookingReceipt.clientLastName}
                       </p>
                       {bookingReceipt.clientPublicId && (
-                        <p className="mt-1 font-mono text-sm font-semibold text-pink-700">
+                        <p className="mt-1 font-mono text-sm font-semibold text-violet-700">
                           Client ID: {bookingReceipt.clientPublicId}
                         </p>
                       )}
@@ -1602,7 +1602,7 @@ export default function BookPage() {
                           <span>GST (12.5%)</span>
                           <span className="tabular-nums">${bookingReceipt.gstTotal.toFixed(2)}</span>
                         </div>
-                        <div className="flex justify-between text-base font-bold text-pink-600 pt-1">
+                        <div className="flex justify-between text-base font-bold text-violet-600 pt-1">
                           <span>Total</span>
                           <span className="tabular-nums">${bookingReceipt.grandTotal.toFixed(2)}</span>
                         </div>
@@ -1648,7 +1648,7 @@ export default function BookPage() {
                     >
                       Book another
                     </Button>
-                    <Button asChild className="rounded-full bg-pink-500 hover:bg-pink-600">
+                    <Button asChild className="rounded-full bg-violet-500 hover:bg-violet-600">
                       <Link href="/">Return home</Link>
                     </Button>
                   </div>
@@ -1667,12 +1667,12 @@ export default function BookPage() {
                 return (
                   <div key={s} className="flex items-center">
                     <div className={`flex items-center justify-center w-8 h-8 rounded-full border-2 ${
-                      isActive ? 'bg-pink-500 border-pink-500 text-white' : 'border-gray-300 text-gray-400'
+                      isActive ? 'bg-violet-500 border-violet-500 text-white' : 'border-gray-300 text-gray-400'
                     }`}>
                       {index + 1}
                     </div>
                     {index < 3 && (
-                      <div className={`w-12 h-0.5 ${isActive ? 'bg-pink-500' : 'bg-gray-300'}`} />
+                      <div className={`w-12 h-0.5 ${isActive ? 'bg-violet-500' : 'bg-gray-300'}`} />
                     )}
                   </div>
                 )
@@ -1681,7 +1681,7 @@ export default function BookPage() {
 
             {/* Step 1: Select Business */}
             {step === 'business' && (
-              <Card className="rounded-[22px] border-2 border-pink-300 shadow-sm">
+              <Card className="rounded-[22px] border-2 border-violet-300 shadow-sm">
                 <CardHeader>
                   <CardTitle>Select a Business</CardTitle>
                   <CardDescription>Choose the business you&apos;d like to book with</CardDescription>
@@ -1724,7 +1724,7 @@ export default function BookPage() {
                           <div className="space-y-1">
                             <Label>Search</Label>
                             <div className="relative">
-                              <Search className="h-4 w-4 text-pink-300 absolute left-3 top-1/2 -translate-y-1/2" />
+                              <Search className="h-4 w-4 text-violet-300 absolute left-3 top-1/2 -translate-y-1/2" />
                               <Input
                                 value={businessSearch}
                                 onChange={(e) => setBusinessSearch(e.target.value)}
@@ -1741,7 +1741,7 @@ export default function BookPage() {
                           {(districtFilter !== 'ALL' || businessSearch.trim()) && (
                             <button
                               type="button"
-                              className="text-pink-600 hover:text-pink-700 font-medium"
+                              className="text-violet-600 hover:text-violet-700 font-medium"
                               onClick={() => {
                                 setDistrictFilter('ALL')
                                 setBusinessSearch('')
@@ -1777,7 +1777,7 @@ export default function BookPage() {
                                 className="group rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden"
                                 open={districtFilter !== 'ALL' || businessSearch.trim() ? true : list.length <= 2}
                               >
-                                <summary className="cursor-pointer select-none list-none px-4 py-3 flex items-center justify-between bg-pink-50/80 border-b border-pink-100">
+                                <summary className="cursor-pointer select-none list-none px-4 py-3 flex items-center justify-between bg-violet-50/80 border-b border-violet-100">
                                   <div className="flex items-center gap-2">
                                     <span className="text-sm font-semibold text-gray-900">{d.label}</span>
                                     <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
@@ -1793,9 +1793,9 @@ export default function BookPage() {
                                       <button
                                         key={business.id}
                                         onClick={() => handleBusinessSelect(business.id)}
-                                        className="group relative w-full text-left rounded-[22px] border-2 border-pink-300 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden px-4 py-3.5"
+                                        className="group relative w-full text-left rounded-[22px] border-2 border-violet-300 bg-white shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all overflow-hidden px-4 py-3.5"
                                       >
-                                        <div className="absolute inset-0 bg-gradient-to-br from-pink-50/70 via-white to-white pointer-events-none" />
+                                        <div className="absolute inset-0 bg-gradient-to-br from-violet-50/70 via-white to-white pointer-events-none" />
                                         <div className="relative flex items-center gap-3 sm:gap-4 min-h-[92px]">
                                           <div className="min-w-0 flex-1 pr-2">
                                             <h4 className="font-semibold text-slate-900 truncate text-[1.35rem] leading-tight">
@@ -1804,31 +1804,31 @@ export default function BookPage() {
                                             <div className="mt-1.5 flex items-center gap-2">
                                               <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${
                                                 business.isOpenNow === true
-                                                  ? 'bg-pink-50 text-pink-700 border border-pink-200'
+                                                  ? 'bg-violet-50 text-violet-700 border border-violet-200'
                                                   : business.isOpenNow === false
-                                                  ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                                                  ? 'bg-violet-50 text-violet-700 border border-violet-200'
                                                   : 'bg-slate-50 text-slate-700 border border-slate-200'
                                               }`}>
                                                 {business.isOpenNow === true ? 'Open now' : business.isOpenNow === false ? 'Closed now' : 'Hours unavailable'}
                                               </span>
                                             </div>
                                             <div className="flex items-center gap-2 text-xs text-slate-600 mt-2">
-                                              <Clock className="h-3.5 w-3.5 text-pink-500 shrink-0" />
+                                              <Clock className="h-3.5 w-3.5 text-violet-500 shrink-0" />
                                               <span className="truncate">{business.todayHours || 'Tap to view hours'}</span>
                                             </div>
                                             <div className="mt-1.5 flex flex-col items-start gap-1 text-[11px] text-slate-500">
                                               <div className="flex items-center gap-1 min-w-0 max-w-full">
-                                                <Phone className="h-3 w-3 text-pink-500 shrink-0" />
+                                                <Phone className="h-3 w-3 text-violet-500 shrink-0" />
                                                 <span className="truncate">{business.phone || 'No phone'}</span>
                                               </div>
                                               <div className="flex items-center gap-1 min-w-0 max-w-full">
-                                                <MapPin className="h-3 w-3 text-pink-500 shrink-0" />
+                                                <MapPin className="h-3 w-3 text-violet-500 shrink-0" />
                                                 <span className="truncate">{business.address || 'No address'}</span>
                                               </div>
                                             </div>
                                           </div>
                                           <div className="shrink-0 flex flex-col items-center gap-2">
-                                            <div className="h-14 w-14 rounded-xl border border-pink-200 bg-white shadow-sm flex items-center justify-center">
+                                            <div className="h-14 w-14 rounded-xl border border-violet-200 bg-white shadow-sm flex items-center justify-center">
                                               {formatImageUrl(business.profilePhoto) ? (
                                                 <img
                                                   src={formatImageUrl(business.profilePhoto) || ''}
@@ -1836,12 +1836,12 @@ export default function BookPage() {
                                                   className="h-12 w-12 rounded-lg object-cover"
                                                 />
                                               ) : (
-                                                <div className="h-12 w-12 rounded-lg bg-pink-100 text-pink-700 flex items-center justify-center font-semibold text-sm ring-1 ring-pink-200/60">
+                                                <div className="h-12 w-12 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center font-semibold text-sm ring-1 ring-violet-200/60">
                                                   {getBusinessInitials(business.name)}
                                                 </div>
                                               )}
                                             </div>
-                                            <span className="inline-flex items-center justify-center rounded-full bg-pink-500 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm group-hover:bg-pink-600 transition-colors">
+                                            <span className="inline-flex items-center justify-center rounded-full bg-violet-500 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm group-hover:bg-violet-600 transition-colors">
                                               Select
                                             </span>
                                           </div>
@@ -2038,7 +2038,7 @@ export default function BookPage() {
 
             {/* Step 3: Select products & services */}
             {step === 'services' && client && (
-              <Card className="rounded-[22px] border-2 border-pink-300 shadow-sm">
+              <Card className="rounded-[22px] border-2 border-violet-300 shadow-sm">
                 <CardHeader>
                   <CardTitle>Select products &amp; services</CardTitle>
                   <CardDescription>
@@ -2076,11 +2076,11 @@ export default function BookPage() {
                               type="button"
                               onClick={() => toggleCategoryCollapsed(categoryName)}
                               aria-expanded={!categoryCollapsed}
-                              className="w-full px-4 py-3 flex items-center justify-between gap-3 bg-pink-300/75 border-b border-pink-200 text-left hover:bg-pink-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/90 focus-visible:ring-inset"
+                              className="w-full px-4 py-3 flex items-center justify-between gap-3 bg-violet-300/75 border-b border-violet-200 text-left hover:bg-violet-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white/90 focus-visible:ring-inset"
                             >
                               <span className="text-sm font-semibold text-white min-w-0">{categoryName}</span>
                               <div className="flex items-center gap-2 shrink-0">
-                                <span className="text-xs px-2 py-0.5 rounded-full bg-white/95 text-pink-600 tabular-nums">
+                                <span className="text-xs px-2 py-0.5 rounded-full bg-white/95 text-violet-600 tabular-nums">
                                   {categoryServices.length}
                                 </span>
                                 <ChevronDown
@@ -2108,14 +2108,14 @@ export default function BookPage() {
                                       key={`${categoryName}-${service.id}`}
                                       className={`rounded-[22px] border overflow-hidden transition-all self-start w-full ${
                                         isSelected
-                                          ? 'border-pink-500 ring-2 ring-pink-400/40 shadow-[0_10px_24px_rgba(236,72,153,0.16)]'
-                                          : 'border-pink-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
+                                          ? 'border-violet-500 ring-2 ring-violet-400/40 shadow-[0_10px_24px_rgba(236,72,153,0.16)]'
+                                          : 'border-violet-200 shadow-sm hover:shadow-md hover:-translate-y-0.5'
                                       }`}
                                     >
                                       <div className="w-full bg-white px-3 py-3 sm:px-3.5 sm:py-3.5">
                                         <div className="flex flex-col gap-2 min-h-[132px]">
                                           <div className="flex items-start justify-between gap-3">
-                                            <div className={`h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-xl bg-white shadow-sm overflow-hidden flex items-center justify-center border ${isSelected ? 'border-pink-300 ring-2 ring-pink-200/60' : 'border-pink-100'}`}>
+                                            <div className={`h-12 w-12 sm:h-14 sm:w-14 shrink-0 rounded-xl bg-white shadow-sm overflow-hidden flex items-center justify-center border ${isSelected ? 'border-violet-300 ring-2 ring-violet-200/60' : 'border-violet-100'}`}>
                                               {imgUrl ? (
                                                 <img
                                                   src={imgUrl}
@@ -2123,7 +2123,7 @@ export default function BookPage() {
                                                   className="h-full w-full object-cover"
                                                 />
                                               ) : (
-                                                <div className="h-full w-full bg-pink-100 text-pink-700 flex items-center justify-center font-semibold text-sm sm:text-base">
+                                                <div className="h-full w-full bg-violet-100 text-violet-700 flex items-center justify-center font-semibold text-sm sm:text-base">
                                                   {getServiceInitial(service.name)}
                                                 </div>
                                               )}
@@ -2132,8 +2132,8 @@ export default function BookPage() {
                                               <span className="inline-flex items-center justify-center rounded-full bg-white px-2.5 py-0.5 text-[11px] font-semibold text-slate-800 border border-slate-200">
                                                 {priceLabel}
                                               </span>
-                                              <span className="inline-flex items-center justify-end gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] sm:text-[11px] font-medium bg-pink-50 text-pink-700 border border-pink-200">
-                                                <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0 text-pink-600" />
+                                              <span className="inline-flex items-center justify-end gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] sm:text-[11px] font-medium bg-violet-50 text-violet-700 border border-violet-200">
+                                                <Clock className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0 text-violet-600" />
                                                 {formatDuration(service.durationMinutes, service.durationUnit)}
                                               </span>
                                             </div>
@@ -2144,22 +2144,22 @@ export default function BookPage() {
                                           </h4>
 
                                           <div className="flex flex-row flex-nowrap items-center justify-center gap-1.5 sm:gap-2.5 w-full">
-                                            <div className="inline-flex shrink-0 items-center rounded-full border border-pink-200 bg-pink-50 p-0.5">
+                                            <div className="inline-flex shrink-0 items-center rounded-full border border-violet-200 bg-violet-50 p-0.5">
                                               <button
                                                 type="button"
-                                                className="h-6 w-6 inline-flex items-center justify-center rounded-full text-pink-700 hover:bg-pink-100 disabled:opacity-40"
+                                                className="h-6 w-6 inline-flex items-center justify-center rounded-full text-violet-700 hover:bg-violet-100 disabled:opacity-40"
                                                 onClick={() => decrementServiceQuantity(service.id)}
                                                 aria-label="Decrease quantity"
                                                 disabled={quantity <= 0}
                                               >
                                                 <Minus className="h-3 w-3" />
                                               </button>
-                                              <span className="px-1.5 text-[13px] font-semibold text-pink-700 min-w-[1.75rem] text-center tabular-nums">
+                                              <span className="px-1.5 text-[13px] font-semibold text-violet-700 min-w-[1.75rem] text-center tabular-nums">
                                                 {quantity}
                                               </span>
                                               <button
                                                 type="button"
-                                                className="h-6 w-6 inline-flex items-center justify-center rounded-full text-pink-700 hover:bg-pink-100"
+                                                className="h-6 w-6 inline-flex items-center justify-center rounded-full text-violet-700 hover:bg-violet-100"
                                                 onClick={() => incrementServiceQuantity(service.id)}
                                                 aria-label="Increase quantity"
                                               >
@@ -2168,7 +2168,7 @@ export default function BookPage() {
                                             </div>
                                             <Button
                                               type="button"
-                                              className="h-7 shrink-0 rounded-full bg-pink-500 hover:bg-pink-600 text-[11px] px-2.5 whitespace-nowrap"
+                                              className="h-7 shrink-0 rounded-full bg-violet-500 hover:bg-violet-600 text-[11px] px-2.5 whitespace-nowrap"
                                               onClick={() => commitBookingLine(service.id)}
                                             >
                                               <span className="hidden sm:inline">Add booking</span>
@@ -2184,7 +2184,7 @@ export default function BookPage() {
                                           e.stopPropagation()
                                           setActiveServiceId((prev) => (prev === service.id ? null : service.id))
                                         }}
-                                        className="flex w-full items-center justify-center gap-1 border-t border-pink-200 bg-pink-500 py-1.5 text-white hover:bg-pink-600 transition-colors"
+                                        className="flex w-full items-center justify-center gap-1 border-t border-violet-200 bg-violet-500 py-1.5 text-white hover:bg-violet-600 transition-colors"
                                       >
                                         <span className="text-xs font-semibold">View</span>
                                         <ChevronDown
@@ -2192,7 +2192,7 @@ export default function BookPage() {
                                         />
                                       </button>
                                       {activeServiceId === service.id && (
-                                        <div className="border-t border-pink-100 bg-gradient-to-b from-pink-50/40 to-white p-3 sm:p-4">
+                                        <div className="border-t border-violet-100 bg-gradient-to-b from-violet-50/40 to-white p-3 sm:p-4">
                                           <div className="space-y-3">
                                             <div>
                                               {(() => {
@@ -2205,7 +2205,7 @@ export default function BookPage() {
                                                       <ul className="space-y-2">
                                                         {fallback.bullets.map((line, idx) => (
                                                           <li key={`${service.id}-fallback-inline-${idx}`} className="flex items-start gap-2 text-sm text-slate-700 leading-relaxed">
-                                                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-pink-500 shrink-0" />
+                                                            <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-violet-500 shrink-0" />
                                                             <span>{line}</span>
                                                           </li>
                                                         ))}
@@ -2220,7 +2220,7 @@ export default function BookPage() {
                                                   <ul className="space-y-2">
                                                     {descriptionLines.map((line, idx) => (
                                                       <li key={`${service.id}-inline-line-${idx}`} className="flex items-start gap-2 text-sm text-slate-700 leading-relaxed">
-                                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-pink-500 shrink-0" />
+                                                        <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-violet-500 shrink-0" />
                                                         <span>{line}</span>
                                                       </li>
                                                     ))}
@@ -2248,7 +2248,7 @@ export default function BookPage() {
                   <div className="hidden lg:block">
                     <div className="sticky top-4">
                       {bookingLines.length > 0 ? (
-                        <div className="rounded-[22px] border-2 border-pink-200 bg-white p-4 sm:p-5 shadow-sm">
+                        <div className="rounded-[22px] border-2 border-violet-200 bg-white p-4 sm:p-5 shadow-sm">
                           <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Booking Summary</p>
                           <div className="mt-3 space-y-3">
                             <div className="flex items-center justify-between border-b border-gray-100 pb-2">
@@ -2263,13 +2263,13 @@ export default function BookPage() {
                             {selectedLineItems.length > 0 && (
                               <div className="space-y-2 border-b border-gray-100 pb-3 max-h-[300px] overflow-y-auto pr-1">
                                 {selectedLineItems.map((item) => (
-                                  <div key={item.lineId} className="rounded-lg border border-pink-100 bg-pink-50/40 px-3 py-2">
+                                  <div key={item.lineId} className="rounded-lg border border-violet-100 bg-violet-50/40 px-3 py-2">
                                     <div className="flex items-start justify-between gap-2">
                                       <p className="text-sm font-semibold text-slate-900 min-w-0">{item.name}</p>
                                       <button
                                         type="button"
                                         onClick={() => removeBookingLine(item.lineId)}
-                                        className="shrink-0 rounded-full p-1 text-slate-500 hover:bg-pink-100 hover:text-pink-700 transition-colors"
+                                        className="shrink-0 rounded-full p-1 text-slate-500 hover:bg-violet-100 hover:text-violet-700 transition-colors"
                                         aria-label="Remove this line"
                                       >
                                         <X className="h-3.5 w-3.5" />
@@ -2304,9 +2304,9 @@ export default function BookPage() {
                             </div>
                             <div className="flex items-center justify-between pt-1">
                               <span className="text-sm text-slate-700 font-medium">Total amount</span>
-                              <span className="text-xl font-bold text-pink-600">${grandTotal.toFixed(2)}</span>
+                              <span className="text-xl font-bold text-violet-600">${grandTotal.toFixed(2)}</span>
                             </div>
-                            <Button onClick={() => setStep('datetime')} className="w-full mt-2 bg-pink-500 hover:bg-pink-600">
+                            <Button onClick={() => setStep('datetime')} className="w-full mt-2 bg-violet-500 hover:bg-violet-600">
                               Continue to date &amp; time
                             </Button>
                           </div>
@@ -2315,7 +2315,7 @@ export default function BookPage() {
                         <div className="rounded-[22px] border border-gray-200 bg-gray-50 p-4">
                           <p className="text-sm font-semibold text-slate-700">Booking Summary</p>
                           <p className="mt-1 text-sm text-slate-500">You can book a consultation without selecting items.</p>
-                          <Button onClick={() => setStep('datetime')} className="w-full mt-3 bg-pink-500 hover:bg-pink-600">
+                          <Button onClick={() => setStep('datetime')} className="w-full mt-3 bg-violet-500 hover:bg-violet-600">
                             Continue to date &amp; time
                           </Button>
                         </div>
@@ -2325,7 +2325,7 @@ export default function BookPage() {
 
                   {/* Mobile summary (stays below list) */}
                   <div className="lg:hidden">
-                    <div className="rounded-[22px] border-2 border-pink-200 bg-white p-4 sm:p-5 shadow-sm">
+                    <div className="rounded-[22px] border-2 border-violet-200 bg-white p-4 sm:p-5 shadow-sm">
                       <div className="grid gap-4 md:grid-cols-[1fr_1.15fr]">
                         <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4 sm:p-5 flex flex-col justify-between">
                           <div className="flex items-center gap-3">
@@ -2337,7 +2337,7 @@ export default function BookPage() {
                               <p className="text-xs text-slate-500">Continue to pick a date and time.</p>
                             </div>
                           </div>
-                          <Button onClick={() => setStep('datetime')} className="w-full mt-4 bg-pink-500 hover:bg-pink-600">
+                          <Button onClick={() => setStep('datetime')} className="w-full mt-4 bg-violet-500 hover:bg-violet-600">
                             Continue to date &amp; time
                           </Button>
                         </div>
@@ -2357,13 +2357,13 @@ export default function BookPage() {
                             {selectedLineItems.length > 0 && (
                               <div className="space-y-2 border-b border-gray-100 pb-3">
                                 {selectedLineItems.map((item) => (
-                                  <div key={item.lineId} className="rounded-lg border border-pink-100 bg-pink-50/40 px-3 py-2">
+                                  <div key={item.lineId} className="rounded-lg border border-violet-100 bg-violet-50/40 px-3 py-2">
                                     <div className="flex items-start justify-between gap-2">
                                       <p className="text-sm font-semibold text-slate-900 min-w-0">{item.name}</p>
                                       <button
                                         type="button"
                                         onClick={() => removeBookingLine(item.lineId)}
-                                        className="shrink-0 rounded-full p-1 text-slate-500 hover:bg-pink-100 hover:text-pink-700 transition-colors"
+                                        className="shrink-0 rounded-full p-1 text-slate-500 hover:bg-violet-100 hover:text-violet-700 transition-colors"
                                         aria-label="Remove this line"
                                       >
                                         <X className="h-3.5 w-3.5" />
@@ -2398,7 +2398,7 @@ export default function BookPage() {
                             </div>
                             <div className="flex items-center justify-between pt-1">
                               <span className="text-sm text-slate-700 font-medium">Total amount</span>
-                              <span className="text-xl font-bold text-pink-600">${grandTotal.toFixed(2)}</span>
+                              <span className="text-xl font-bold text-violet-600">${grandTotal.toFixed(2)}</span>
                             </div>
                           </div>
                         </div>
@@ -2513,9 +2513,9 @@ export default function BookPage() {
                                     : !isBusinessDayForDate
                                     ? 'text-gray-300 bg-gray-50 cursor-not-allowed'
                                     : isSelected
-                                    ? 'bg-pink-500 text-white hover:bg-pink-600'
+                                    ? 'bg-violet-500 text-white hover:bg-violet-600'
                                     : isCurrentDay
-                                    ? 'bg-pink-100 text-pink-700 hover:bg-pink-200'
+                                    ? 'bg-violet-100 text-violet-700 hover:bg-violet-200'
                                     : 'text-gray-700 bg-white hover:bg-gray-100 border border-gray-200'
                                 }`}
                               >
@@ -2558,7 +2558,7 @@ export default function BookPage() {
                       </p>
                     )}
                     {!selectedDate ? (
-                      <div className="mt-2 flex flex-1 items-center justify-center rounded-lg border border-dashed border-pink-200/80 bg-pink-50/40 px-4 py-10 text-center text-sm text-slate-500">
+                      <div className="mt-2 flex flex-1 items-center justify-center rounded-lg border border-dashed border-violet-200/80 bg-violet-50/40 px-4 py-10 text-center text-sm text-slate-500">
                         Select a date on the left to see available times here.
                       </div>
                     ) : loadingAppointments ? (
@@ -2613,8 +2613,8 @@ export default function BookPage() {
                                         isUnavailable
                                           ? 'bg-gray-100 border-gray-300 text-gray-400 cursor-not-allowed opacity-60'
                                           : isSelected
-                                          ? 'bg-pink-500 border-pink-500 text-white hover:bg-pink-600 shadow-md'
-                                          : 'bg-white border-gray-200 text-gray-700 hover:border-pink-300 hover:bg-pink-50'
+                                          ? 'bg-violet-500 border-violet-500 text-white hover:bg-violet-600 shadow-md'
+                                          : 'bg-white border-gray-200 text-gray-700 hover:border-violet-300 hover:bg-violet-50'
                                       }`}
                                     >
                                       {format(slotTime, 'h:mm a')}
@@ -2659,7 +2659,7 @@ export default function BookPage() {
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-gray-600">Total Price</span>
-                      <span className="text-lg font-semibold text-pink-600">${totalPrice.toFixed(2)}</span>
+                      <span className="text-lg font-semibold text-violet-600">${totalPrice.toFixed(2)}</span>
                     </div>
                   </div>
                   <Button onClick={handleBookAppointment} disabled={isLoading || !selectedDate || !selectedTime} className="w-full">

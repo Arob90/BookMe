@@ -64,7 +64,7 @@ export function DistrictDirectory({ businesses }: { businesses: DirectoryBusines
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={b.profilePhoto} alt={b.name} className="h-12 w-12 rounded-2xl object-cover" />
                 ) : (
-                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-lg font-bold text-white">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-600 text-lg font-bold text-white">
                     {b.name[0]?.toUpperCase()}
                   </span>
                 )}
@@ -97,7 +97,7 @@ export function DistrictDirectory({ businesses }: { businesses: DirectoryBusines
 
               <Link
                 href={`/book?business=${b.id}`}
-                className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all group-hover:-translate-y-0.5 group-hover:shadow-lg"
+                className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all group-hover:-translate-y-0.5 group-hover:shadow-lg"
               >
                 Book now <ArrowRight className="h-4 w-4" />
               </Link>

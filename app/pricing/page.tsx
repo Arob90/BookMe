@@ -77,7 +77,7 @@ export default function PricingPage() {
           </span>
           <h1 className="mt-6 font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
             Simple pricing that{' '}
-            <span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">grows with you</span>.
+            <span className="text-violet-600">grows with you</span>.
           </h1>
           <p className="mt-4 text-lg text-slate-600">
             Start with a <span className="font-semibold text-violet-700">14-day free trial</span> — no card required.
@@ -88,13 +88,13 @@ export default function PricingPage() {
           <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 text-sm shadow-sm">
             <button
               onClick={() => setBilling('monthly')}
-              className={`rounded-full px-5 py-2 font-semibold transition-all ${billing === 'monthly' ? 'bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`rounded-full px-5 py-2 font-semibold transition-all ${billing === 'monthly' ? 'bg-violet-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBilling('annual')}
-              className={`flex items-center gap-1.5 rounded-full px-5 py-2 font-semibold transition-all ${billing === 'annual' ? 'bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow' : 'text-slate-600 hover:text-slate-900'}`}
+              className={`flex items-center gap-1.5 rounded-full px-5 py-2 font-semibold transition-all ${billing === 'annual' ? 'bg-violet-600 text-white shadow' : 'text-slate-600 hover:text-slate-900'}`}
             >
               Annual
               <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-bold ${billing === 'annual' ? 'bg-white/20 text-white' : 'bg-violet-100 text-violet-700'}`}>2 months free</span>
@@ -113,7 +113,7 @@ export default function PricingPage() {
                 key={tier.id}
                 className={`animate-fade-up relative flex flex-col rounded-3xl p-7 shadow-sm transition-all ${
                   tier.highlight
-                    ? 'border-2 border-transparent bg-gradient-to-b from-violet-600 to-fuchsia-600 text-white shadow-xl shadow-violet-600/25 md:-mt-4 md:mb-4'
+                    ? 'border-2 border-transparent bg-violet-600 text-white shadow-xl shadow-violet-600/25 md:-mt-4 md:mb-4'
                     : 'border border-slate-100 bg-white'
                 }`}
                 style={{ animationDelay: `${i * 90}ms` }}
@@ -139,7 +139,7 @@ export default function PricingPage() {
                   className={`mt-6 w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition-all hover:-translate-y-0.5 ${
                     tier.highlight
                       ? 'bg-white text-violet-700 shadow hover:shadow-lg'
-                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow-sm hover:shadow-lg'
+                      : 'bg-violet-600 text-white shadow-sm hover:shadow-lg'
                   }`}
                 >
                   Start free trial

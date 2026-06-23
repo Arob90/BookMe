@@ -3,7 +3,6 @@ import {
   CalendarDays, ArrowRight, Check, ShieldCheck, Globe, Clock, Zap, Star, MapPin,
 } from 'lucide-react'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
-import { FeatureFlipGrid } from '@/components/feature-flip-grid'
 import { DISTRICTS } from '@/lib/districts'
 
 export const metadata = {
@@ -17,11 +16,10 @@ export default function HomePage() {
     <div className="min-h-screen bg-white text-slate-900 antialiased">
       <MarketingNav />
       <Hero />
+      <Districts />
       <TrustStrip />
       <AboutSection />
       <StatsBand />
-      <Districts />
-      <Features />
       <Faq />
       <FinalCta />
       <MarketingFooter />
@@ -33,7 +31,7 @@ function BtnPrimary({ href, children, className = '' }: { href: string; children
   return (
     <Link
       href={href}
-      className={`inline-flex items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-600/30 ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl hover:shadow-violet-600/30 ${className}`}
     >
       {children}
     </Link>
@@ -58,7 +56,7 @@ function Hero() {
           </span>
           <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.05] tracking-tight text-slate-900 sm:text-6xl">
             The simplest way to run your{' '}
-            <span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">bookings</span>.
+            <span className="text-violet-600">bookings</span>.
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-600 sm:text-lg">
             Appointments, clients, payments, loyalty and reports — beautifully
@@ -120,14 +118,14 @@ function HeroMockup() {
               </div>
             ))}
           </div>
-          <div className="mt-3 flex items-center justify-between rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 px-3 py-2.5 text-white">
+          <div className="mt-3 flex items-center justify-between rounded-xl bg-violet-600 px-3 py-2.5 text-white">
             <span className="text-[10px] font-medium uppercase tracking-wide opacity-90">Today’s income</span>
             <span className="font-display text-sm font-bold">$90.00</span>
           </div>
         </div>
       </div>
 
-      <div className="absolute -left-4 top-10 hidden rounded-2xl border border-slate-100 bg-white px-3.5 py-3 shadow-xl sm:block animate-float-slow" style={{ animationDelay: '1.2s' }}>
+      <div className="glass absolute -left-4 top-10 hidden rounded-2xl px-3.5 py-3 shadow-xl sm:block animate-float-slow" style={{ animationDelay: '1.2s' }}>
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><Check className="h-4 w-4" /></span>
           <div>
@@ -167,7 +165,7 @@ function AboutSection() {
     <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <div className="order-2 lg:order-1">
-          <div className="relative rounded-3xl bg-gradient-to-br from-violet-600 to-fuchsia-500 p-8 shadow-xl">
+          <div className="relative rounded-3xl bg-violet-600 p-8 shadow-xl">
             <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
               <div className="grid grid-cols-2 gap-3">
                 {[['98%', 'On-time'], ['1-click', 'Rebook'], ['24/7', 'Online booking'], ['0', 'Double-bookings']].map(([a, b]) => (
@@ -213,7 +211,7 @@ function StatsBand() {
   const stats = [['10k+', 'Appointments booked'], ['99.9%', 'Uptime'], ['14 days', 'Free to try'], ['1 app', 'For your whole business']]
   return (
     <section className="px-5 pb-4 sm:px-8">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-to-r from-violet-700 via-violet-600 to-fuchsia-600 px-6 py-12 sm:px-12">
+      <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-violet-600 px-6 py-12 sm:px-12">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {stats.map(([a, b]) => (
             <div key={b} className="text-center">
@@ -246,10 +244,10 @@ function Districts() {
           <Link
             key={d.slug}
             href={`/district/${d.slug}`}
-            className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-600/10"
+            className="glass-card group relative overflow-hidden rounded-3xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-violet-600/10"
           >
-            <div aria-hidden className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 opacity-70 transition-transform duration-300 group-hover:scale-150" />
-            <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white shadow-sm">
+            <div aria-hidden className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-violet-100 opacity-70 transition-transform duration-300 group-hover:scale-150" />
+            <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-sm">
               <MapPin className="h-5 w-5" />
             </span>
             <h3 className="relative mt-4 font-display text-lg font-bold text-slate-900">{d.label}</h3>
@@ -264,24 +262,6 @@ function Districts() {
   )
 }
 
-/* ───────────────────────── features (click → modal) ───────────────────────── */
-
-function Features() {
-  return (
-    <section id="features" className="bg-slate-50/70 py-20 sm:py-24">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="mx-auto mb-12 max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Key features</p>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            Convenience at your fingertips
-          </h2>
-          <p className="mt-4 text-slate-600">Tap any feature to see it up close.</p>
-        </div>
-        <FeatureFlipGrid />
-      </div>
-    </section>
-  )
-}
 
 /* ───────────────────────── faq ───────────────────────── */
 
@@ -318,7 +298,7 @@ function Faq() {
 function FinalCta() {
   return (
     <section className="px-5 pb-24 sm:px-8">
-      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.25rem] bg-gradient-to-r from-violet-700 via-violet-600 to-fuchsia-600 px-8 py-16 text-center sm:px-12 lg:py-20">
+      <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2.25rem] bg-violet-600 px-8 py-16 text-center sm:px-12 lg:py-20">
         <div aria-hidden className="pointer-events-none absolute inset-0">
           <div className="absolute -right-10 -top-10 h-56 w-56 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -bottom-12 left-10 h-56 w-56 rounded-full bg-fuchsia-300/20 blur-2xl" />
