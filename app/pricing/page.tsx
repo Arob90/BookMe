@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Check } from 'lucide-react'
+import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
 
 type Billing = 'monthly' | 'annual'
 
@@ -11,8 +12,8 @@ const TIERS = [
     id: 'basic',
     name: 'Basic',
     blurb: 'For solo owners getting started.',
-    monthly: 29,
-    annual: 290, // ~2 months free
+    monthly: 45,
+    annual: 450, // ~2 months free
     seats: '1 user',
     highlight: false,
     features: [
@@ -27,8 +28,8 @@ const TIERS = [
     id: 'pro',
     name: 'Pro',
     blurb: 'For growing teams that need more.',
-    monthly: 59,
-    annual: 590,
+    monthly: 65,
+    annual: 650,
     seats: 'Up to 5 users',
     highlight: true,
     features: [
@@ -61,97 +62,96 @@ export default function PricingPage() {
   const [billing, setBilling] = useState<Billing>('monthly')
 
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="border-b border-white/40 glass-nav sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
-            <div className="h-9 w-9 rounded-xl bg-pink-500 flex items-center justify-center shadow-sm">
-              <svg className="h-5 w-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            </div>
-            <span className="font-display text-xl font-semibold tracking-tight text-pink-600">BookMeBz</span>
-          </Link>
-          <Link
-            href="/login"
-            className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-sm transition-all hover:-translate-y-0.5"
-          >
-            Login
-          </Link>
-        </div>
-      </header>
+    <div className="min-h-screen bg-white text-slate-900 antialiased">
+      <MarketingNav />
 
-      <main className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-10 sm:py-14 flex-1">
-        <div className="text-center max-w-2xl mx-auto animate-fade-up">
-          <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight text-gray-900">
-            Simple pricing that grows with you
+      {/* hero */}
+      <section className="relative overflow-hidden">
+        <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute -left-20 -top-24 h-80 w-80 rounded-full bg-violet-300/30 blur-3xl animate-blob-drift" />
+          <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-fuchsia-300/25 blur-3xl animate-blob-drift" style={{ animationDelay: '4s' }} />
+        </div>
+        <div className="mx-auto max-w-3xl px-5 pt-16 text-center sm:px-8">
+          <span className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-violet-700">
+            <span className="h-1.5 w-1.5 rounded-full bg-violet-600" /> Pricing
+          </span>
+          <h1 className="mt-6 font-display text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+            Simple pricing that{' '}
+            <span className="bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">grows with you</span>.
           </h1>
-          <p className="mt-3 text-gray-600">
-            Start with a <span className="font-semibold text-pink-600">14-day free trial</span> — no card required.
+          <p className="mt-4 text-lg text-slate-600">
+            Start with a <span className="font-semibold text-violet-700">14-day free trial</span> — no card required.
             Pick a plan when you&apos;re ready.
           </p>
 
-          {/* Billing toggle */}
-          <div className="mt-7 inline-flex items-center gap-1 glass rounded-full p-1 text-sm">
+          {/* billing toggle */}
+          <div className="mt-8 inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white p-1 text-sm shadow-sm">
             <button
               onClick={() => setBilling('monthly')}
-              className={`px-4 py-1.5 rounded-full font-medium transition-colors ${billing === 'monthly' ? 'bg-pink-500 text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+              className={`rounded-full px-5 py-2 font-semibold transition-all ${billing === 'monthly' ? 'bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow' : 'text-slate-600 hover:text-slate-900'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBilling('annual')}
-              className={`px-4 py-1.5 rounded-full font-medium transition-colors ${billing === 'annual' ? 'bg-pink-500 text-white shadow-sm' : 'text-gray-600 hover:text-gray-900'}`}
+              className={`flex items-center gap-1.5 rounded-full px-5 py-2 font-semibold transition-all ${billing === 'annual' ? 'bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow' : 'text-slate-600 hover:text-slate-900'}`}
             >
               Annual
-              <span className="ml-1.5 text-xs font-semibold text-pink-600 bg-white/80 rounded-full px-1.5 py-0.5">2 months free</span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[11px] font-bold ${billing === 'annual' ? 'bg-white/20 text-white' : 'bg-violet-100 text-violet-700'}`}>2 months free</span>
             </button>
           </div>
         </div>
+      </section>
 
-        {/* Tiers */}
-        <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
+      {/* tiers */}
+      <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
+        <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
           {TIERS.map((tier, i) => {
             const price = billing === 'monthly' ? tier.monthly : Math.round(tier.annual / 12)
             return (
               <div
                 key={tier.id}
-                className={`animate-fade-up glass-card rounded-3xl p-7 flex flex-col relative ${tier.highlight ? 'ring-2 ring-pink-400/60 md:-mt-3 md:mb-3' : ''}`}
+                className={`animate-fade-up relative flex flex-col rounded-3xl p-7 shadow-sm transition-all ${
+                  tier.highlight
+                    ? 'border-2 border-transparent bg-gradient-to-b from-violet-600 to-fuchsia-600 text-white shadow-xl shadow-violet-600/25 md:-mt-4 md:mb-4'
+                    : 'border border-slate-100 bg-white'
+                }`}
                 style={{ animationDelay: `${i * 90}ms` }}
               >
                 {tier.highlight && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-pink-500 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-400 px-3 py-1 text-xs font-bold text-slate-900 shadow">
                     Most popular
                   </span>
                 )}
-                <h3 className="font-display text-xl font-semibold text-gray-900">{tier.name}</h3>
-                <p className="mt-1 text-sm text-gray-600">{tier.blurb}</p>
+                <h3 className={`font-display text-xl font-bold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>{tier.name}</h3>
+                <p className={`mt-1 text-sm ${tier.highlight ? 'text-white/80' : 'text-slate-500'}`}>{tier.blurb}</p>
                 <div className="mt-5 flex items-baseline gap-1">
-                  <span className="font-display text-4xl font-semibold text-gray-900">${price}</span>
-                  <span className="text-gray-500 text-sm">/mo</span>
+                  <span className={`font-display text-5xl font-bold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>${price}</span>
+                  <span className={tier.highlight ? 'text-white/70' : 'text-slate-400'}>/mo</span>
                 </div>
-                <p className="mt-1 text-xs text-gray-500 h-4">
-                  {billing === 'annual' ? `Billed $${tier.annual}/year` : `or $${tier.annual}/yr (save 2 months)`}
+                <p className={`mt-1 h-4 text-xs ${tier.highlight ? 'text-white/70' : 'text-slate-400'}`}>
+                  {billing === 'annual' ? `Billed $${tier.annual}/year` : `or $${tier.annual}/yr — save 2 months`}
                 </p>
-                <p className="mt-3 text-sm font-medium text-pink-600">{tier.seats}</p>
+                <p className={`mt-3 text-sm font-semibold ${tier.highlight ? 'text-amber-200' : 'text-violet-600'}`}>{tier.seats}</p>
 
                 <Link
                   href="/signup"
-                  className={`mt-5 w-full text-center px-5 py-2.5 rounded-full font-semibold text-sm transition-all hover:-translate-y-0.5 ${
+                  className={`mt-6 w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition-all hover:-translate-y-0.5 ${
                     tier.highlight
-                      ? 'bg-pink-500 hover:bg-pink-600 text-white shadow-sm'
-                      : 'border-2 border-pink-500 text-pink-600 bg-white hover:bg-pink-50'
+                      ? 'bg-white text-violet-700 shadow hover:shadow-lg'
+                      : 'bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white shadow-sm hover:shadow-lg'
                   }`}
                 >
                   Start free trial
                 </Link>
 
-                <ul className="mt-6 space-y-2.5">
+                <ul className="mt-7 space-y-3">
                   {tier.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-gray-700">
-                      <Check className="h-4 w-4 text-pink-500 flex-shrink-0 mt-0.5" />
-                      <span>{f}</span>
+                    <li key={f} className="flex items-start gap-2.5 text-sm">
+                      <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${tier.highlight ? 'bg-white/20' : 'bg-violet-100'}`}>
+                        <Check className={`h-3 w-3 ${tier.highlight ? 'text-white' : 'text-violet-600'}`} />
+                      </span>
+                      <span className={tier.highlight ? 'text-white/90' : 'text-slate-700'}>{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -160,20 +160,14 @@ export default function PricingPage() {
           })}
         </div>
 
-        <p className="mt-10 text-center text-sm text-gray-500 max-w-xl mx-auto">
+        <p className="mx-auto mt-12 max-w-xl text-center text-sm text-slate-500">
           All plans include the 14-day free trial. After the trial, choose a plan to keep your account active.
           Prices in USD. Need something custom?{' '}
-          <a href="mailto:sasoandco.ltd@gmail.com" className="text-pink-600 font-medium hover:underline">Contact us</a>.
+          <a href="mailto:sasoandco.ltd@gmail.com" className="font-medium text-violet-600 hover:underline">Contact us</a>.
         </p>
-      </main>
+      </section>
 
-      <footer className="border-t border-white/40 glass-nav mt-auto">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 text-center">
-          <p className="text-sm text-gray-600">
-            Powered by <span className="font-semibold text-pink-600">SaSo Pixel Studio</span>
-          </p>
-        </div>
-      </footer>
+      <MarketingFooter />
     </div>
   )
 }

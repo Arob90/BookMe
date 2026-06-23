@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import {
-  CalendarDays, Users, CreditCard, Gift, Package, BarChart3,
-  Star, ArrowRight, Check, ShieldCheck, Zap, Globe, Clock,
+  CalendarDays, ArrowRight, Check, ShieldCheck, Globe, Clock, Zap, Star, MapPin,
 } from 'lucide-react'
+import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
+import { FeatureFlipGrid } from '@/components/feature-flip-grid'
+import { DISTRICTS } from '@/lib/districts'
 
 export const metadata = {
   title: 'BookMe — The simplest way to run your bookings',
@@ -13,33 +15,17 @@ export const metadata = {
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-white text-slate-900 antialiased">
-      <SiteNav />
+      <MarketingNav />
       <Hero />
       <TrustStrip />
       <AboutSection />
-      <WhyCards />
       <StatsBand />
-      <FeatureGrid />
-      <Testimonials />
+      <Districts />
+      <Features />
       <Faq />
       <FinalCta />
-      <SiteFooter />
+      <MarketingFooter />
     </div>
-  )
-}
-
-/* ───────────────────────── shared ───────────────────────── */
-
-function Logo({ light = false }: { light?: boolean }) {
-  return (
-    <Link href="/" className="flex items-center gap-2">
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-500 shadow-sm">
-        <CalendarDays className="h-5 w-5 text-white" />
-      </span>
-      <span className={`font-display text-xl font-semibold tracking-tight ${light ? 'text-white' : 'text-slate-900'}`}>
-        BookMe
-      </span>
-    </Link>
   )
 }
 
@@ -51,30 +37,6 @@ function BtnPrimary({ href, children, className = '' }: { href: string; children
     >
       {children}
     </Link>
-  )
-}
-
-/* ───────────────────────── nav ───────────────────────── */
-
-function SiteNav() {
-  return (
-    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
-        <Logo />
-        <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-          <a href="#features" className="transition-colors hover:text-violet-700">Features</a>
-          <Link href="/pricing" className="transition-colors hover:text-violet-700">Pricing</Link>
-          <a href="#faq" className="transition-colors hover:text-violet-700">FAQ</a>
-          <Link href="/book" className="transition-colors hover:text-violet-700">Book now</Link>
-        </nav>
-        <div className="flex items-center gap-2">
-          <Link href="/login" className="rounded-full px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100">
-            Sign in
-          </Link>
-          <BtnPrimary href="/signup" className="px-5 py-2">Get started</BtnPrimary>
-        </div>
-      </div>
-    </header>
   )
 }
 
@@ -131,7 +93,6 @@ function Hero() {
 function HeroMockup() {
   return (
     <div className="relative mx-auto w-full max-w-md">
-      {/* phone */}
       <div className="relative mx-auto w-[270px] rounded-[2.4rem] border-[10px] border-slate-900 bg-white shadow-2xl shadow-violet-900/20 animate-float-slow">
         <div className="rounded-[1.6rem] bg-gradient-to-b from-violet-50 to-white p-4">
           <div className="flex items-center justify-between">
@@ -166,22 +127,12 @@ function HeroMockup() {
         </div>
       </div>
 
-      {/* floating cards */}
       <div className="absolute -left-4 top-10 hidden rounded-2xl border border-slate-100 bg-white px-3.5 py-3 shadow-xl sm:block animate-float-slow" style={{ animationDelay: '1.2s' }}>
         <div className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-600"><Check className="h-4 w-4" /></span>
           <div>
             <p className="text-[11px] font-semibold text-slate-800">Booking confirmed</p>
             <p className="text-[10px] text-slate-400">Nadia · 11:30</p>
-          </div>
-        </div>
-      </div>
-      <div className="absolute -right-2 bottom-8 hidden rounded-2xl border border-slate-100 bg-white px-3.5 py-3 shadow-xl sm:block animate-float-slow" style={{ animationDelay: '2.4s' }}>
-        <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-100 text-violet-600"><Gift className="h-4 w-4" /></span>
-          <div>
-            <p className="text-[11px] font-semibold text-slate-800">+25 loyalty pts</p>
-            <p className="text-[10px] text-slate-400">Liam Garcia</p>
           </div>
         </div>
       </div>
@@ -213,7 +164,7 @@ function TrustStrip() {
 
 function AboutSection() {
   return (
-    <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
+    <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <div className="order-2 lg:order-1">
           <div className="relative rounded-3xl bg-gradient-to-br from-violet-600 to-fuchsia-500 p-8 shadow-xl">
@@ -256,44 +207,12 @@ function AboutSection() {
   )
 }
 
-/* ───────────────────────── why cards ───────────────────────── */
-
-function WhyCards() {
-  return (
-    <section className="mx-auto max-w-6xl px-5 py-12 sm:px-8">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Why BookMe</p>
-        <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Why service businesses trust us
-        </h2>
-      </div>
-      <div className="mt-12 grid gap-4 md:grid-cols-3">
-        <div className="rounded-3xl bg-amber-50 p-7 shadow-sm">
-          <Clock className="h-7 w-7 text-amber-500" />
-          <h3 className="mt-4 font-display text-xl font-bold text-slate-900">Hours back every week</h3>
-          <p className="mt-2 text-sm text-slate-600">Automate the admin — reminders, rebooking and records keep themselves.</p>
-        </div>
-        <div className="rounded-3xl bg-gradient-to-br from-violet-600 to-fuchsia-500 p-7 text-white shadow-lg">
-          <p className="font-display text-4xl font-bold">275+</p>
-          <h3 className="mt-2 font-display text-xl font-bold">Features that matter</h3>
-          <p className="mt-2 text-sm text-white/80">From loyalty to inventory — built around how you actually work.</p>
-        </div>
-        <div className="rounded-3xl bg-fuchsia-50 p-7 shadow-sm">
-          <Zap className="h-7 w-7 text-fuchsia-500" />
-          <h3 className="mt-4 font-display text-xl font-bold text-slate-900">Set up in minutes</h3>
-          <p className="mt-2 text-sm text-slate-600">No training day. Add services, share your link, take bookings today.</p>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ───────────────────────── stats band ───────────────────────── */
 
 function StatsBand() {
   const stats = [['10k+', 'Appointments booked'], ['99.9%', 'Uptime'], ['14 days', 'Free to try'], ['1 app', 'For your whole business']]
   return (
-    <section className="px-5 py-12 sm:px-8">
+    <section className="px-5 pb-4 sm:px-8">
       <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-gradient-to-r from-violet-700 via-violet-600 to-fuchsia-600 px-6 py-12 sm:px-12">
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           {stats.map(([a, b]) => (
@@ -308,70 +227,57 @@ function StatsBand() {
   )
 }
 
-/* ───────────────────────── feature grid ───────────────────────── */
+/* ───────────────────────── districts ───────────────────────── */
 
-function FeatureGrid() {
-  const items = [
-    [<CalendarDays key="1" />, 'Smart scheduling', 'Day, week & month views, drag-and-drop and public booking links.'],
-    [<Users key="2" />, 'Client CRM', 'Profiles, history, birthdays and notes — every client remembered.'],
-    [<CreditCard key="3" />, 'Payments & banking', 'Record payments, refunds and balances against each booking.'],
-    [<Gift key="4" />, 'Loyalty & strikes', 'Reward regulars and manage no-shows with your own policies.'],
-    [<Package key="5" />, 'Inventory', 'Track stock, low-level alerts and cost in the background.'],
-    [<BarChart3 key="6" />, 'Analytics', 'Revenue, client health and trends that read like a story.'],
-  ]
+function Districts() {
   return (
-    <section id="features" className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
+    <section id="districts" className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
       <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Key features</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Find a business</p>
         <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Convenience at your fingertips
+          Browse by district
         </h2>
+        <p className="mt-4 text-slate-600">
+          Discover and book service businesses near you, anywhere in Belize.
+        </p>
       </div>
-      <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map(([icon, t, b]) => (
-          <div key={t as string} className="group rounded-2xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-lg hover:shadow-violet-600/10">
-            <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-100 to-fuchsia-100 text-violet-600 transition-colors group-hover:from-violet-600 group-hover:to-fuchsia-500 group-hover:text-white">
-              {icon}
+      <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+        {DISTRICTS.map((d, i) => (
+          <Link
+            key={d.slug}
+            href={`/district/${d.slug}`}
+            className="group relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-violet-200 hover:shadow-xl hover:shadow-violet-600/10"
+          >
+            <div aria-hidden className="pointer-events-none absolute -right-6 -top-6 h-20 w-20 rounded-full bg-gradient-to-br from-violet-100 to-fuchsia-100 opacity-70 transition-transform duration-300 group-hover:scale-150" />
+            <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-fuchsia-500 text-white shadow-sm">
+              <MapPin className="h-5 w-5" />
             </span>
-            <h3 className="mt-5 font-display text-lg font-bold text-slate-900">{t as string}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">{b as string}</p>
-          </div>
+            <h3 className="relative mt-4 font-display text-lg font-bold text-slate-900">{d.label}</h3>
+            <p className="relative mt-0.5 text-xs text-slate-400">{d.blurb}</p>
+            <span className="relative mt-4 inline-flex items-center gap-1 text-sm font-semibold text-violet-600">
+              Explore <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+            </span>
+          </Link>
         ))}
       </div>
     </section>
   )
 }
 
-/* ───────────────────────── testimonials ───────────────────────── */
+/* ───────────────────────── features (click → modal) ───────────────────────── */
 
-function Testimonials() {
-  const quotes = [
-    ['“My whole salon runs on BookMe now. The no-show strikes alone paid for it.”', 'Maya R.', 'Salon owner'],
-    ['“Clients book themselves online and I just show up to a full day. Brilliant.”', 'Carlos B.', 'Barber'],
-    ['“Reports finally make sense. I can see exactly what’s working each month.”', 'Aisha N.', 'Spa manager'],
-  ]
+function Features() {
   return (
-    <section className="bg-slate-50/70 py-20 sm:py-28">
+    <section id="features" className="bg-slate-50/70 py-20 sm:py-24">
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Loved by owners</p>
-          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">What our users say</h2>
+        <div className="mx-auto mb-12 max-w-2xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Key features</p>
+          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Convenience at your fingertips
+          </h2>
+          <p className="mt-4 text-slate-600">Tap any feature to see it up close.</p>
         </div>
-        <div className="mt-12 grid gap-4 md:grid-cols-3">
-          {quotes.map(([q, n, r]) => (
-            <div key={n} className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
-              <div className="flex">{[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}</div>
-              <p className="mt-4 text-[15px] leading-relaxed text-slate-700">{q}</p>
-              <div className="mt-5 flex items-center gap-3">
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-bold text-white">{(n as string)[0]}</span>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{n}</p>
-                  <p className="text-xs text-slate-400">{r}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <FeatureFlipGrid />
       </div>
     </section>
   )
@@ -387,7 +293,7 @@ function Faq() {
     ['Can I add my team?', 'Yes — add staff logins on the Pro and higher plans, each with their own access.'],
   ]
   return (
-    <section id="faq" className="mx-auto max-w-3xl px-5 py-20 sm:px-8 lg:py-28">
+    <section id="faq" className="mx-auto max-w-3xl px-5 py-20 sm:px-8 lg:py-24">
       <div className="text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">FAQ</p>
         <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Frequently asked questions</h2>
@@ -431,24 +337,5 @@ function FinalCta() {
         </div>
       </div>
     </section>
-  )
-}
-
-/* ───────────────────────── footer ───────────────────────── */
-
-function SiteFooter() {
-  return (
-    <footer className="border-t border-slate-100 bg-slate-50/60">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-5 py-10 sm:flex-row sm:px-8">
-        <Logo />
-        <div className="flex items-center gap-6 text-sm text-slate-500">
-          <a href="#features" className="hover:text-violet-700">Features</a>
-          <Link href="/pricing" className="hover:text-violet-700">Pricing</Link>
-          <Link href="/login" className="hover:text-violet-700">Sign in</Link>
-          <Link href="/book" className="hover:text-violet-700">Book now</Link>
-        </div>
-        <p className="text-xs text-slate-400">© 2026 BookMe · Belize</p>
-      </div>
-    </footer>
   )
 }
