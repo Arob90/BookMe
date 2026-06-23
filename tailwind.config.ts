@@ -89,6 +89,10 @@ const config = {
           "0%": { transform: "translateX(-120%)" },
           "60%, 100%": { transform: "translateX(220%)" },
         },
+        "float-slow": {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -97,6 +101,7 @@ const config = {
         "fade-in": "fade-in 0.6s ease-out both",
         "blob-drift": "blob-drift 18s ease-in-out infinite",
         "sheen": "sheen 1.1s ease-out",
+        "float-slow": "float-slow 6s ease-in-out infinite",
       },
     },
   },
