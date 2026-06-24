@@ -378,6 +378,12 @@ model Settings {
   planTier              String?  @map("plan_tier") // basic | pro | business (display only)
   trialEndsAt           DateTime? @map("trial_ends_at")
 
+  /// In-app plan upgrade: existing user uploads payment proof; admin verifies then sets the plan.
+  requestedPlan          String?   @map("requested_plan") // Basic | Pro | Business
+  planPaymentProofUrl    String?   @map("plan_payment_proof_url")
+  planPaymentStatus      String?   @map("plan_payment_status") // null | submitted
+  planPaymentSubmittedAt DateTime? @map("plan_payment_submitted_at")
+
   @@index([staffId])
   @@map("settings")
 }

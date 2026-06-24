@@ -6,6 +6,8 @@ import { AppTopbar } from '@/components/app-topbar'
 import { AccountsAdminTabs } from '@/components/accounts-admin-tabs'
 import { getPendingAccountRequests } from '@/app/actions/account-requests'
 import { getAllManagedUsers } from '@/app/actions/account-admin'
+import { getPendingUpgradePayments } from '@/app/actions/upgrade-payments'
+import { PendingUpgradePayments } from '@/components/pending-upgrade-payments'
 import { db } from '@/lib/db'
 import { getSessionStaffId } from '@/lib/session-staff'
 import type { PendingApproval } from '@/components/pending-approvals-list'
@@ -74,10 +76,18 @@ export default async function AccountsPage({ searchParams }: AccountsPageProps) 
     approvals = []
   }
 
+  let upgradePayments: Awaited<ReturnType<typeof getPendingUpgradePayments>> = []
+  try {
+    upgradePayments = await getPendingUpgradePayments()
+  } catch {
+    upgradePayments = []
+  }
+
   return (
     <div className="flex flex-col h-full">
       <AppTopbar title="Account Management" />
-      <div className="flex-1 overflow-y-auto bg-transparent p-4 lg:p-6">
+      <div className="flex-1 overflow-y-auto bg-transparent p-4 lg:p-6 space-y-6">
+        <PendingUpgradePayments initial={upgradePayments} />
         <AccountsAdminTabs
           defaultTab={searchParams.tab}
           users={users}
