@@ -39,6 +39,7 @@ export async function approveAccountRequest(id: string, plan: PlanType) {
       passwordHash: request.passwordHash,
       role: 'ADMIN',
       businessName: request.businessName,
+      businessCategory: (request as { businessCategory?: string | null }).businessCategory ?? null,
       district: request.district,
       firstName: request.firstName,
       lastName: request.lastName,

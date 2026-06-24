@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { getUserProfile, updateUserProfile, updateUserPassword } from '@/app/actions/user'
+import { BUSINESS_CATEGORIES } from '@/lib/business-categories'
 import { useToast } from '@/components/ui/use-toast'
 import { Upload, X, User as UserIcon, Lock } from 'lucide-react'
 import Image from 'next/image'
@@ -36,6 +37,7 @@ export function ProfileModal({ open, onOpenChange, userId, onProfileUpdated }: P
   const [profileData, setProfileData] = useState({
     userName: '',
     businessName: '',
+    businessCategory: '',
     district: 'BELIZE',
     firstName: '',
     lastName: '',
@@ -78,6 +80,7 @@ export function ProfileModal({ open, onOpenChange, userId, onProfileUpdated }: P
       setProfileData({
         userName: userProfile.userName || '',
         businessName: userProfile.businessName || '',
+        businessCategory: (userProfile as { businessCategory?: string | null }).businessCategory || '',
         district: (userProfile.district || 'BELIZE') as string,
         firstName: userProfile.firstName || '',
         lastName: userProfile.lastName || '',
@@ -326,6 +329,22 @@ export function ProfileModal({ open, onOpenChange, userId, onProfileUpdated }: P
                 placeholder="Your business name"
                 className="h-8 text-sm"
               />
+            </div>
+            <div>
+              <Label className="text-xs">Business Category</Label>
+              <Select
+                value={profileData.businessCategory}
+                onValueChange={(value) => setProfileData({ ...profileData, businessCategory: value })}
+              >
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BUSINESS_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
               <Label className="text-xs">District</Label>

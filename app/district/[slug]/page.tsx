@@ -36,6 +36,7 @@ export default async function DistrictPage({ params }: { params: { slug: string 
         phone: b.phone ?? null,
         address: b.address ?? null,
         profilePhoto: b.profilePhoto ?? null,
+        category: b.businessCategory ?? null,
         isOpenNow: b.isOpenNow ?? null,
         todayHours: b.todayHours ?? null,
       }))

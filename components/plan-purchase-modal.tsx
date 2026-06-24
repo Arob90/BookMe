@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/components/ui/use-toast'
 import { createAccount } from '@/app/actions/auth'
 import { DISTRICTS } from '@/lib/districts'
+import { BUSINESS_CATEGORIES } from '@/lib/business-categories'
 import { Check, Upload, Loader2 } from 'lucide-react'
 
 const PAYMENT_METHODS = [
@@ -37,6 +38,7 @@ export function PlanPurchaseModal({
   const [uploaded, setUploaded] = useState(false)
 
   const [businessName, setBusinessName] = useState('')
+  const [businessCategory, setBusinessCategory] = useState('')
   const [district, setDistrict] = useState('BELIZE')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -47,7 +49,7 @@ export function PlanPurchaseModal({
 
   function reset() {
     setStep('form'); setRequestId(null); setUploaded(false)
-    setBusinessName(''); setFirstName(''); setLastName(''); setEmail(''); setPhone(''); setPassword(''); setConfirmPassword('')
+    setBusinessName(''); setBusinessCategory(''); setFirstName(''); setLastName(''); setEmail(''); setPhone(''); setPassword(''); setConfirmPassword('')
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -60,7 +62,7 @@ export function PlanPurchaseModal({
     }
     setLoading(true)
     try {
-      const res = await createAccount({ businessName, district, firstName, lastName, email, phone, password })
+      const res = await createAccount({ businessName, businessCategory, district, firstName, lastName, email, phone, password })
       if (res.pending) {
         setRequestId(res.requestId ?? null)
         setDoneName(res.firstName ?? firstName)
@@ -106,6 +108,15 @@ export function PlanPurchaseModal({
               <div className="space-y-1">
                 <Label htmlFor="m-bn" className="text-xs font-medium text-slate-700">Business name</Label>
                 <Input id="m-bn" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required className={inputCls} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="m-cat" className="text-xs font-medium text-slate-700">Business category</Label>
+                <Select value={businessCategory} onValueChange={setBusinessCategory}>
+                  <SelectTrigger className="h-10 rounded-xl border-slate-200"><SelectValue placeholder="What kind of business?" /></SelectTrigger>
+                  <SelectContent>
+                    {BUSINESS_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1">
                 <Label htmlFor="m-d" className="text-xs font-medium text-slate-700">District</Label>

@@ -9,6 +9,7 @@ import { sendEmail, passwordResetEmail } from '@/lib/email'
 
 const signupSchema = z.object({
   businessName: z.string().min(1, 'Business name is required'),
+  businessCategory: z.string().optional(),
   district: z.string().optional(),
   firstName: z.string().min(1, 'First name is required'),
   lastName: z.string().min(1, 'Last name is required'),
@@ -47,6 +48,7 @@ export async function createAccount(data: z.infer<typeof signupSchema>) {
       email: validated.email,
       passwordHash,
       businessName: validated.businessName,
+      businessCategory: validated.businessCategory || null,
       district: validated.district || null,
       firstName: validated.firstName,
       lastName: validated.lastName,

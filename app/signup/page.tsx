@@ -16,6 +16,7 @@ import {
 import { useToast } from '@/components/ui/use-toast'
 import { createAccount } from '@/app/actions/auth'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { BUSINESS_CATEGORIES } from '@/lib/business-categories'
 import { Check, Upload, Loader2 } from 'lucide-react'
 
 export default function SignupPage() {
@@ -23,6 +24,7 @@ export default function SignupPage() {
   const [submittedRequestId, setSubmittedRequestId] = useState<string | null>(null)
   const [submittedFirstName, setSubmittedFirstName] = useState('')
   const [businessName, setBusinessName] = useState('')
+  const [businessCategory, setBusinessCategory] = useState('')
   const [district, setDistrict] = useState('BELIZE')
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -68,6 +70,7 @@ export default function SignupPage() {
     try {
       const result = await createAccount({
         businessName,
+        businessCategory,
         district,
         firstName,
         lastName,
@@ -151,6 +154,19 @@ export default function SignupPage() {
             <div className="space-y-1.5">
               <Label htmlFor="businessName" className="text-sm font-medium text-slate-700">Business name</Label>
               <Input id="businessName" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required className={inputCls} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="businessCategory" className="text-sm font-medium text-slate-700">Business category</Label>
+              <Select value={businessCategory} onValueChange={setBusinessCategory}>
+                <SelectTrigger className="h-11 rounded-xl border-slate-200 focus:border-violet-400 focus:ring-violet-200">
+                  <SelectValue placeholder="What kind of business?" />
+                </SelectTrigger>
+                <SelectContent>
+                  {BUSINESS_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="district" className="text-sm font-medium text-slate-700">District</Label>

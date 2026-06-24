@@ -10,11 +10,10 @@ export type DirectoryBusiness = {
   phone: string | null
   address: string | null
   profilePhoto: string | null
+  category?: string | null
   isOpenNow?: boolean | null
   todayHours?: string | null
 }
-
-type Filter = 'all' | 'open' | 'az'
 
 export function DistrictDirectory({
   businesses,
@@ -25,21 +24,21 @@ export function DistrictDirectory({
   featured?: DirectoryBusiness
 }) {
   const [query, setQuery] = useState('')
-  const [filter, setFilter] = useState<Filter>('all')
+  const [cat, setCat] = useState<string>('all')
+
+  // Category chips from whatever categories exist in this district.
+  const categories = useMemo(
+    () => Array.from(new Set(businesses.map((b) => b.category).filter((c): c is string => !!c))).sort(),
+    [businesses]
+  )
+  const chips = ['all', ...categories]
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     let list = q ? businesses.filter((b) => b.name.toLowerCase().includes(q)) : businesses.slice()
-    if (filter === 'open') list = list.filter((b) => b.isOpenNow)
-    if (filter === 'az') list = list.slice().sort((a, b) => a.name.localeCompare(b.name))
+    if (cat !== 'all') list = list.filter((b) => b.category === cat)
     return list
-  }, [businesses, query, filter])
-
-  const chips: { id: Filter; label: string }[] = [
-    { id: 'all', label: 'All' },
-    { id: 'open', label: 'Open now' },
-    { id: 'az', label: 'A–Z' },
-  ]
+  }, [businesses, query, cat])
 
   return (
     <div>
@@ -59,21 +58,23 @@ export function DistrictDirectory({
           {filtered.length} {filtered.length === 1 ? 'business' : 'businesses'}
           {query ? ' found' : ' listed'}
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
-          {chips.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setFilter(c.id)}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                filter === c.id
-                  ? 'bg-violet-600 text-white shadow-sm'
-                  : 'border border-slate-200 bg-white text-slate-600 hover:border-violet-200 hover:text-violet-700'
-              }`}
-            >
-              {c.label}
-            </button>
-          ))}
-        </div>
+        {chips.length > 1 && (
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+            {chips.map((c) => (
+              <button
+                key={c}
+                onClick={() => setCat(c)}
+                className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                  cat === c
+                    ? 'bg-violet-600 text-white shadow-sm'
+                    : 'border border-slate-200 bg-white text-slate-600 hover:border-violet-200 hover:text-violet-700'
+                }`}
+              >
+                {c === 'all' ? 'All' : c}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Featured / sponsored spotlight */}
@@ -140,6 +141,11 @@ export function DistrictDirectory({
                 )}
                 <div className="min-w-0">
                   <h3 className="truncate font-display text-base font-bold text-slate-900">{b.name}</h3>
+                  {b.category && (
+                    <span className="mt-0.5 inline-block rounded-full bg-violet-50 px-2 py-0.5 text-[11px] font-semibold text-violet-700">
+                      {b.category}
+                    </span>
+                  )}
                   {b.isOpenNow != null && (
                     <span
                       className={`mt-0.5 inline-flex items-center gap-1 text-xs font-medium ${

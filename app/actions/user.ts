@@ -11,6 +11,7 @@ import { parseYmdToUtcNoon } from '@/lib/date-only'
 const updateProfileSchema = z.object({
   userName: z.string().optional(),
   businessName: z.string().optional(),
+  businessCategory: z.string().optional(),
   district: z.string().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
@@ -40,6 +41,7 @@ export async function getUserProfile() {
         role: true,
         userName: true,
         businessName: true,
+        businessCategory: true,
         district: true,
         firstName: true,
         lastName: true,
@@ -58,6 +60,7 @@ export async function getUserProfile() {
       role: user.role,
       userName: user.userName || null,
       businessName: user.businessName || null,
+      businessCategory: user.businessCategory || null,
       district: user.district || null,
       firstName: user.firstName || null,
       lastName: user.lastName || null,
@@ -188,6 +191,7 @@ export async function updateUserProfile(data: z.infer<typeof updateProfileSchema
   try {
     if (validated.userName !== undefined) updateData.userName = validated.userName || null
     if (validated.businessName !== undefined) updateData.businessName = validated.businessName || null
+    if (validated.businessCategory !== undefined) updateData.businessCategory = validated.businessCategory || null
     if (validated.district !== undefined) updateData.district = validated.district || null
     if (validated.firstName !== undefined) updateData.firstName = validated.firstName || null
     if (validated.lastName !== undefined) updateData.lastName = validated.lastName || null

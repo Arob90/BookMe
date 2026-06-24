@@ -22,6 +22,7 @@ type PublicBusiness = {
   phone: string | null
   address: string | null
   district: string | null
+  businessCategory?: string | null
   profilePhoto: string | null
 }
 
@@ -97,6 +98,7 @@ export async function getPublicBusinesses() {
       select: {
         id: true,
         businessName: true,
+        businessCategory: true,
         district: true,
         userName: true,
         firstName: true,
@@ -118,6 +120,7 @@ export async function getPublicBusinesses() {
       phone: business.phone,
       address: business.address || null,
       district: business.district || null,
+      businessCategory: business.businessCategory || null,
       profilePhoto: business.profilePhoto || null,
     }))
     return await withBusinessAvailability(mappedBusinesses)

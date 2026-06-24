@@ -17,6 +17,7 @@ model User {
   role         UserRole  @default(ADMIN)
   userName     String?   @map("user_name")
   businessName String?   @map("business_name")
+  businessCategory String? @map("business_category") // Salon | Clinic | Car Wash | Consultant | Designer | ...
   district     String?   @map("district") // Belize: COROZAL | ORANGE_WALK | BELIZE | CAYO | STANN_CREEK | TOLEDO | SAN_PEDRO | CAYE_CAULKER
   firstName    String?   @map("first_name")
   lastName     String?   @map("last_name")
@@ -393,6 +394,7 @@ model PendingAccountRequest {
   email        String   @unique @map("email")
   passwordHash String   @map("password_hash")
   businessName String   @map("business_name")
+  businessCategory String? @map("business_category")
   district     String?  @map("district")
   firstName    String   @map("first_name")
   lastName     String   @map("last_name")
