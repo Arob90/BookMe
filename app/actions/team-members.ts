@@ -4,11 +4,13 @@ import { db } from '@/lib/db'
 import { requireAdmin } from '@/lib/authz'
 import { getSessionStaffId } from '@/lib/session-staff'
 import { getMaxUsersForStaffId, resolveSeatCap, canAddTeamMember } from '@/lib/plan-seats'
+import { DEFAULT_STAFF_RIGHTS } from '@/lib/staff-rights'
 import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 
 const userRoleSchema = z.enum(['ADMIN', 'STAFF'])
+const rightsSchema = z.record(z.boolean())
 
 const createTeamMemberSchema = z.object({
   email: z.string().email(),
@@ -17,6 +19,7 @@ const createTeamMemberSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   phone: z.string().optional(),
+  staffRights: rightsSchema.optional(),
 })
 
 const updateTeamMemberSchema = z.object({
@@ -26,6 +29,7 @@ const updateTeamMemberSchema = z.object({
   firstName: z.string().optional().nullable(),
   lastName: z.string().optional().nullable(),
   phone: z.string().optional().nullable(),
+  staffRights: rightsSchema.optional(),
 })
 
 const teamMemberSelect = {
@@ -35,6 +39,7 @@ const teamMemberSelect = {
   firstName: true,
   lastName: true,
   phone: true,
+  staffRights: true,
   createdAt: true,
 } as const
 
@@ -101,11 +106,13 @@ export async function createTeamMemberForBusiness(data: z.infer<typeof createTea
       firstName: v.firstName || null,
       lastName: v.lastName || null,
       phone: v.phone || null,
+      staffRights: v.staffRights ?? DEFAULT_STAFF_RIGHTS,
     },
     select: teamMemberSelect,
   })
 
   revalidatePath('/app/settings')
+  revalidatePath('/app/team')
   return member
 }
 
@@ -132,6 +139,7 @@ export async function updateTeamMemberForBusiness(memberId: string, data: z.infe
   if (v.firstName !== undefined) updateData.firstName = v.firstName
   if (v.lastName !== undefined) updateData.lastName = v.lastName
   if (v.phone !== undefined) updateData.phone = v.phone
+  if (v.staffRights !== undefined) updateData.staffRights = v.staffRights
   if (v.password) updateData.passwordHash = await bcrypt.hash(v.password, 10)
 
   const member = await db.user.update({
@@ -141,6 +149,7 @@ export async function updateTeamMemberForBusiness(memberId: string, data: z.infe
   })
 
   revalidatePath('/app/settings')
+  revalidatePath('/app/team')
   return member
 }
 

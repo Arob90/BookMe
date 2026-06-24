@@ -4,6 +4,7 @@ import { db } from '@/lib/db'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { isSuperAdmin } from '@/lib/authz'
+import { effectiveRights, rightForNotificationType } from '@/lib/staff-rights'
 import { endOfDay, addMinutes, format } from 'date-fns'
 import { getBirthdayOccurrenceInCurrentMonthFromToday, isBirthdayToday } from '@/lib/utils'
 import { getSessionStaffId } from '@/lib/session-staff'
@@ -257,5 +258,14 @@ export async function getNotifications(): Promise<Notification[]> {
     return a.createdAt.getTime() - b.createdAt.getTime()
   })
 
-  return notifications
+  // Staff only see notification types their rights allow.
+  const rights = effectiveRights({
+    role: (session.user as { role?: string }).role,
+    isSuperAdmin: isSuperAdmin(session.user.email),
+    staffRights: (session.user as { staffRights?: unknown }).staffRights,
+  })
+  return notifications.filter((n) => {
+    const need = rightForNotificationType(n.type)
+    return !need || rights[need]
+  })
 }

@@ -26,6 +26,9 @@ model User {
   address      String?   @db.Text
   profilePhoto String?   @map("profile_photo")
   isPaused     Boolean   @default(false) @map("is_paused")
+  /// Per-staff rights (owners/admins always have all). JSON like { calendar, clients, services, payments }.
+  /// null = full access (back-compat for existing staff).
+  staffRights  Json?     @map("staff_rights")
   /// Primary business user id; null = top-level account (owner). Set for extra logins under a business.
   ownerUserId  String?   @map("owner_user_id")
   createdAt    DateTime  @default(now()) @map("created_at")

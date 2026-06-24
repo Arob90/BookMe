@@ -83,6 +83,7 @@ export const authOptions: NextAuthOptions = {
                         id: user.id,
                         email: user.email,
                         role: user.role,
+                        staffRights: (user as { staffRights?: unknown }).staffRights ?? null,
                     }
                 } catch (error: unknown) {
                     const msg = error instanceof Error ? error.message : String(error)
@@ -104,6 +105,14 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id
                 token.email = user.email
                 token.role = user.role
+                token.staffRights = (user as { staffRights?: unknown }).staffRights ?? null
+            }
+            // Refresh rights from DB on session update so changes apply without re-login.
+            if (trigger === 'update' && token.id) {
+                try {
+                    const u = await db.user.findUnique({ where: { id: token.id as string }, select: { staffRights: true } })
+                    if (u) token.staffRights = u.staffRights ?? null
+                } catch { /* keep existing */ }
             }
             // If session is being updated, fetch latest email from database
             if (trigger === 'update' && token.id) {
@@ -125,6 +134,7 @@ export const authOptions: NextAuthOptions = {
             if (session.user && token.id) {
                 session.user.id = token.id as string
                 session.user.role = token.role as 'ADMIN' | 'STAFF'
+                session.user.staffRights = token.staffRights ?? null
                 try {
                     const dbUser = await db.user.findUnique({
                         where: { id: token.id as string },

@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { isSuperAdmin } from '@/lib/authz'
+import { effectiveRights, rightForPath } from '@/lib/staff-rights'
 import { getAccountLockState } from '@/lib/account-status'
 import { AppSidebar } from '@/components/app-sidebar'
 import { SessionProvider } from '@/components/session-provider'
@@ -61,6 +62,15 @@ export default async function AppLayout({
       redirect('/app/billing')
     }
     return <SessionProvider session={session}>{children}</SessionProvider>
+  }
+
+  // Staff rights: block (by URL) any section a staff member isn't allowed to access.
+  if (!isSuper && session.user.role === 'STAFF') {
+    const rights = effectiveRights({ role: 'STAFF', staffRights: session.user.staffRights })
+    const need = rightForPath(pathname)
+    if ((need && !rights[need]) || pathname.startsWith('/app/team') || pathname.startsWith('/app/accounts')) {
+      redirect('/app/dashboard')
+    }
   }
 
   const showTrialBanner = lock.planStatus === 'trialing' && lock.daysLeft != null

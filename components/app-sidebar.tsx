@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { cn } from '@/lib/utils'
 import { isSuperAdmin } from '@/lib/authz'
+import { effectiveRights, rightForPath } from '@/lib/staff-rights'
 import {
   Calendar,
   Users,
@@ -17,6 +18,8 @@ import {
   X,
   Kanban,
   UserPlus,
+  Bell,
+  UserCog,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
@@ -30,6 +33,7 @@ const baseNavigation = [
   { name: 'Loyalty & Strike', href: '/app/loyalty', icon: Gift },
   { name: 'Inventory', href: '/app/inventory', icon: Package },
   { name: 'Analytics', href: '/app/analytics', icon: TrendingUp },
+  { name: 'Notifications', href: '/app/notifications', icon: Bell },
 ]
 
 export function AppSidebar() {
@@ -37,9 +41,23 @@ export function AppSidebar() {
   const { data: session } = useSession()
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const showAccounts = isSuperAdmin((session?.user as { email?: string })?.email)
+  const email = (session?.user as { email?: string })?.email
+  const role = (session?.user as { role?: string })?.role
+  const showAccounts = isSuperAdmin(email)
+  const isOwnerAdmin = role === 'ADMIN'
+  const rights = effectiveRights({
+    role,
+    isSuperAdmin: showAccounts,
+    staffRights: (session?.user as { staffRights?: unknown })?.staffRights,
+  })
+  // Hide nav items a staff member isn't allowed to access.
+  const allowedBase = baseNavigation.filter((item) => {
+    const need = rightForPath(item.href)
+    return !need || rights[need]
+  })
   const navigation: { name: string; href: string; icon: React.ComponentType<{ className?: string }> }[] = [
-    ...baseNavigation,
+    ...allowedBase,
+    ...(isOwnerAdmin ? [{ name: 'Team & Permissions', href: '/app/team', icon: UserCog }] : []),
     ...(showAccounts ? [{ name: 'Account Management', href: '/app/accounts', icon: UserPlus }] : []),
   ]
 

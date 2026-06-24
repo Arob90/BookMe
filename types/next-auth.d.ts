@@ -9,6 +9,8 @@ declare module 'next-auth' {
       role: UserRole
       /** Owner's user id for business data; same as `id` for account owners. */
       businessStaffId: string
+      /** Per-staff rights JSON (null = full access). Owners/admins always have all. */
+      staffRights?: unknown
     }
   }
 
@@ -16,6 +18,7 @@ declare module 'next-auth' {
     id: string
     email: string
     role: UserRole
+    staffRights?: unknown
   }
 }
 
@@ -23,5 +26,6 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string
     role: UserRole
+    staffRights?: unknown
   }
 }
