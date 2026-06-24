@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Check, Megaphone } from 'lucide-react'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
+import { PlanPurchaseModal } from '@/components/plan-purchase-modal'
 
 const AD_PACKAGES = [
   {
@@ -103,6 +104,8 @@ const SHOW_AD_PACKAGES = false
 
 export default function PricingPage() {
   const [billing, setBilling] = useState<Billing>('monthly')
+  const [planModalOpen, setPlanModalOpen] = useState(false)
+  const [selectedPlan, setSelectedPlan] = useState('')
 
   return (
     <div className="min-h-screen bg-white text-slate-900 antialiased">
@@ -170,23 +173,24 @@ export default function PricingPage() {
                 <p className={`mt-1 text-sm ${tier.highlight ? 'text-white/80' : 'text-slate-500'}`}>{tier.blurb}</p>
                 <div className="mt-5 flex items-baseline gap-1">
                   <span className={`font-display text-5xl font-bold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>${price}</span>
-                  <span className={tier.highlight ? 'text-white/70' : 'text-slate-400'}>/mo</span>
+                  <span className={tier.highlight ? 'text-white/70' : 'text-slate-400'}>BZD /mo</span>
                 </div>
                 <p className={`mt-1 h-4 text-xs ${tier.highlight ? 'text-white/70' : 'text-slate-400'}`}>
                   {billing === 'annual' ? `Billed $${tier.annual}/year` : `or $${tier.annual}/yr — save 2 months`}
                 </p>
                 <p className={`mt-3 text-sm font-semibold ${tier.highlight ? 'text-amber-200' : 'text-violet-600'}`}>{tier.seats}</p>
 
-                <Link
-                  href="/signup"
+                <button
+                  type="button"
+                  onClick={() => { setSelectedPlan(tier.name); setPlanModalOpen(true) }}
                   className={`mt-6 w-full rounded-full px-5 py-3 text-center text-sm font-semibold transition-all hover:-translate-y-0.5 ${
                     tier.highlight
                       ? 'bg-white text-violet-700 shadow hover:shadow-lg'
                       : 'bg-violet-600 text-white shadow-sm hover:shadow-lg'
                   }`}
                 >
-                  Start free trial
-                </Link>
+                  Choose {tier.name}
+                </button>
 
                 <ul className="mt-7 space-y-3">
                   {tier.features.map((f) => (
@@ -205,7 +209,7 @@ export default function PricingPage() {
 
         <p className="mx-auto mt-12 max-w-xl text-center text-sm text-slate-500">
           All plans include the 14-day free trial. After the trial, choose a plan to keep your account active.
-          Prices in USD. Need something custom?{' '}
+          All prices in Belize Dollars (BZD). Need something custom?{' '}
           <a href="mailto:sasoandco.ltd@gmail.com" className="font-medium text-violet-600 hover:underline">Contact us</a>.
         </p>
       </section>
@@ -266,13 +270,15 @@ export default function PricingPage() {
             ))}
           </div>
           <p className="mx-auto mt-10 max-w-xl text-center text-xs text-slate-400">
-            Ad placements are limited per district to keep them effective. Prices in USD.
+            Ad placements are limited per district to keep them effective. Prices in BZD.
           </p>
         </div>
       </section>
       )}
 
       <MarketingFooter />
+
+      <PlanPurchaseModal planName={selectedPlan} open={planModalOpen} onOpenChange={setPlanModalOpen} />
     </div>
   )
 }

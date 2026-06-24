@@ -99,8 +99,8 @@ export default function RootLayout({
                   offers: {
                     '@type': 'Offer',
                     price: '45',
-                    priceCurrency: 'USD',
-                    description: 'Plans from $45/mo. 14-day free trial.',
+                    priceCurrency: 'BZD',
+                    description: 'Plans from $45 BZD/mo. 14-day free trial.',
                   },
                   description:
                     'All-in-one online booking, client CRM, payments, loyalty and analytics for service businesses.',
