@@ -49,6 +49,7 @@ const DURATION_UNIT_OPTIONS: { value: DurationUnit; label: string }[] = [
   { value: 'MINUTES', label: 'Minutes' },
   { value: 'HOURS', label: 'Hours' },
   { value: 'DAYS', label: 'Days' },
+  { value: 'WEEKS', label: 'Weeks' },
   { value: 'MONTHS', label: 'Months' },
   { value: 'YEARS', label: 'Years' },
 ]

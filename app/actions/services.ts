@@ -8,7 +8,7 @@ import { revalidatePath } from 'next/cache'
 import { z } from 'zod'
 import { whereServicesForBusiness, isSortOrderUnavailableError } from '@/lib/service-ownership'
 
-const DURATION_UNITS = ['MINUTES', 'HOURS', 'DAYS', 'MONTHS', 'YEARS'] as const
+const DURATION_UNITS = ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS'] as const
 
 function whereServiceByIdForBusiness(serviceId: string, staffId: string) {
   return {
@@ -59,6 +59,7 @@ const createServiceSchema = z.object({
   durationMinutes: z.number().int().positive(),
   durationUnit: z.enum(DURATION_UNITS).optional().default('MINUTES'),
   price: z.number().nonnegative(),
+  hidePrice: z.boolean().optional().default(false),
   pointsWorth: z.number().int().nonnegative().optional(),
   colorTag: z.string().default('blue'),
   isActive: z.boolean().default(true),
@@ -87,6 +88,7 @@ export async function createService(data: z.infer<typeof createServiceSchema>) {
     durationMinutes: validated.durationMinutes,
     durationUnit: validated.durationUnit ?? 'MINUTES',
     price: validated.price,
+    hidePrice: validated.hidePrice,
     pointsWorth: validated.pointsWorth || null,
     colorTag: validated.colorTag,
     isActive: validated.isActive,

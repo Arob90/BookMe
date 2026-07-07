@@ -34,6 +34,7 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
     { value: 'MINUTES', label: 'Minutes' },
     { value: 'HOURS', label: 'Hours' },
     { value: 'DAYS', label: 'Days' },
+    { value: 'WEEKS', label: 'Weeks' },
     { value: 'MONTHS', label: 'Months' },
     { value: 'YEARS', label: 'Years' },
   ]
@@ -46,6 +47,7 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
     durationUnit: 'MINUTES' as DurationUnit,
     durationMinutes: 30,
     price: 0,
+    hidePrice: false,
     pointsWorth: 0,
     colorTag: 'blue',
     isActive: true,
@@ -101,6 +103,7 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
           durationUnit: unit,
           durationMinutes: minutes,
           price: service.price ? Number(service.price) : 0,
+          hidePrice: !!service.hidePrice,
           pointsWorth: service.pointsWorth || 0,
           colorTag: service.colorTag || 'blue',
           isActive: service.isActive !== undefined ? service.isActive : true,
@@ -120,6 +123,7 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
           durationUnit: 'MINUTES',
           durationMinutes: 30,
           price: 0,
+          hidePrice: false,
           pointsWorth: 0,
           colorTag: 'blue',
           isActive: true,
@@ -379,6 +383,7 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
         durationMinutes,
         durationUnit: formData.durationUnit,
         price: formData.price,
+        hidePrice: formData.hidePrice,
         colorTag: formData.colorTag,
         isActive: formData.isActive,
         pointsWorth: formData.pointsWorth || undefined,
@@ -432,6 +437,7 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
         durationUnit: 'MINUTES',
         durationMinutes: 30,
         price: 0,
+        hidePrice: false,
         pointsWorth: 0,
         colorTag: 'blue',
         isActive: true,
@@ -703,17 +709,34 @@ export function ServiceDialog({ open, onOpenChange, service, categories, onServi
                 </SelectContent>
               </Select>
             </div>
-            <div className="flex items-center space-x-2 pt-8">
-              <Checkbox
-                id="isActive"
-                checked={formData.isActive}
-                onCheckedChange={(checked) => setFormData({ ...formData, isActive: !!checked })}
-              />
-              <Label htmlFor="isActive" className="cursor-pointer">
-                Active
-              </Label>
+            <div className="flex flex-col justify-center gap-2 pt-8">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isActive"
+                  checked={formData.isActive}
+                  onCheckedChange={(checked) => setFormData({ ...formData, isActive: !!checked })}
+                />
+                <Label htmlFor="isActive" className="cursor-pointer">
+                  Active
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="hidePrice"
+                  checked={formData.hidePrice}
+                  onCheckedChange={(checked) => setFormData({ ...formData, hidePrice: !!checked })}
+                />
+                <Label htmlFor="hidePrice" className="cursor-pointer">
+                  Hide price from clients
+                </Label>
+              </div>
             </div>
           </div>
+          {formData.hidePrice && (
+            <p className="text-xs text-muted-foreground">
+              Clients won’t see this price on your profile or when booking — they’ll see “Price on request”. You still keep it for your own records.
+            </p>
+          )}
 
           <div className="flex justify-end gap-2 pt-3 border-t">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

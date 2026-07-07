@@ -171,8 +171,10 @@ model Service {
   description     String?  @db.Text
   imageUrl        String?  @map("image_url")
   durationMinutes Int      @map("duration_minutes")
-  durationUnit    String?  @default("MINUTES") @map("duration_unit") // MINUTES | HOURS | DAYS | MONTHS | YEARS
+  durationUnit    String?  @default("MINUTES") @map("duration_unit") // MINUTES | HOURS | DAYS | WEEKS | MONTHS | YEARS
   price           Decimal  @db.Decimal(10, 2)
+  /// When true, the price is not shown to the public (profile + booking) — for custom/quote-only services.
+  hidePrice       Boolean  @default(false) @map("hide_price")
   pointsWorth     Int?     @map("points_worth")
   colorTag        String   @default("blue") @map("color_tag")
   isActive        Boolean  @default(true) @map("is_active")

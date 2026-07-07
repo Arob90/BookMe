@@ -106,12 +106,12 @@ export function CreateAppointmentDialog({
 
   // Keep appointment slots practical for scheduling UI:
   // - MINUTES/HOURS use configured duration (capped to 8h per service)
-  // - DAYS/MONTHS/YEARS use a 60-minute booking slot
+  // - DAYS/WEEKS/MONTHS/YEARS use a 60-minute booking slot
   const getSchedulableMinutes = (service: any) => {
     const minutes = Number(service?.durationMinutes || 0)
     if (!Number.isFinite(minutes) || minutes <= 0) return 0
     const unit = String(service?.durationUnit || 'MINUTES').toUpperCase()
-    if (unit === 'DAYS' || unit === 'MONTHS' || unit === 'YEARS') return 60
+    if (unit === 'DAYS' || unit === 'WEEKS' || unit === 'MONTHS' || unit === 'YEARS') return 60
     return Math.min(minutes, 8 * 60)
   }
 

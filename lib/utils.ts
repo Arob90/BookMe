@@ -6,12 +6,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Duration unit type and helpers for services (minutes, hours, days, months, years)
-export type DurationUnit = 'MINUTES' | 'HOURS' | 'DAYS' | 'MONTHS' | 'YEARS'
+export type DurationUnit = 'MINUTES' | 'HOURS' | 'DAYS' | 'WEEKS' | 'MONTHS' | 'YEARS'
 
 const MINUTES_PER_UNIT: Record<DurationUnit, number> = {
   MINUTES: 1,
   HOURS: 60,
   DAYS: 24 * 60,
+  WEEKS: 7 * 24 * 60,
   MONTHS: 30 * 24 * 60,
   YEARS: 365 * 24 * 60,
 }
@@ -39,6 +40,7 @@ export function formatDuration(
     MINUTES: { singular: 'min', plural: 'min' },
     HOURS: { singular: 'hr', plural: 'hr' },
     DAYS: { singular: 'day', plural: 'days' },
+    WEEKS: { singular: 'wk', plural: 'wks' },
     MONTHS: { singular: 'mo', plural: 'mo' },
     YEARS: { singular: 'yr', plural: 'yr' },
   }
@@ -58,7 +60,7 @@ export function getSchedulableSlotMinutes(
   const minutes = Number(durationMinutes || 0)
   if (!Number.isFinite(minutes) || minutes <= 0) return 0
   const unit = String(durationUnit || 'MINUTES').toUpperCase()
-  if (unit === 'DAYS' || unit === 'MONTHS' || unit === 'YEARS') return 60
+  if (unit === 'DAYS' || unit === 'WEEKS' || unit === 'MONTHS' || unit === 'YEARS') return 60
   return Math.min(minutes, 8 * 60)
 }
 

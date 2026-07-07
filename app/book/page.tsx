@@ -41,6 +41,7 @@ interface Service {
   id: string
   name: string
   price: number | null
+  hidePrice?: boolean
   durationMinutes: number
   durationUnit?: string | null
   description: string | null
@@ -2147,7 +2148,9 @@ export default function BookPage() {
                                   const isSelected =
                                     quantity > 0 || bookingLines.some((l) => l.serviceId === service.id)
                                   const priceLabel =
-                                    service.price != null && !Number.isNaN(Number(service.price))
+                                    (service as any).hidePrice
+                                      ? 'Price on request'
+                                      : service.price != null && !Number.isNaN(Number(service.price))
                                       ? `$${Number(service.price).toFixed(2)}`
                                       : 'â€”'
                                   const imgUrl = formatImageUrl(service.imageUrl) || serviceFallbackImage

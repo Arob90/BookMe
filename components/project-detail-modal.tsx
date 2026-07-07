@@ -44,7 +44,7 @@ function getAmount(amount: unknown): number | null {
   return null
 }
 
-const PLAN_UNITS = ['MINUTES', 'HOURS', 'DAYS', 'MONTHS', 'YEARS'] as const
+const PLAN_UNITS = ['MINUTES', 'HOURS', 'DAYS', 'WEEKS', 'MONTHS', 'YEARS'] as const
 
 type StaffOption = {
   id: string

@@ -251,7 +251,9 @@ export async function getBusinessServices(businessId: string) {
       imageUrl: service.imageUrl ?? null,
       durationMinutes: service.durationMinutes,
       durationUnit: service.durationUnit ?? 'MINUTES',
-      price: service.price ? Number(service.price) : null,
+      // Owner opted to hide the price publicly: never expose the amount in the payload.
+      price: (service as any).hidePrice ? null : service.price ? Number(service.price) : null,
+      hidePrice: !!(service as any).hidePrice,
       pointsWorth: service.pointsWorth ?? null,
       category: service.category
         ? {
