@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type ComponentProps } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { BillingHistoryRow } from '@/lib/billing-history'
@@ -20,11 +20,19 @@ import { PlanSummary } from '@/components/plan-summary'
 import { BillingHistoryList } from '@/components/billing-history-list'
 import { AppearanceSettings } from '@/components/appearance-settings'
 import { SubscriptionPaymentsHistory } from '@/components/subscription-payments-history'
+import { StaffManager } from '@/components/staff-manager'
 
 export function SettingsTabs(props: {
   initialSettings: any
   billingHistory: BillingHistoryRow[]
+  /** Owner-admins only; when provided, a "Team" tab is shown here (moved from the sidebar). */
+  teamData?: ComponentProps<typeof StaffManager>['data'] | null
+  /** Preselected tab from `?tab=` (e.g. `team`). */
+  initialTab?: string
 }) {
+  const showTeam = !!props.teamData
+  const validTabs = ['billing', 'general', 'hours', 'banking', 'notifications', ...(showTeam ? ['team'] : [])]
+  const defaultTab = props.initialTab && validTabs.includes(props.initialTab) ? props.initialTab : 'billing'
   const router = useRouter()
   const { toast } = useToast()
 
@@ -194,7 +202,7 @@ export function SettingsTabs(props: {
   }
 
   return (
-    <Tabs defaultValue="billing" className="w-full">
+    <Tabs defaultValue={defaultTab} className="w-full">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <TabsList className="w-full sm:w-auto flex-wrap h-auto">
           <TabsTrigger value="billing">Account</TabsTrigger>
@@ -202,6 +210,7 @@ export function SettingsTabs(props: {
           <TabsTrigger value="hours">Business hours</TabsTrigger>
           <TabsTrigger value="banking">Banking</TabsTrigger>
           <TabsTrigger value="notifications">Notifications</TabsTrigger>
+          {showTeam && <TabsTrigger value="team">Team &amp; permissions</TabsTrigger>}
         </TabsList>
         <div className="flex justify-end">
           <Button onClick={handleSave} disabled={isSaving} size="sm" className="h-8 px-4 text-sm">
@@ -361,6 +370,12 @@ export function SettingsTabs(props: {
       <TabsContent value="notifications" className="mt-4">
         <NotificationSettings />
       </TabsContent>
+
+      {showTeam && props.teamData && (
+        <TabsContent value="team" className="mt-4">
+          <StaffManager data={props.teamData} />
+        </TabsContent>
+      )}
     </Tabs>
   )
 }

@@ -19,7 +19,6 @@ import {
   Kanban,
   UserPlus,
   Bell,
-  UserCog,
   Megaphone,
   Inbox,
 } from 'lucide-react'
@@ -60,7 +59,6 @@ export function AppSidebar() {
   const navigation: { name: string; href: string; icon: React.ComponentType<{ className?: string }> }[] = [
     ...allowedBase,
     ...(isOwnerAdmin ? [{ name: 'Promotions', href: '/app/promotions', icon: Megaphone }] : []),
-    ...(isOwnerAdmin ? [{ name: 'Team & Permissions', href: '/app/team', icon: UserCog }] : []),
     ...(showAccounts ? [{ name: 'Account Management', href: '/app/accounts', icon: UserPlus }] : []),
     ...(showAccounts ? [{ name: 'Listing Requests', href: '/app/listing-requests', icon: Inbox }] : []),
   ]
