@@ -19,6 +19,7 @@ import {
 } from '@/lib/billing-history'
 import { ensureOwnerDefaultClients } from '@/lib/owner-default-clients'
 import { computeRenewalDate } from '@/lib/subscription'
+import { grantFreeDaysToBusiness } from '@/lib/rewards'
 import { format } from 'date-fns'
 
 function isSuperAdminEmail(email: string) {
@@ -610,6 +611,26 @@ export async function setSubscriptionEnd(ownerId: string, data: z.infer<typeof s
 
   revalidatePath('/app/accounts')
   return { ok: true as const, subscriptionEndsAt: newEnd ? newEnd.toISOString() : null }
+}
+
+const grantFreeDaysSchema = z.object({
+  days: z.number().int().min(1).max(3650),
+  reason: z.string().trim().max(200).optional(),
+})
+
+/** Super-admin: add N free days to a business (extends the owner's expiry; covers the whole team). */
+export async function grantFreeDaysToAccount(ownerId: string, data: z.infer<typeof grantFreeDaysSchema>) {
+  const session = await requireSuperAdmin()
+  const { days, reason } = grantFreeDaysSchema.parse(data)
+  await requireBusinessOwner(ownerId)
+  const res = await grantFreeDaysToBusiness({
+    ownerId,
+    days,
+    reason: reason || 'Manual grant',
+    actorUserId: session.user?.id ?? null,
+  })
+  revalidatePath('/app/accounts')
+  return res
 }
 
 const teamMemberSelect = {

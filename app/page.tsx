@@ -271,10 +271,34 @@ function Districts() {
 
 function Faq() {
   const faqs = [
-    ['Is there really a free trial?', 'Yes — every new account gets 14 days free, no card required. After that you simply pick a plan.'],
-    ['Can my clients book online?', 'Absolutely. You get a public booking link your clients can use anytime, on any device.'],
-    ['Do I need to install anything?', 'No. BookMe runs in the browser on desktop, tablet and phone.'],
-    ['Can I add my team?', 'Yes — add staff logins on the Pro and higher plans, each with their own access.'],
+    [
+      'What exactly is BookMe?',
+      'An all-in-one booking and client-management app built for service providers in Belize. You get your own online booking page plus everything behind it — appointments, client records, payments, loyalty and reports — in one place.',
+    ],
+    [
+      'How do my clients actually book me?',
+      'You get a personal booking page and link. Drop it on WhatsApp, Instagram or your website; clients pick a service and time, and it lands straight on your calendar — 24/7, with no back-and-forth messages.',
+    ],
+    [
+      'Do I need a website or any software to install?',
+      'No. BookMe is your online presence and booking system in one, and it runs in any browser on phone, tablet or desktop. Nothing to download or maintain.',
+    ],
+    [
+      'How much does it cost, and is there a free trial?',
+      'Start with 14 days free — no card required. After that, pick the plan that fits your team: Basic for solo owners, Pro for small teams, or Business for larger ones. You can change plans anytime.',
+    ],
+    [
+      'Can I add my team?',
+      'Yes. Pro includes up to 5 logins and Business up to 10, each with their own access so staff only see what they need — while everyone shares the same calendar and clients.',
+    ],
+    [
+      'How do people find my business?',
+      'Every business is listed in its Belize district directory, so nearby clients can discover and book you. You can also feature your business or post promotions to stand out even more.',
+    ],
+    [
+      'What if I have an idea or run into a problem?',
+      'Tell us — right inside the app you can suggest ideas and report issues, then watch their progress. If we build your idea, we’ll thank you with free time added to your account.',
+    ],
   ]
   return (
     <section id="faq" className="mx-auto max-w-3xl px-5 py-20 sm:px-8 lg:py-24">

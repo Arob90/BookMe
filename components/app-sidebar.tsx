@@ -21,6 +21,8 @@ import {
   Bell,
   Megaphone,
   Inbox,
+  Lightbulb,
+  LifeBuoy,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useState, useEffect } from 'react'
@@ -35,6 +37,8 @@ const baseNavigation = [
   { name: 'Inventory', href: '/app/inventory', icon: Package },
   { name: 'Analytics', href: '/app/analytics', icon: TrendingUp },
   { name: 'Notifications', href: '/app/notifications', icon: Bell },
+  { name: 'Ideas', href: '/app/ideas', icon: Lightbulb },
+  { name: 'Tech Support', href: '/app/support', icon: LifeBuoy },
 ]
 
 export function AppSidebar() {

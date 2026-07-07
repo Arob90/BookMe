@@ -54,6 +54,29 @@ export function addMonths(base: Date, months: number): Date {
   return d
 }
 
+/** Add whole days to a base date. */
+export function addDays(base: Date, days: number): Date {
+  return new Date(base.getTime() + days * MS_PER_DAY)
+}
+
+/**
+ * Compute a new expiry when granting `days` of free time. Extends from the
+ * current expiry if it's still in the future; otherwise from now.
+ */
+export function computeFreeDaysDate(
+  currentEndsAt: Date | string | null | undefined,
+  days: number,
+  now: Date = new Date()
+): Date {
+  const current = currentEndsAt
+    ? typeof currentEndsAt === 'string'
+      ? new Date(currentEndsAt)
+      : currentEndsAt
+    : null
+  const base = current && current.getTime() > now.getTime() ? current : now
+  return addDays(base, days)
+}
+
 /**
  * Compute a new expiry when renewing by `months`. Extends from the current
  * expiry if it is still in the future (so time isn't lost); otherwise from now.

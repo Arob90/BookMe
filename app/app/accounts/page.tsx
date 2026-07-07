@@ -6,6 +6,8 @@ import { AppTopbar } from '@/components/app-topbar'
 import { AccountsAdminTabs } from '@/components/accounts-admin-tabs'
 import { getPendingAccountRequests } from '@/app/actions/account-requests'
 import { getAllManagedUsers } from '@/app/actions/account-admin'
+import { getAllIdeas } from '@/app/actions/ideas'
+import { getAllSupportReports } from '@/app/actions/support'
 import { getPendingUpgradePayments } from '@/app/actions/upgrade-payments'
 import { PendingUpgradePayments } from '@/components/pending-upgrade-payments'
 import { db } from '@/lib/db'
@@ -83,6 +85,20 @@ export default async function AccountsPage({ searchParams }: AccountsPageProps) 
     upgradePayments = []
   }
 
+  let ideas: Awaited<ReturnType<typeof getAllIdeas>> = []
+  try {
+    ideas = await getAllIdeas()
+  } catch {
+    ideas = []
+  }
+
+  let reports: Awaited<ReturnType<typeof getAllSupportReports>> = []
+  try {
+    reports = await getAllSupportReports()
+  } catch {
+    reports = []
+  }
+
   return (
     <div className="flex flex-col h-full">
       <AppTopbar title="Account Management" />
@@ -92,6 +108,8 @@ export default async function AccountsPage({ searchParams }: AccountsPageProps) 
           defaultTab={searchParams.tab}
           users={users}
           approvals={approvals}
+          ideas={ideas}
+          reports={reports}
           requests={requests.map((r) => ({
             id: r.id,
             email: r.email,

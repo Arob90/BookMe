@@ -607,3 +607,54 @@ model ListingRequest {
   @@index([status, createdAt(sort: Desc)])
   @@map("listing_requests")
 }
+
+/// "Bring your idea to life" submission from a service provider. Approved ideas are shown on the in-app ideas board with live progress.
+model Idea {
+  id            String   @id @default(cuid())
+  /// Human-friendly reference, e.g. IDEA-7Q2F9K (searchable on the ideas page).
+  ref           String   @unique
+  /// Submitting business owner id (for rewarding free days). Null if we can't resolve it.
+  staffId       String?  @map("staff_id")
+  submitterName String?  @map("submitter_name")
+  submitterEmail String? @map("submitter_email")
+  title         String
+  details       String?  @db.Text
+  /// PENDING (awaiting review) | APPROVED (in progress, public) | DENIED | COMPLETED
+  status        String   @default("PENDING")
+  /// 0–100, shown as a progress bar on the board.
+  progress      Int      @default(0)
+  /// Current public note shown to the submitter/community.
+  publicNote    String?  @db.Text @map("public_note")
+  /// Timeline of updates: [{ at, progress, note }] (JSON), newest last.
+  updates       Json?
+  /// Free days already granted for this idea (prevents double-rewarding).
+  rewardedDays  Int      @default(0) @map("rewarded_days")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([status, updatedAt(sort: Desc)])
+  @@index([staffId])
+  @@map("ideas")
+}
+
+/// Bug / error report ("TechSupport"). Admin-managed; submitter sees status on their support page.
+model SupportReport {
+  id            String   @id @default(cuid())
+  ref           String   @unique // e.g. BUG-4KD2P
+  staffId       String?  @map("staff_id")
+  submitterName String?  @map("submitter_name")
+  submitterEmail String? @map("submitter_email")
+  title         String
+  details       String?  @db.Text
+  /// PENDING | IN_PROGRESS | HALFWAY | COMPLETED
+  status        String   @default("PENDING")
+  /// Note from support shown to the reporter.
+  adminNote     String?  @db.Text @map("admin_note")
+  rewardedDays  Int      @default(0) @map("rewarded_days")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([status, updatedAt(sort: Desc)])
+  @@index([staffId])
+  @@map("support_reports")
+}
