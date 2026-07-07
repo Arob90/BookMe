@@ -10,6 +10,7 @@ export type SupportReportView = {
   details: string | null
   status: string
   adminNote: string | null
+  attachments: string[]
   createdAt: string
   updatedAt: string
 }

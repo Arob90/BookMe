@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { Trash2, Gift, Hash } from 'lucide-react'
+import { Trash2, Gift, Hash, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
@@ -60,6 +60,25 @@ function ReportRow({ report }: { report: AdminReport }) {
       </div>
 
       {report.details && <p className="mt-2 whitespace-pre-line text-sm text-gray-600">{report.details}</p>}
+
+      {report.attachments.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {report.attachments.map((url, i) => {
+            const isImg = /\.(jpe?g|png|gif|webp|bmp|svg|heic)$/i.test(url)
+            const name = decodeURIComponent(url.split('/').pop() || 'file')
+            return isImg ? (
+              <a key={i} href={url} target="_blank" rel="noreferrer">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="attachment" className="h-20 w-20 rounded-lg border object-cover" />
+              </a>
+            ) : (
+              <a key={i} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-xs text-gray-600 hover:border-violet-300">
+                <FileText className="h-3.5 w-3.5" /> {name}
+              </a>
+            )
+          })}
+        </div>
+      )}
 
       <div className="mt-3 space-y-2 rounded-xl bg-gray-50/70 p-3">
         <div className="flex flex-wrap items-center gap-2">

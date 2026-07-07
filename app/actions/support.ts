@@ -16,11 +16,12 @@ const ADMIN_INBOX = 'sasoandco.ltd@gmail.com'
 
 function toView(r: {
   id: string; ref: string; title: string; details: string | null; status: string
-  adminNote: string | null; createdAt: Date; updatedAt: Date
+  adminNote: string | null; attachments: string[]; createdAt: Date; updatedAt: Date
 }): SupportReportView {
   return {
     id: r.id, ref: r.ref, title: r.title, details: r.details ?? null, status: r.status,
-    adminNote: r.adminNote ?? null, createdAt: r.createdAt.toISOString(), updatedAt: r.updatedAt.toISOString(),
+    adminNote: r.adminNote ?? null, attachments: r.attachments ?? [],
+    createdAt: r.createdAt.toISOString(), updatedAt: r.updatedAt.toISOString(),
   }
 }
 
@@ -29,6 +30,7 @@ function toView(r: {
 const submitSchema = z.object({
   title: z.string().trim().min(3, 'Briefly describe the problem').max(160),
   details: z.string().trim().max(4000).optional().nullable(),
+  attachments: z.array(z.string().url()).max(10).optional(),
 })
 
 export async function submitSupportReport(input: z.infer<typeof submitSchema>) {
@@ -52,7 +54,11 @@ export async function submitSupportReport(input: z.infer<typeof submitSchema>) {
   )
 
   await db.supportReport.create({
-    data: { ref, staffId, submitterName, submitterEmail, title: v.title, details: v.details?.trim() || null },
+    data: {
+      ref, staffId, submitterName, submitterEmail,
+      title: v.title, details: v.details?.trim() || null,
+      attachments: v.attachments ?? [],
+    },
   })
 
   try {

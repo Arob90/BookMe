@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { format } from 'date-fns'
-import { LifeBuoy, Plus, Hash, Bug } from 'lucide-react'
+import { LifeBuoy, Plus, Hash, Bug, Paperclip, X, FileText, ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -29,6 +29,31 @@ export function SupportPanel({ mine }: { mine: SupportReportView[] }) {
   const [saving, setSaving] = useState(false)
   const [title, setTitle] = useState('')
   const [details, setDetails] = useState('')
+  const [attachments, setAttachments] = useState<string[]>([])
+  const [uploading, setUploading] = useState(false)
+
+  const fileName = (url: string) => decodeURIComponent(url.split('/').pop() || 'file')
+  const isImage = (url: string) => /\.(jpe?g|png|gif|webp|bmp|svg|heic)$/i.test(url)
+
+  const onPickFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return
+    setUploading(true)
+    try {
+      const urls: string[] = []
+      for (const f of Array.from(files)) {
+        const fd = new FormData()
+        fd.append('file', f)
+        fd.append('type', 'support')
+        const res = await fetch('/api/upload', { method: 'POST', body: fd })
+        const data = await res.json().catch(() => ({}))
+        if (res.ok && data.url) urls.push(data.url)
+        else toast({ title: `Couldn't upload ${f.name}`, description: data.error ?? 'Try again', variant: 'destructive' })
+      }
+      if (urls.length) setAttachments((prev) => [...prev, ...urls])
+    } finally {
+      setUploading(false)
+    }
+  }
 
   const send = async () => {
     if (title.trim().length < 3) {
@@ -37,12 +62,12 @@ export function SupportPanel({ mine }: { mine: SupportReportView[] }) {
     }
     setSaving(true)
     try {
-      const r = await submitSupportReport({ title: title.trim(), details: details.trim() || null })
+      const r = await submitSupportReport({ title: title.trim(), details: details.trim() || null, attachments })
       toast({
         title: 'Report sent — thank you for your patience 🙏',
         description: `Your reference is ${r.ref}. We'll get on it and keep you posted here.`,
       })
-      setTitle(''); setDetails(''); setOpen(false)
+      setTitle(''); setDetails(''); setAttachments([]); setOpen(false)
       router.refresh()
     } catch (e: any) {
       toast({ title: 'Could not send', description: e?.message ?? 'Please try again.', variant: 'destructive' })
@@ -101,6 +126,22 @@ export function SupportPanel({ mine }: { mine: SupportReportView[] }) {
                       style={{ width: `${s.pct}%` }}
                     />
                   </div>
+                  {r.attachments.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {r.attachments.map((url, i) =>
+                        isImage(url) ? (
+                          <a key={i} href={url} target="_blank" rel="noreferrer">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={url} alt="attachment" className="h-16 w-16 rounded-lg border object-cover" />
+                          </a>
+                        ) : (
+                          <a key={i} href={url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-xs text-slate-600 hover:border-violet-300">
+                            <FileText className="h-3.5 w-3.5" /> {fileName(url)}
+                          </a>
+                        )
+                      )}
+                    </div>
+                  )}
                   {r.adminNote && (
                     <p className="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
                       <span className="font-semibold">Support:</span> {r.adminNote}
@@ -127,6 +168,33 @@ export function SupportPanel({ mine }: { mine: SupportReportView[] }) {
             <div className="grid gap-1.5">
               <div className="text-sm font-medium">Details <span className="font-normal text-slate-400">(optional)</span></div>
               <Textarea rows={4} value={details} onChange={(e) => setDetails(e.target.value)} placeholder="What were you doing? What did you expect vs. what happened?" />
+            </div>
+            <div className="grid gap-1.5">
+              <div className="text-sm font-medium">Screenshots / files <span className="font-normal text-slate-400">(optional, any format)</span></div>
+              <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-slate-300 px-3 py-2 text-sm text-slate-500 transition-colors hover:border-violet-300 hover:text-violet-700">
+                <Paperclip className="h-4 w-4" />
+                {uploading ? 'Uploading…' : 'Add files'}
+                <input
+                  type="file"
+                  multiple
+                  className="hidden"
+                  disabled={uploading}
+                  onChange={(e) => { onPickFiles(e.target.files); e.currentTarget.value = '' }}
+                />
+              </label>
+              {attachments.length > 0 && (
+                <ul className="space-y-1">
+                  {attachments.map((url, i) => (
+                    <li key={i} className="flex items-center gap-2 rounded-md bg-slate-50 px-2 py-1 text-xs text-slate-600">
+                      {isImage(url) ? <ImageIcon className="h-3.5 w-3.5 shrink-0" /> : <FileText className="h-3.5 w-3.5 shrink-0" />}
+                      <span className="flex-1 truncate">{fileName(url)}</span>
+                      <button type="button" onClick={() => setAttachments((prev) => prev.filter((_, j) => j !== i))} className="text-slate-400 hover:text-red-600">
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
           <DialogFooter>

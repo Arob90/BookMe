@@ -7,7 +7,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Bell, Calendar, DollarSign, Package, Clock, Gift, UserPlus } from 'lucide-react'
+import { Bell, Calendar, DollarSign, Package, Clock, Gift, UserPlus, Lightbulb, LifeBuoy } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useRouter } from 'next/navigation'
@@ -24,6 +24,8 @@ const notificationIcons = {
   low_inventory: Package,
   birthday: Gift,
   account_request: UserPlus,
+  idea: Lightbulb,
+  support_report: LifeBuoy,
 }
 
 const priorityColors = {

@@ -13,7 +13,7 @@ import { invoiceBalanceDue } from '@/lib/payment-net'
 
 export interface Notification {
   id: string
-  type: 'upcoming_appointment' | 'unpaid_payment' | 'low_inventory' | 'birthday' | 'account_request'
+  type: 'upcoming_appointment' | 'unpaid_payment' | 'low_inventory' | 'birthday' | 'account_request' | 'idea' | 'support_report'
   title: string
   message: string
   link?: string
@@ -247,6 +247,50 @@ export async function getNotifications(): Promise<Notification[]> {
         priority: 'high',
         createdAt: req.createdAt,
       })
+    }
+
+    // New ideas awaiting review
+    try {
+      const pendingIdeas = await db.idea.findMany({
+        where: { status: 'PENDING' },
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+      })
+      for (const idea of pendingIdeas) {
+        notifications.push({
+          id: `idea-${idea.id}`,
+          type: 'idea',
+          title: '💡 New idea submitted',
+          message: `${idea.submitterName ?? 'A provider'} — ${idea.title} (${idea.ref})`,
+          link: '/app/ideas',
+          priority: 'high',
+          createdAt: idea.createdAt,
+        })
+      }
+    } catch {
+      /* ideas table may not exist yet */
+    }
+
+    // New / open bug reports
+    try {
+      const openReports = await db.supportReport.findMany({
+        where: { status: 'PENDING' },
+        orderBy: { createdAt: 'desc' },
+        take: 20,
+      })
+      for (const r of openReports) {
+        notifications.push({
+          id: `support-${r.id}`,
+          type: 'support_report',
+          title: '🐞 New bug report',
+          message: `${r.submitterName ?? 'A provider'} — ${r.title} (${r.ref})`,
+          link: '/app/support',
+          priority: 'high',
+          createdAt: r.createdAt,
+        })
+      }
+    } catch {
+      /* support table may not exist yet */
     }
   }
 

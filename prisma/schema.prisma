@@ -650,6 +650,8 @@ model SupportReport {
   status        String   @default("PENDING")
   /// Note from support shown to the reporter.
   adminNote     String?  @db.Text @map("admin_note")
+  /// Uploaded screenshot / file URLs (Vercel Blob), any format.
+  attachments   String[] @default([])
   rewardedDays  Int      @default(0) @map("rewarded_days")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
