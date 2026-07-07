@@ -889,12 +889,12 @@ function CalendarView({ initialAppointments, initialTasks = [], initialReminders
                       // Show label for all time slots (:00, :15, :30, :45)
                       // Each 15-minute slot is 15px (matching week view: 60px per hour)
                       return (
-                        <div key={`${slot.hour}-${slot.minute}`} className="grid grid-cols-6 border-b border-gray-100 relative flex-shrink-0" style={{ height: '15px' }}>
-                          <div className="p-0.5 text-[10px] text-gray-500 border-r flex items-center">
+                        <div key={`${slot.hour}-${slot.minute}`} className="grid grid-cols-[64px_1fr] border-b border-gray-100 relative flex-shrink-0" style={{ height: '15px' }}>
+                          <div className="p-0.5 text-[10px] text-gray-500 border-r flex items-center whitespace-nowrap overflow-hidden">
                             {format(new Date().setHours(slot.hour, slot.minute, 0, 0), 'h:mm a')}
                           </div>
-                          <div 
-                            className="col-span-5 cursor-pointer hover:bg-gray-50/50 transition-colors relative group"
+                          <div
+                            className="cursor-pointer hover:bg-gray-50/50 transition-colors relative group"
                             style={{ height: '15px' }}
                             onDoubleClick={(e) => {
                               if (e.target === e.currentTarget || (e.target as HTMLElement).closest('.appointment-card') === null) {

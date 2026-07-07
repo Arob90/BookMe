@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { db } from './db'
 import bcrypt from 'bcryptjs'
 import { logAuthFailure, logAuthSuccess } from './logger'
+import { isSubscriptionExpired } from './subscription'
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -43,6 +44,29 @@ export const authOptions: NextAuthOptions = {
                     if (user.isPaused === true) {
                         logAuthFailure({ reason: 'account_paused', email: credentials.email })
                         return null
+                    }
+
+                    // Subscription expiry blocks the whole business (owner + team) until an
+                    // admin renews it. The expiry date lives on the business owner row.
+                    try {
+                        const businessOwnerId = user.ownerUserId ?? user.id
+                        let subEndsAt: Date | null = null
+                        if (businessOwnerId === user.id) {
+                            subEndsAt = user.subscriptionEndsAt ?? null
+                        } else {
+                            const bizOwner = await db.user.findUnique({
+                                where: { id: businessOwnerId },
+                                select: { subscriptionEndsAt: true },
+                            })
+                            subEndsAt = bizOwner?.subscriptionEndsAt ?? null
+                        }
+                        if (isSubscriptionExpired(subEndsAt)) {
+                            logAuthFailure({ reason: 'subscription_expired', email: credentials.email })
+                            return null
+                        }
+                    } catch (e) {
+                        // Stale Prisma client without subscription_ends_at: skip the check
+                        // rather than locking everyone out.
                     }
 
                     // Tenant safety: a STAFF login must be linked to exactly one owner business.

@@ -38,9 +38,8 @@ export function ClientsList({ initialClients }: ClientsListProps) {
   const [loadingClient, setLoadingClient] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [companyPage, setCompanyPage] = useState(1)
-  const [itemsPerPage, setItemsPerPage] = useState(12)
+  const [itemsPerPage] = useState(12)
   const [companiesPerPage] = useState(12)
-  const [columns, setColumns] = useState(3)
   const [clients, setClients] = useState(initialClients)
 
   // Update clients when initialClients prop changes
@@ -66,18 +65,6 @@ export function ClientsList({ initialClients }: ClientsListProps) {
       cleanup4()
     }
   }, [router])
-
-  // Responsive grid: 2 columns on small screens, 3 on larger (no 4-up — cards stay readable)
-  useEffect(() => {
-    const updateLayout = () => {
-      setColumns(window.innerWidth < 768 ? 2 : 3)
-      setItemsPerPage(12)
-    }
-
-    updateLayout()
-    window.addEventListener('resize', updateLayout)
-    return () => window.removeEventListener('resize', updateLayout)
-  }, [])
 
   const handleClientClick = async (clientId: string) => {
     setLoadingClient(true)
@@ -189,9 +176,9 @@ export function ClientsList({ initialClients }: ClientsListProps) {
       <Card
         key={client.id}
         onClick={() => handleClientClick(client.id)}
-        className="cursor-pointer border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
+        className="flex h-full min-h-[9.5rem] cursor-pointer flex-col border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
       >
-        <div className="flex flex-col gap-2.5 p-3">
+        <div className="flex flex-1 flex-col gap-2.5 p-3">
           <div className="flex items-start gap-3">
             <Avatar className="h-10 w-10 shrink-0">
               <AvatarFallback className={`${avatarColor} text-sm font-semibold text-white`}>
@@ -233,7 +220,7 @@ export function ClientsList({ initialClients }: ClientsListProps) {
               </Badge>
             )}
           </div>
-          <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-gray-100 pt-2 text-xs text-gray-600">
+          <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 border-t border-gray-100 pt-2 text-xs text-gray-600">
             <span className="inline-flex items-center gap-1 tabular-nums">
               <DollarSign className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden />
               <span className="font-medium text-gray-900">{formatCurrency(totalSpend)}</span>
@@ -347,19 +334,19 @@ export function ClientsList({ initialClients }: ClientsListProps) {
         </Card>
       ) : viewMode === 'byCompany' ? (
         <>
-        <div className="grid flex-1 min-h-0 auto-rows-auto grid-cols-1 content-start items-start justify-items-stretch gap-3 overflow-y-auto sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <div className="grid flex-1 min-h-0 auto-rows-min grid-cols-1 content-start items-stretch justify-items-stretch gap-2.5 overflow-y-auto sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
           {paginatedCompanies.map((company) => {
             const contacts = companyContactsMap[company.id] || []
             return (
                 <Card
                   key={company.id}
-                  className="cursor-pointer border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md w-full"
+                  className="flex h-full min-h-[9.5rem] w-full cursor-pointer flex-col border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-md"
                   onClick={async () => {
                     setSelectedCompanyContacts(contacts)
                     await handleClientClick(company.id)
                   }}
                 >
-                  <div className="flex flex-col gap-2.5 p-3">
+                  <div className="flex flex-1 flex-col gap-2.5 p-3">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-10 w-10 shrink-0">
                         <AvatarFallback className="bg-pink-500 text-sm font-semibold text-white">
@@ -393,7 +380,7 @@ export function ClientsList({ initialClients }: ClientsListProps) {
                         </div>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-gray-100 pt-2 text-xs text-gray-600">
+                    <div className="mt-auto flex flex-wrap gap-x-4 gap-y-1 border-t border-gray-100 pt-2 text-xs text-gray-600">
                       <span className="inline-flex items-center gap-1 tabular-nums">
                         <DollarSign className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden />
                         <span className="font-medium text-gray-900">
@@ -461,9 +448,7 @@ export function ClientsList({ initialClients }: ClientsListProps) {
         </Card>
       ) : (
         <>
-          <div
-            className={`grid flex-1 min-h-0 content-start items-start gap-2 overflow-y-auto sm:gap-3 ${columns === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}
-          >
+          <div className="grid flex-1 min-h-0 auto-rows-min content-start items-stretch gap-2.5 overflow-y-auto sm:gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {paginatedClients.map((client) => renderClientCard(client))}
           </div>
 

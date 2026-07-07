@@ -18,6 +18,8 @@ import {
   recordBillingHistoryEvent,
 } from '@/lib/billing-history'
 import { ensureOwnerDefaultClients } from '@/lib/owner-default-clients'
+import { computeRenewalDate } from '@/lib/subscription'
+import { format } from 'date-fns'
 
 function isSuperAdminEmail(email: string) {
   return email.trim().toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()
@@ -135,6 +137,7 @@ export async function getAllManagedUsers() {
     createdAt: Date
     updatedAt: Date
     ownerUserId?: string | null
+    subscriptionEndsAt?: Date | null
   }
 
   let users: UserRow[]
@@ -153,6 +156,7 @@ export async function getAllManagedUsers() {
         createdAt: true,
         updatedAt: true,
         ownerUserId: true,
+        subscriptionEndsAt: true,
       },
     })
   } catch (e) {
@@ -200,6 +204,7 @@ export async function getAllManagedUsers() {
     const { ownerUserId: _omit, ...rest } = u
     return {
       ...rest,
+      subscriptionEndsAt: u.subscriptionEndsAt ?? null,
       isArchived: isArchivedEmail(u.email),
       maxUsers: maxByStaff.get(u.id) ?? null,
     }
@@ -349,6 +354,7 @@ const managedAccountOwnerSelect = {
   birthday: true,
   address: true,
   profilePhoto: true,
+  subscriptionEndsAt: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -517,6 +523,93 @@ export async function setManagedBusinessPaused(ownerId: string, paused: boolean)
 
   revalidatePath('/app/accounts')
   return { ok: true }
+}
+
+/** Load a business owner row for subscription changes; rejects team logins. */
+async function requireBusinessOwner(ownerId: string) {
+  const owner = await db.user.findUnique({
+    where: { id: ownerId },
+    select: { id: true, email: true, ownerUserId: true, subscriptionEndsAt: true },
+  })
+  if (!owner) throw new Error('Account not found')
+  if (owner.ownerUserId != null) {
+    throw new Error('Manage the subscription from the business account, not a team login.')
+  }
+  return owner
+}
+
+const renewSubscriptionSchema = z.object({
+  months: z.union([z.literal(1), z.literal(3), z.literal(6), z.literal(12)]),
+})
+
+/** Extend a business subscription by a number of months (from current expiry if still active, else from now). */
+export async function renewSubscription(ownerId: string, data: z.infer<typeof renewSubscriptionSchema>) {
+  const session = await requireSuperAdmin()
+  const { months } = renewSubscriptionSchema.parse(data)
+
+  const owner = await requireBusinessOwner(ownerId)
+  const previous = owner.subscriptionEndsAt ?? null
+  const newEnd = computeRenewalDate(previous, months)
+
+  await db.user.update({
+    where: { id: ownerId },
+    data: { subscriptionEndsAt: newEnd },
+  })
+
+  await recordBillingHistoryEvent({
+    staffId: ownerId,
+    eventType: BillingHistoryEventType.SUBSCRIPTION_RENEWED,
+    title: `Subscription renewed (+${months} month${months === 1 ? '' : 's'})`,
+    detail: `Expiry ${previous ? `moved from ${format(previous, 'PP')} ` : 'set '}to ${format(newEnd, 'PP')}.`,
+    metadata: {
+      months,
+      from: previous ? previous.toISOString() : null,
+      to: newEnd.toISOString(),
+    },
+    actorUserId: session.user?.id ?? null,
+  })
+
+  revalidatePath('/app/accounts')
+  return { ok: true as const, subscriptionEndsAt: newEnd.toISOString() }
+}
+
+const setSubscriptionEndSchema = z.object({
+  /** ISO date string, or null to clear the expiry (unlimited). */
+  endsAt: z.string().datetime().nullable(),
+})
+
+/** Set or clear an exact subscription expiry date for a business. */
+export async function setSubscriptionEnd(ownerId: string, data: z.infer<typeof setSubscriptionEndSchema>) {
+  const session = await requireSuperAdmin()
+  const { endsAt } = setSubscriptionEndSchema.parse(data)
+
+  const owner = await requireBusinessOwner(ownerId)
+  const previous = owner.subscriptionEndsAt ?? null
+  const newEnd = endsAt ? new Date(endsAt) : null
+
+  await db.user.update({
+    where: { id: ownerId },
+    data: { subscriptionEndsAt: newEnd },
+  })
+
+  await recordBillingHistoryEvent({
+    staffId: ownerId,
+    eventType: newEnd
+      ? BillingHistoryEventType.SUBSCRIPTION_RENEWED
+      : BillingHistoryEventType.SUBSCRIPTION_CLEARED,
+    title: newEnd ? 'Subscription date set' : 'Subscription expiry cleared',
+    detail: newEnd
+      ? `Expiry ${previous ? `changed from ${format(previous, 'PP')} ` : 'set '}to ${format(newEnd, 'PP')}.`
+      : `Expiry removed${previous ? ` (was ${format(previous, 'PP')})` : ''}; account no longer expires.`,
+    metadata: {
+      from: previous ? previous.toISOString() : null,
+      to: newEnd ? newEnd.toISOString() : null,
+    },
+    actorUserId: session.user?.id ?? null,
+  })
+
+  revalidatePath('/app/accounts')
+  return { ok: true as const, subscriptionEndsAt: newEnd ? newEnd.toISOString() : null }
 }
 
 const teamMemberSelect = {

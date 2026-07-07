@@ -26,6 +26,9 @@ model User {
   address      String?   @db.Text
   profilePhoto String?   @map("profile_photo")
   isPaused     Boolean   @default(false) @map("is_paused")
+  /// Subscription expiry for the business (set on the owner row). null = no expiry tracked / unlimited.
+  /// When in the past, the owner and all team logins are blocked at sign-in until renewed.
+  subscriptionEndsAt DateTime? @map("subscription_ends_at")
   /// Per-staff rights (owners/admins always have all). JSON like { calendar, clients, services, payments }.
   /// null = full access (back-compat for existing staff).
   staffRights  Json?     @map("staff_rights")
@@ -565,4 +568,40 @@ model BillingHistoryEvent {
 
   @@index([staffId, createdAt(sort: Desc)])
   @@map("billing_history_events")
+}
+
+/// Owner-posted promo / announcement shown on the business profile page and (when active) in the sponsored ad rails.
+model Promotion {
+  id          String    @id @default(cuid())
+  staffId     String    @map("staff_id") // Business owner id (tenant)
+  title       String
+  description String?   @db.Text
+  imageUrl    String?   @map("image_url")
+  /// Optional visibility window. null = no bound on that side.
+  startsAt    DateTime? @map("starts_at")
+  endsAt      DateTime? @map("ends_at")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@index([staffId, createdAt(sort: Desc)])
+  @@index([isActive, endsAt])
+  @@map("promotions")
+}
+
+/// Lead from a public "list your business / advertise with us" CTA. Emailed to the admin + shown in the admin requests page.
+model ListingRequest {
+  id        String   @id @default(cuid())
+  fullName  String   @map("full_name")
+  phone     String?
+  email     String
+  message   String?  @db.Text
+  /// Which CTA / page the lead came from (e.g. "Advertise with us", "List your business · Cayo").
+  source    String?
+  status    String   @default("NEW") // NEW | CONTACTED | CLOSED
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt(sort: Desc)])
+  @@index([status, createdAt(sort: Desc)])
+  @@map("listing_requests")
 }

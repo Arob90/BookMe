@@ -5,7 +5,7 @@ import { FeatureFlipGrid } from '@/components/feature-flip-grid'
 
 export const metadata = {
   title: 'Features · BookMe',
-  description: 'Everything BookMe does for your service business — scheduling, CRM, payments, loyalty, inventory and analytics.',
+  description: 'Everything BookMe does for service providers — your own booking page plus scheduling, CRM, payments, loyalty, inventory and analytics.',
 }
 
 export default function FeaturesPage() {
@@ -27,8 +27,8 @@ export default function FeaturesPage() {
             One app for the whole <span className="text-violet-600">back office</span>.
           </h1>
           <p className="mt-5 text-lg text-slate-600">
-            From the first booking to the final report, BookMe handles the busywork so you can
-            stay focused on your clients. Explore what&apos;s inside.
+            Let clients book themselves online — then let BookMe handle the
+            busywork, from the first booking to the final report. Explore what&apos;s inside.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl">
@@ -63,7 +63,7 @@ export default function FeaturesPage() {
           <div className="grid gap-4 md:grid-cols-3">
             {[
               [<CalendarPlus key="1" className="h-6 w-6" />, '1 · Set up your services', 'Add what you offer, your hours and your team. Takes minutes, not a training day.'],
-              [<Share2 key="2" className="h-6 w-6" />, '2 · Share your booking link', 'Drop your personal link on Instagram, WhatsApp or your site. Clients book themselves.'],
+              [<Share2 key="2" className="h-6 w-6" />, '2 · Your booking link', 'Add your personal link to Instagram, WhatsApp or your site — clients book themselves.'],
               [<CheckCircle2 key="3" className="h-6 w-6" />, '3 · Run your day', 'Confirmations, reminders, payments and loyalty all happen automatically.'],
             ].map(([icon, t, b]) => (
               <div key={t as string} className="glass-card rounded-3xl p-7">
@@ -89,7 +89,7 @@ export default function FeaturesPage() {
                 Built to be calm, fast and reliable.
               </h2>
               <p className="mt-4 max-w-md text-white/80">
-                BookMe is designed for real service businesses — quick to learn, dependable
+                BookMe is designed for real service providers — quick to learn, dependable
                 every day, and secure by default.
               </p>
             </div>
@@ -115,7 +115,7 @@ export default function FeaturesPage() {
       <section className="px-5 pb-24 sm:px-8">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-            See it working in your business.
+            Ready to let clients book themselves?
           </h2>
           <p className="mt-4 text-slate-600">Start your free 14-day trial — no card required.</p>
           <Link href="/signup" className="mt-8 inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl">

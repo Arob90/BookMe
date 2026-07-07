@@ -9,6 +9,8 @@ export const BillingHistoryEventType = {
   SEAT_PLAN_CHANGE: 'SEAT_PLAN_CHANGE',
   ACCOUNT_PAUSED: 'ACCOUNT_PAUSED',
   ACCOUNT_UNPAUSED: 'ACCOUNT_UNPAUSED',
+  SUBSCRIPTION_RENEWED: 'SUBSCRIPTION_RENEWED',
+  SUBSCRIPTION_CLEARED: 'SUBSCRIPTION_CLEARED',
 } as const
 
 export type BillingHistoryEventTypeValue = (typeof BillingHistoryEventType)[keyof typeof BillingHistoryEventType]

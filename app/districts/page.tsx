@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { MapPin, ArrowRight, Search, CalendarCheck, Sparkles } from 'lucide-react'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
+import { ListingRequestButton } from '@/components/listing-request-modal'
 import { DISTRICTS } from '@/lib/districts'
 
 export const metadata = {
@@ -88,9 +89,12 @@ export default function DistrictsPage() {
           <p className="relative mx-auto mt-3 max-w-md text-white/80">
             Get listed in your district and start taking online bookings — free for 14 days.
           </p>
-          <Link href="/signup" className="relative mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl">
+          <ListingRequestButton
+            source="List your business · Districts"
+            className="relative mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+          >
             List your business <ArrowRight className="h-4 w-4" />
-          </Link>
+          </ListingRequestButton>
         </div>
       </section>
 

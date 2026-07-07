@@ -23,7 +23,6 @@ export function MarketingNav() {
           <Link href="/features" className="transition-colors hover:text-violet-700">Features</Link>
           <Link href="/pricing" className="transition-colors hover:text-violet-700">Pricing</Link>
           <Link href="/districts" className="transition-colors hover:text-violet-700">Districts</Link>
-          <Link href="/book" className="transition-colors hover:text-violet-700">Book now</Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link href="/login" className="rounded-full px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100">

@@ -189,6 +189,15 @@ export default function BookPage() {
   const [loadingBusinesses, setLoadingBusinesses] = useState<boolean>(true)
   const [bookingReceipt, setBookingReceipt] = useState<BookingReceipt | null>(null)
   const [postBookingPhase, setPostBookingPhase] = useState<'none' | 'success' | 'details'>('none')
+  // When arriving from a company's "Book now" link (/book?business=<id>), preselect that
+  // business and skip the picker. Applied once businesses load (see effect below).
+  const [pendingBusinessId, setPendingBusinessId] = useState<string | null>(null)
+
+  // Read the ?business= param once on mount.
+  useEffect(() => {
+    const bid = new URLSearchParams(window.location.search).get('business')
+    if (bid) setPendingBusinessId(bid)
+  }, [])
 
   // Load businesses on mount
   useEffect(() => {
@@ -254,6 +263,18 @@ export default function BookPage() {
 
     return () => controller.abort()
   }, [toast])
+
+  // Once businesses are loaded, honor a ?business= deep link by jumping straight into
+  // that company's booking flow. Runs once (clears the pending id after handling).
+  useEffect(() => {
+    if (!pendingBusinessId || businesses.length === 0) return
+    const match = businesses.find((b) => b.id === pendingBusinessId)
+    if (match) {
+      setSelectedBusiness(match)
+      setStep('client')
+    }
+    setPendingBusinessId(null)
+  }, [pendingBusinessId, businesses])
 
   const DISTRICTS: Array<{ value: string; label: string }> = [
     { value: 'ALL', label: 'All locations' },
@@ -1678,6 +1699,33 @@ export default function BookPage() {
                 )
               })}
             </div>
+
+            {/* Selected business banner — confirms who the client is booking with */}
+            {selectedBusiness && step !== 'business' && (
+              <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-violet-100 bg-white px-4 py-3 shadow-sm">
+                {formatImageUrl(selectedBusiness.profilePhoto) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={formatImageUrl(selectedBusiness.profilePhoto) as string}
+                    alt={selectedBusiness.name}
+                    className="h-11 w-11 shrink-0 rounded-xl object-cover"
+                  />
+                ) : (
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-violet-600 text-sm font-bold text-white">
+                    {getBusinessInitials(selectedBusiness.name)}
+                  </span>
+                )}
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wide text-violet-500">Booking with</p>
+                  <p className="truncate font-display text-base font-bold text-slate-900">{selectedBusiness.name}</p>
+                  {(selectedBusiness.district || selectedBusiness.address) && (
+                    <p className="truncate text-xs text-slate-500">
+                      {selectedBusiness.address || selectedBusiness.district}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Step 1: Select Business */}
             {step === 'business' && (

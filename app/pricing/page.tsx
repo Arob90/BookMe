@@ -48,13 +48,16 @@ const AD_PACKAGES = [
 
 type Billing = 'monthly' | 'annual'
 
+/** Show cents only when the amount isn't a whole number (e.g. 22.50, but 60). */
+const fmtPrice = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(2))
+
 const TIERS = [
   {
     id: 'basic',
     name: 'Basic',
     blurb: 'For solo owners getting started.',
-    monthly: 45,
-    annual: 450, // ~2 months free
+    monthly: 22.5,
+    annual: 225, // ~2 months free (10× monthly)
     seats: '1 user',
     highlight: false,
     features: [
@@ -69,8 +72,8 @@ const TIERS = [
     id: 'pro',
     name: 'Pro',
     blurb: 'For growing teams that need more.',
-    monthly: 65,
-    annual: 650,
+    monthly: 34.5,
+    annual: 345,
     seats: 'Up to 5 users',
     highlight: true,
     features: [
@@ -86,8 +89,8 @@ const TIERS = [
     id: 'business',
     name: 'Business',
     blurb: 'For established businesses at scale.',
-    monthly: 99,
-    annual: 990,
+    monthly: 60,
+    annual: 600,
     seats: 'Up to 10 users',
     highlight: false,
     features: [
@@ -153,7 +156,7 @@ export default function PricingPage() {
       <section className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
         <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-3">
           {TIERS.map((tier, i) => {
-            const price = billing === 'monthly' ? tier.monthly : Math.round(tier.annual / 12)
+            const price = billing === 'monthly' ? tier.monthly : tier.annual / 12
             return (
               <div
                 key={tier.id}
@@ -172,8 +175,8 @@ export default function PricingPage() {
                 <h3 className={`font-display text-xl font-bold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>{tier.name}</h3>
                 <p className={`mt-1 text-sm ${tier.highlight ? 'text-white/80' : 'text-slate-500'}`}>{tier.blurb}</p>
                 <div className="mt-5 flex items-baseline gap-1">
-                  <span className={`font-display text-5xl font-bold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>${price}</span>
-                  <span className={tier.highlight ? 'text-white/70' : 'text-slate-400'}>BZD /mo</span>
+                  <span className={`font-display text-5xl font-bold ${tier.highlight ? 'text-white' : 'text-slate-900'}`}>${fmtPrice(price)}</span>
+                  <span className={tier.highlight ? 'text-white/70' : 'text-slate-400'}>/mo</span>
                 </div>
                 <p className={`mt-1 h-4 text-xs ${tier.highlight ? 'text-white/70' : 'text-slate-400'}`}>
                   {billing === 'annual' ? `Billed $${tier.annual}/year` : `or $${tier.annual}/yr — save 2 months`}
@@ -209,7 +212,7 @@ export default function PricingPage() {
 
         <p className="mx-auto mt-12 max-w-xl text-center text-sm text-slate-500">
           All plans include the 14-day free trial. After the trial, choose a plan to keep your account active.
-          All prices in Belize Dollars (BZD). Need something custom?{' '}
+          Need something custom?{' '}
           <a href="mailto:sasoandco.ltd@gmail.com" className="font-medium text-violet-600 hover:underline">Contact us</a>.
         </p>
       </section>

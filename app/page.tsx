@@ -6,9 +6,9 @@ import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
 import { DISTRICTS } from '@/lib/districts'
 
 export const metadata = {
-  title: 'BookMe — The simplest way to run your bookings',
+  title: 'BookMe — Your booking link for clients',
   description:
-    'Scheduling, client CRM, payments, loyalty and analytics for service businesses — all in one beautiful app.',
+    'BookMe gives service providers a personal booking page. Clients book themselves online while you manage appointments, payments, loyalty and reports in one app.',
 }
 
 export default function HomePage() {
@@ -52,15 +52,16 @@ function Hero() {
         <div className="animate-fade-up">
           <span className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-violet-700">
             <span className="h-1.5 w-1.5 rounded-full bg-violet-600" />
-            Scheduling &amp; client CRM
+            Online booking for service providers
           </span>
           <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.05] tracking-tight text-slate-900 sm:text-6xl">
-            The simplest way to run your{' '}
-            <span className="text-violet-600">bookings</span>.
+            Manage your bookings. Let clients{' '}
+            <span className="text-violet-600">book themselves</span>.
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-600 sm:text-lg">
-            Appointments, clients, payments, loyalty and reports — beautifully
-            organised in one app, so your day runs itself.
+            BookMe gives you your own booking page. Clients pick a service and
+            time online, while you manage appointments, payments, loyalty and
+            reports in one app.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <BtnPrimary href="/signup" className="px-7 py-3.5 text-base">
@@ -76,7 +77,7 @@ function Hero() {
                 <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">Loved</span> by service businesses</p>
+            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">Loved</span> by service providers</p>
           </div>
         </div>
 
@@ -146,7 +147,7 @@ function TrustStrip() {
     <section className="border-y border-slate-100 bg-slate-50/60">
       <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
         <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-          Built for every kind of service business
+          A booking page for every kind of service provider
         </p>
         <div className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           {kinds.map((k) => (
@@ -181,11 +182,12 @@ function AboutSection() {
         <div className="order-1 lg:order-2">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">About BookMe</p>
           <h2 className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
-            Everything your business needs, in one place.
+            Your booking page — and everything behind it.
           </h2>
           <p className="mt-4 text-slate-600">
-            Stop juggling notebooks, spreadsheets and chat apps. BookMe pulls
-            your whole operation together so nothing slips through the cracks.
+            Clients book themselves online, 24/7 — no more back-and-forth
+            messages. Behind the scenes, BookMe pulls your whole operation
+            together so nothing slips through the cracks.
           </p>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {[
@@ -306,7 +308,7 @@ function FinalCta() {
           <div className="absolute -bottom-12 left-10 h-56 w-56 rounded-full bg-fuchsia-300/20 blur-2xl" />
         </div>
         <h2 className="relative mx-auto max-w-2xl font-display text-3xl font-bold leading-tight text-white sm:text-5xl">
-          Join the service businesses growing with BookMe.
+          Join the service providers growing with BookMe.
         </h2>
         <p className="relative mx-auto mt-5 max-w-md text-white/80">Set up in minutes. Your first 14 days are on us.</p>
         <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">

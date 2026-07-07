@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { Megaphone, Sparkles, TrendingUp, Star } from 'lucide-react'
+import type { RailPromotion } from '@/app/actions/promotions'
+import { ListingRequestButton } from '@/components/listing-request-modal'
 
 type Ad = {
   tone: 'violet' | 'amber' | 'white'
@@ -70,7 +72,7 @@ function AdCard({ ad }: { ad: Ad }) {
       : 'bg-violet-600 text-white'
 
   return (
-    <Link href={ad.href} className={`${base} ${tone}`}>
+    <ListingRequestButton source={`Ad · ${ad.title}`} className={`${base} ${tone} w-full text-left`}>
       <div className="flex items-center justify-between">
         <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconWrap}`}>{ad.icon}</span>
         <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${chip}`}>Sponsored</span>
@@ -79,12 +81,41 @@ function AdCard({ ad }: { ad: Ad }) {
       <h3 className="mt-1 font-display text-base font-bold leading-snug">{ad.title}</h3>
       <p className={`mt-1.5 text-xs leading-relaxed ${ad.tone === 'violet' ? 'text-white/80' : 'text-slate-500'}`}>{ad.body}</p>
       <span className={`mt-4 inline-flex w-full items-center justify-center rounded-full px-3 py-2 text-xs font-semibold ${ctaCls}`}>{ad.cta}</span>
+    </ListingRequestButton>
+  )
+}
+
+/** A real owner-posted promotion; links to that business's profile page. */
+function PromoCard({ promo }: { promo: RailPromotion }) {
+  return (
+    <Link
+      href={`/b/${promo.businessId}`}
+      className="block overflow-hidden rounded-3xl bg-amber-50 p-5 shadow-sm ring-1 ring-amber-200 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+    >
+      <div className="flex items-center justify-between">
+        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-100 text-amber-600">
+          <Megaphone className="h-5 w-5" />
+        </span>
+        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700">Sponsored</span>
+      </div>
+      {promo.imageUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={promo.imageUrl} alt={promo.title} className="mt-4 h-24 w-full rounded-xl object-cover" />
+      )}
+      <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-amber-600">{promo.businessName}</p>
+      <h3 className="mt-1 font-display text-base font-bold leading-snug text-slate-900">{promo.title}</h3>
+      {promo.description && (
+        <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed text-slate-600">{promo.description}</p>
+      )}
+      <span className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-violet-600 px-3 py-2 text-xs font-semibold text-white">
+        View &amp; book
+      </span>
     </Link>
   )
 }
 
 /** Real sponsored advertiser: AR Land Documents & Services. */
-function ArLandAd() {
+function ArLandAd({ href }: { href: string }) {
   const services = [
     'Transfer of Land', 'First Registration', 'Land Certificate',
     'Power of Attorney', 'Deed of Mortgage', 'Lost Title',
@@ -92,7 +123,7 @@ function ArLandAd() {
   ]
   return (
     <Link
-      href="mailto:alexisrobertsbelize@gmail.com"
+      href={href}
       className="block overflow-hidden rounded-3xl bg-[#efe7e3] p-5 shadow-sm ring-1 ring-[#e2d6d0] transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
     >
       <div className="flex items-center justify-between">
@@ -117,21 +148,37 @@ function ArLandAd() {
   )
 }
 
-export function SponsoredRail({ district, side }: { district: string; side: 'left' | 'right' }) {
+export function SponsoredRail({
+  district,
+  side,
+  arLandBusinessId,
+  promos = [],
+}: {
+  district: string
+  side: 'left' | 'right'
+  /** AR Land's business id, so their sponsored card links to their profile page. */
+  arLandBusinessId?: string
+  /** Active owner-posted promotions to feature (split across the two rails). */
+  promos?: RailPromotion[]
+}) {
   const ads = adsFor(district)
+  const arLandHref = arLandBusinessId ? `/b/${arLandBusinessId}` : '/book'
+  // Give the left rail the first promo, the right rail the next two; fall back to lead-gen ads.
+  const railPromos = side === 'left' ? promos.slice(0, 1) : promos.slice(1, 3)
+
   return (
     <aside className="hidden xl:block">
       <div className="sticky top-24 space-y-4">
         <p className="px-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-300">Sponsored</p>
         {side === 'left' ? (
           <>
-            <ArLandAd />
-            <AdCard ad={ads[0]} />
+            <ArLandAd href={arLandHref} />
+            {railPromos[0] ? <PromoCard promo={railPromos[0]} /> : <AdCard ad={ads[0]} />}
           </>
         ) : (
           <>
-            <AdCard ad={ads[2]} />
-            <AdCard ad={ads[3]} />
+            {railPromos[0] ? <PromoCard promo={railPromos[0]} /> : <AdCard ad={ads[2]} />}
+            {railPromos[1] ? <PromoCard promo={railPromos[1]} /> : <AdCard ad={ads[3]} />}
           </>
         )}
       </div>

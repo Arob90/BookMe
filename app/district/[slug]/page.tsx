@@ -3,9 +3,11 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowRight, MapPin, Clock3, BadgeCheck, Sparkles } from 'lucide-react'
 import { DISTRICTS, districtBySlug } from '@/lib/districts'
 import { getPublicBusinesses } from '@/app/actions/public-booking'
+import { getActivePromotionsForRails } from '@/app/actions/promotions'
 import { DistrictDirectory, type DirectoryBusiness } from '@/components/district-directory'
 import { SponsoredRail } from '@/components/sponsored-rail'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
+import { ListingRequestButton } from '@/components/listing-request-modal'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,8 +28,11 @@ export default async function DistrictPage({ params }: { params: { slug: string 
   if (!district) notFound()
 
   let businesses: DirectoryBusiness[] = []
+  let arLandBusinessId: string | undefined
   try {
     const all = await getPublicBusinesses()
+    // AR Land is a real cross-district sponsored advertiser — resolve their id from the full list.
+    arLandBusinessId = (all as any[]).find((b) => /ar land/i.test(b.name || ''))?.id
     businesses = (all as any[])
       .filter((b) => (b.district || '').toUpperCase() === district.value)
       .map((b) => ({
@@ -43,6 +48,8 @@ export default async function DistrictPage({ params }: { params: { slug: string 
   } catch {
     businesses = []
   }
+
+  const railPromos = await getActivePromotionsForRails(6).catch(() => [])
 
   // Featured = a paid, rotating placement. This page is force-dynamic, so the
   // pick changes each load — when several businesses buy "Featured" they share
@@ -92,9 +99,9 @@ export default async function DistrictPage({ params }: { params: { slug: string 
       {/* Directory with sponsored rails */}
       <section className="mx-auto max-w-7xl px-5 py-14 sm:px-8 lg:py-16">
         <div className="grid gap-6 xl:grid-cols-[190px_minmax(0,1fr)_190px]">
-          <SponsoredRail district={district.label} side="left" />
+          <SponsoredRail district={district.label} side="left" arLandBusinessId={arLandBusinessId} promos={railPromos} />
           <DistrictDirectory businesses={businesses} featured={featured} />
-          <SponsoredRail district={district.label} side="right" />
+          <SponsoredRail district={district.label} side="right" arLandBusinessId={arLandBusinessId} promos={railPromos} />
         </div>
       </section>
 
@@ -133,9 +140,12 @@ export default async function DistrictPage({ params }: { params: { slug: string 
           <p className="relative mx-auto mt-3 max-w-md text-white/80">
             List it here and let clients across {district.label} find and book you — free for 14 days.
           </p>
-          <Link href="/signup" className="relative mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl">
+          <ListingRequestButton
+            source={`List your business · ${district.label}`}
+            className="relative mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+          >
             List your business <ArrowRight className="h-4 w-4" />
-          </Link>
+          </ListingRequestButton>
         </div>
       </section>
 

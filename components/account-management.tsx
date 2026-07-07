@@ -36,6 +36,7 @@ import {
   updateManagedUser,
 } from '@/app/actions/account-admin'
 import { AccountDetailDialog } from '@/components/account-detail-dialog'
+import { SubscriptionBadge } from '@/components/subscription-badge'
 
 export type ManagedUser = Awaited<ReturnType<typeof getAllManagedUsers>>[number]
 
@@ -232,6 +233,7 @@ export function AccountManagement({ initialUsers }: { initialUsers: ManagedUser[
                           Archived
                         </Badge>
                       )}
+                      <SubscriptionBadge endsAt={(u as { subscriptionEndsAt?: string | Date | null }).subscriptionEndsAt} compact showActive={false} />
                     </div>
                     <div className="text-sm text-gray-600 truncate">{u.email}</div>
                     {(u.phone || u.district) && (

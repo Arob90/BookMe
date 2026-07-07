@@ -1,8 +1,10 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
-import { Search, MapPin, Phone, Clock, ArrowRight, Star, BadgeCheck } from 'lucide-react'
+import { Search, MapPin, Phone, Clock, ArrowRight, Star, BadgeCheck, ChevronLeft, ChevronRight } from 'lucide-react'
+
+const PAGE_SIZE = 9
 
 export type DirectoryBusiness = {
   id: string
@@ -39,6 +41,22 @@ export function DistrictDirectory({
     if (cat !== 'all') list = list.filter((b) => b.category === cat)
     return list
   }, [businesses, query, cat])
+
+  // The list actually shown as cards (the featured business is pulled into its own banner).
+  const visible = useMemo(
+    () => filtered.filter((b) => query || !featured || b.id !== featured.id),
+    [filtered, query, featured]
+  )
+
+  const [page, setPage] = useState(1)
+  const pageCount = Math.max(1, Math.ceil(visible.length / PAGE_SIZE))
+  const safePage = Math.min(page, pageCount)
+  const pageItems = visible.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+
+  // Reset to the first page whenever the result set changes (search / category).
+  useEffect(() => {
+    setPage(1)
+  }, [query, cat])
 
   return (
     <div>
@@ -103,10 +121,10 @@ export function DistrictDirectory({
               </div>
             </div>
             <Link
-              href={`/book?business=${featured.id}`}
+              href={`/b/${featured.id}`}
               className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg"
             >
-              Book now <ArrowRight className="h-4 w-4" />
+              View & book <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -123,8 +141,7 @@ export function DistrictDirectory({
         </div>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered
-            .filter((b) => query || !featured || b.id !== featured.id)
+          {pageItems
             .map((b) => (
             <div
               key={b.id}
@@ -166,14 +183,50 @@ export function DistrictDirectory({
               </div>
 
               <Link
-                href={`/book?business=${b.id}`}
+                href={`/b/${b.id}`}
                 className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-all group-hover:-translate-y-0.5 group-hover:shadow-lg"
               >
-                Book now <ArrowRight className="h-4 w-4" />
+                View & book <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
           ))}
         </div>
+      )}
+
+      {pageCount > 1 && (
+        <nav className="mt-10 flex items-center justify-center gap-1.5" aria-label="Business list pages">
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={safePage === 1}
+            className="inline-flex h-9 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 transition-colors hover:border-violet-200 hover:text-violet-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <ChevronLeft className="h-4 w-4" /> Prev
+          </button>
+          {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+            <button
+              key={n}
+              type="button"
+              onClick={() => setPage(n)}
+              aria-current={n === safePage ? 'page' : undefined}
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold transition-colors ${
+                n === safePage
+                  ? 'bg-violet-600 text-white shadow-sm'
+                  : 'border border-slate-200 bg-white text-slate-600 hover:border-violet-200 hover:text-violet-700'
+              }`}
+            >
+              {n}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={() => setPage((p) => Math.min(pageCount, p + 1))}
+            disabled={safePage === pageCount}
+            className="inline-flex h-9 items-center gap-1 rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-600 transition-colors hover:border-violet-200 hover:text-violet-700 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Next <ChevronRight className="h-4 w-4" />
+          </button>
+        </nav>
       )}
     </div>
   )

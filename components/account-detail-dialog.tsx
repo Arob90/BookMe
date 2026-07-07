@@ -49,11 +49,15 @@ import {
   deleteManagedUser,
   deleteTeamMemberAccount,
   getManagedAccountDetail,
+  renewSubscription,
   setManagedBusinessPaused,
+  setSubscriptionEnd,
   updateManagedUser,
 } from '@/app/actions/account-admin'
 import { SUPER_ADMIN_EMAIL } from '@/lib/authz'
 import { format } from 'date-fns'
+import { SubscriptionBadge } from '@/components/subscription-badge'
+import { getSubscriptionStatus } from '@/lib/subscription'
 
 type Detail = Awaited<ReturnType<typeof getManagedAccountDetail>>
 
@@ -97,6 +101,9 @@ export function AccountDetailDialog(props: {
   const [staffEditPhone, setStaffEditPhone] = useState('')
   const [staffEditRole, setStaffEditRole] = useState<'ADMIN' | 'STAFF'>('STAFF')
   const [staffEditSaving, setStaffEditSaving] = useState(false)
+
+  const [subSaving, setSubSaving] = useState(false)
+  const [customDate, setCustomDate] = useState('')
 
   const openStaffEdit = (u: {
     id: string
@@ -351,7 +358,64 @@ export function AccountDetailDialog(props: {
     }
   }
 
+  const doRenew = async (months: 1 | 3 | 6 | 12) => {
+    if (!ownerId) return
+    setSubSaving(true)
+    try {
+      const r = await renewSubscription(ownerId, { months })
+      toast({
+        title: 'Subscription renewed',
+        description: `Now active until ${format(new Date(r.subscriptionEndsAt), 'PP')}.`,
+      })
+      await load()
+      onChanged()
+    } catch (e: any) {
+      toast({ title: 'Error', description: e?.message ?? 'Renew failed', variant: 'destructive' })
+    } finally {
+      setSubSaving(false)
+    }
+  }
+
+  const doSetCustomDate = async () => {
+    if (!ownerId || !customDate) return
+    // Treat the picked calendar day as end-of-day so access lasts through that date.
+    const iso = new Date(`${customDate}T23:59:59`).toISOString()
+    setSubSaving(true)
+    try {
+      const r = await setSubscriptionEnd(ownerId, { endsAt: iso })
+      toast({
+        title: 'Expiry updated',
+        description: r.subscriptionEndsAt
+          ? `Set to ${format(new Date(r.subscriptionEndsAt), 'PP')}.`
+          : 'Cleared.',
+      })
+      setCustomDate('')
+      await load()
+      onChanged()
+    } catch (e: any) {
+      toast({ title: 'Error', description: e?.message ?? 'Update failed', variant: 'destructive' })
+    } finally {
+      setSubSaving(false)
+    }
+  }
+
+  const doClearExpiry = async () => {
+    if (!ownerId) return
+    setSubSaving(true)
+    try {
+      await setSubscriptionEnd(ownerId, { endsAt: null })
+      toast({ title: 'Expiry cleared', description: 'This account no longer expires.' })
+      await load()
+      onChanged()
+    } catch (e: any) {
+      toast({ title: 'Error', description: e?.message ?? 'Update failed', variant: 'destructive' })
+    } finally {
+      setSubSaving(false)
+    }
+  }
+
   const o = detail?.owner
+  const subStatus = getSubscriptionStatus((o as { subscriptionEndsAt?: string | Date | null } | undefined)?.subscriptionEndsAt)
 
   return (
     <>
@@ -383,6 +447,7 @@ export function AccountDetailDialog(props: {
                 <Badge variant="secondary">
                   {detail.seatsUsed} / {detail.seatCap} seats
                 </Badge>
+                <SubscriptionBadge endsAt={(o as { subscriptionEndsAt?: string | Date | null }).subscriptionEndsAt} />
               </div>
 
               <Tabs defaultValue="details" className="flex flex-col flex-1 min-h-0 pt-3">
@@ -669,6 +734,75 @@ export function AccountDetailDialog(props: {
 
                 <TabsContent value="history" className="mt-0 flex-1 min-h-0 overflow-hidden data-[state=inactive]:hidden">
                   <div className="max-h-[min(52vh,440px)] overflow-y-auto pr-1 pt-4 space-y-3">
+                    <section className="rounded-lg border bg-white p-3 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <h3 className="text-sm font-semibold text-gray-900">Subscription</h3>
+                        <SubscriptionBadge endsAt={(o as { subscriptionEndsAt?: string | Date | null }).subscriptionEndsAt} />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {(o as { subscriptionEndsAt?: string | Date | null }).subscriptionEndsAt
+                          ? subStatus === 'expired'
+                            ? `Expired on ${format(new Date((o as { subscriptionEndsAt: string | Date }).subscriptionEndsAt), 'PP')}. The owner and team cannot sign in until you renew.`
+                            : `Active until ${format(new Date((o as { subscriptionEndsAt: string | Date }).subscriptionEndsAt), 'PP')}. Sign-in is blocked automatically once it lapses.`
+                          : 'No expiry set — this account never expires. Set a date or renew to start tracking.'}
+                      </p>
+
+                      <div className="space-y-1.5">
+                        <div className="text-xs font-medium text-muted-foreground">Renew / extend</div>
+                        <div className="flex flex-wrap gap-2">
+                          {([1, 3, 6, 12] as const).map((m) => (
+                            <Button
+                              key={m}
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={subSaving || o.isArchived}
+                              onClick={() => doRenew(m)}
+                            >
+                              +{m} mo{m === 1 ? '' : 's'}
+                            </Button>
+                          ))}
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">
+                          Extends from the current expiry if still active, otherwise from today.
+                        </p>
+                      </div>
+
+                      <div className="space-y-1.5 border-t pt-3">
+                        <div className="text-xs font-medium text-muted-foreground">Set an exact date</div>
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Input
+                            type="date"
+                            value={customDate}
+                            onChange={(e) => setCustomDate(e.target.value)}
+                            disabled={subSaving || o.isArchived}
+                            className="w-auto"
+                          />
+                          <Button
+                            type="button"
+                            size="sm"
+                            className="bg-pink-500 hover:bg-pink-600"
+                            disabled={subSaving || o.isArchived || !customDate}
+                            onClick={doSetCustomDate}
+                          >
+                            Set date
+                          </Button>
+                          {(o as { subscriptionEndsAt?: string | Date | null }).subscriptionEndsAt && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="text-muted-foreground"
+                              disabled={subSaving || o.isArchived}
+                              onClick={doClearExpiry}
+                            >
+                              Clear (no expiry)
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </section>
+
                     <h3 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                       <History className="h-4 w-4" />
                       Billing & plan history
