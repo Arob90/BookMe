@@ -10,6 +10,7 @@ import { getAccountLockState } from '@/lib/account-status'
 import { AppSidebar } from '@/components/app-sidebar'
 import { SessionProvider } from '@/components/session-provider'
 import { SyncListener } from '@/components/sync-listener'
+import { AnnouncementModals } from '@/components/announcement-modals'
 
 export const dynamic = 'force-dynamic'
 
@@ -78,6 +79,7 @@ export default async function AppLayout({
   return (
     <SessionProvider session={session}>
       <SyncListener />
+      <AnnouncementModals />
       <div className="flex h-screen overflow-hidden">
         <AppSidebar />
         <main className="flex-1 flex flex-col overflow-hidden md:ml-[var(--sidebar-w)] w-full transition-[margin] duration-300">

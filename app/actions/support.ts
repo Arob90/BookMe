@@ -10,6 +10,7 @@ import { sendEmail } from '@/lib/email'
 import { requireSuperAdmin } from '@/lib/authz'
 import { generateUniqueRef } from '@/lib/ref-code'
 import { grantFreeDaysToBusiness } from '@/lib/rewards'
+import { enqueueAnnouncement } from '@/lib/announcements'
 import { SUPPORT_REWARD_DAYS, SUPPORT_STATUSES, type SupportReportView } from '@/lib/support-shared'
 
 const ADMIN_INBOX = 'sasoandco.ltd@gmail.com'
@@ -130,6 +131,13 @@ export async function rewardSupport(id: string, input?: z.infer<typeof rewardSch
     actorUserId: session.user?.id ?? null,
   })
   await db.supportReport.update({ where: { id }, data: { rewardedDays: report.rewardedDays + days } })
+  await enqueueAnnouncement({
+    staffId: report.staffId,
+    kind: 'SUPPORT_REWARD',
+    title: `Sorry for the trouble — ${days} free days on us 🙏`,
+    body: `Thanks for your patience and for letting us know. As a small thank-you, we’ve added ${days} free days to your account.`,
+    meta: { days, ref: report.ref },
+  })
   revalidatePath('/app/support')
   revalidatePath('/app/accounts')
   return { ok: true as const, days }

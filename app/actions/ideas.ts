@@ -10,6 +10,7 @@ import { sendEmail } from '@/lib/email'
 import { requireSuperAdmin } from '@/lib/authz'
 import { generateUniqueRef } from '@/lib/ref-code'
 import { grantFreeDaysToBusiness } from '@/lib/rewards'
+import { enqueueAnnouncement } from '@/lib/announcements'
 import { IDEA_REWARD_DAYS, type IdeaUpdate, type PublicIdea } from '@/lib/ideas-shared'
 
 const ADMIN_INBOX = 'sasoandco.ltd@gmail.com'
@@ -116,7 +117,25 @@ export async function getAllIdeas() {
 
 export async function setIdeaApproval(id: string, approved: boolean) {
   await requireSuperAdmin()
+  const idea = await db.idea.findUnique({
+    where: { id },
+    select: { staffId: true, ref: true, title: true, status: true },
+  })
+  if (!idea) throw new Error('Idea not found')
+
   await db.idea.update({ where: { id }, data: { status: approved ? 'APPROVED' : 'DENIED' } })
+
+  // Congratulate the submitter — only on the first approval, not re-approvals.
+  if (approved && idea.status !== 'APPROVED' && idea.status !== 'COMPLETED') {
+    await enqueueAnnouncement({
+      staffId: idea.staffId,
+      kind: 'IDEA_APPROVED',
+      title: 'Your idea was approved! 🎉',
+      body: `Thanks for contributing — “${idea.title}” is now on our board and we’re bringing it to life. Follow its progress on your Ideas page.`,
+      meta: { ref: idea.ref },
+    })
+  }
+
   revalidatePath('/app/ideas')
   revalidatePath('/app/accounts')
   return { ok: true as const }
@@ -164,6 +183,13 @@ export async function rewardIdea(id: string, input?: z.infer<typeof rewardSchema
     actorUserId: session.user?.id ?? null,
   })
   await db.idea.update({ where: { id }, data: { rewardedDays: idea.rewardedDays + days } })
+  await enqueueAnnouncement({
+    staffId: idea.staffId,
+    kind: 'IDEA_REWARD',
+    title: `You’ve received ${days} free days! 💜`,
+    body: `Thank you for your brilliant idea — your contribution has made BookMe better. We’ve added ${days} free days to your account as our thanks.`,
+    meta: { days, ref: idea.ref },
+  })
   revalidatePath('/app/ideas')
   revalidatePath('/app/accounts')
   return { ok: true as const, days }

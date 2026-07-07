@@ -660,3 +660,18 @@ model SupportReport {
   @@index([staffId])
   @@map("support_reports")
 }
+
+/// A one-time celebratory / info modal queued for a business owner (idea approved, free days granted, etc.).
+model Announcement {
+  id             String    @id @default(cuid())
+  staffId        String    @map("staff_id") // Business owner to show it to
+  kind           String    // IDEA_APPROVED | IDEA_REWARD | SUPPORT_REWARD | GENERIC
+  title          String
+  body           String?   @db.Text
+  meta           Json?     // e.g. { days, ref }
+  acknowledgedAt DateTime? @map("acknowledged_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([staffId, acknowledgedAt])
+  @@map("announcements")
+}
