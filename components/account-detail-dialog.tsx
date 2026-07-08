@@ -49,7 +49,9 @@ import {
   deleteManagedUser,
   deleteTeamMemberAccount,
   getManagedAccountDetail,
+  grantFreeDaysToAccount,
   renewSubscription,
+  sendAccountAnnouncement,
   setManagedBusinessPaused,
   setSubscriptionEnd,
   updateManagedUser,
@@ -104,6 +106,9 @@ export function AccountDetailDialog(props: {
 
   const [subSaving, setSubSaving] = useState(false)
   const [customDate, setCustomDate] = useState('')
+  const [freeDays, setFreeDays] = useState('')
+  const [annTitle, setAnnTitle] = useState('')
+  const [annBody, setAnnBody] = useState('')
 
   const openStaffEdit = (u: {
     id: string
@@ -409,6 +414,49 @@ export function AccountDetailDialog(props: {
       onChanged()
     } catch (e: any) {
       toast({ title: 'Error', description: e?.message ?? 'Update failed', variant: 'destructive' })
+    } finally {
+      setSubSaving(false)
+    }
+  }
+
+  const doGrantFreeDays = async () => {
+    if (!ownerId) return
+    const days = Number(freeDays)
+    if (!Number.isFinite(days) || days <= 0) {
+      toast({ title: 'Enter a number of days', variant: 'destructive' })
+      return
+    }
+    setSubSaving(true)
+    try {
+      const r = await grantFreeDaysToAccount(ownerId, { days: Math.floor(days) })
+      toast({
+        title: `Granted ${r.days} free days`,
+        description: `Now active until ${format(new Date(r.subscriptionEndsAt), 'PP')}. Applies to the whole team.`,
+      })
+      setFreeDays('')
+      await load()
+      onChanged()
+    } catch (e: any) {
+      toast({ title: 'Error', description: e?.message ?? 'Grant failed', variant: 'destructive' })
+    } finally {
+      setSubSaving(false)
+    }
+  }
+
+  const doSendAnnouncement = async () => {
+    if (!ownerId) return
+    if (annTitle.trim().length < 2) {
+      toast({ title: 'Add a title', variant: 'destructive' })
+      return
+    }
+    setSubSaving(true)
+    try {
+      await sendAccountAnnouncement(ownerId, { title: annTitle.trim(), body: annBody.trim() || undefined })
+      toast({ title: 'Announcement queued', description: 'They’ll see it as a popup next time they’re in the app.' })
+      setAnnTitle('')
+      setAnnBody('')
+    } catch (e: any) {
+      toast({ title: 'Error', description: e?.message ?? 'Failed to send', variant: 'destructive' })
     } finally {
       setSubSaving(false)
     }
@@ -800,6 +848,78 @@ export function AccountDetailDialog(props: {
                             </Button>
                           )}
                         </div>
+                      </div>
+                    </section>
+
+                    <section className="rounded-lg border bg-white p-3 space-y-2">
+                      <h3 className="text-sm font-semibold text-gray-900">Grant free days</h3>
+                      <p className="text-[11px] text-muted-foreground">
+                        Adds days to this business’s subscription (covers the whole team). They’ll see a popup thanking them.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Input
+                          type="number"
+                          min={1}
+                          value={freeDays}
+                          onChange={(e) => setFreeDays(e.target.value)}
+                          placeholder="e.g. 30"
+                          disabled={subSaving || o.isArchived}
+                          className="w-28"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="bg-pink-500 hover:bg-pink-600"
+                          disabled={subSaving || o.isArchived || !freeDays}
+                          onClick={doGrantFreeDays}
+                        >
+                          Grant days
+                        </Button>
+                        <div className="flex gap-1">
+                          {[7, 30].map((d) => (
+                            <Button
+                              key={d}
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={subSaving || o.isArchived}
+                              onClick={() => setFreeDays(String(d))}
+                            >
+                              {d}
+                            </Button>
+                          ))}
+                        </div>
+                      </div>
+                    </section>
+
+                    <section className="rounded-lg border bg-white p-3 space-y-2">
+                      <h3 className="text-sm font-semibold text-gray-900">Send announcement</h3>
+                      <p className="text-[11px] text-muted-foreground">
+                        Shows as a one-time popup to the owner and team next time they open the app.
+                      </p>
+                      <Input
+                        value={annTitle}
+                        onChange={(e) => setAnnTitle(e.target.value)}
+                        placeholder="Title (e.g. A quick note from the team)"
+                        disabled={subSaving || o.isArchived}
+                      />
+                      <Textarea
+                        rows={3}
+                        value={annBody}
+                        onChange={(e) => setAnnBody(e.target.value)}
+                        placeholder="Message (optional)"
+                        disabled={subSaving || o.isArchived}
+                      />
+                      <div className="flex justify-end">
+                        <Button
+                          type="button"
+                          size="sm"
+                          className="bg-pink-500 hover:bg-pink-600"
+                          disabled={subSaving || o.isArchived || annTitle.trim().length < 2}
+                          onClick={doSendAnnouncement}
+                        >
+                          Send popup
+                        </Button>
                       </div>
                     </section>
 

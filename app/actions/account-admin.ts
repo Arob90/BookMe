@@ -20,6 +20,7 @@ import {
 import { ensureOwnerDefaultClients } from '@/lib/owner-default-clients'
 import { computeRenewalDate } from '@/lib/subscription'
 import { grantFreeDaysToBusiness } from '@/lib/rewards'
+import { enqueueAnnouncement } from '@/lib/announcements'
 import { format } from 'date-fns'
 
 function isSuperAdminEmail(email: string) {
@@ -631,6 +632,21 @@ export async function grantFreeDaysToAccount(ownerId: string, data: z.infer<type
   })
   revalidatePath('/app/accounts')
   return res
+}
+
+const announcementSchema = z.object({
+  title: z.string().trim().min(2).max(120),
+  body: z.string().trim().max(1000).optional(),
+})
+
+/** Super-admin: queue a custom one-time popup modal for a business (owner + team see it). */
+export async function sendAccountAnnouncement(ownerId: string, data: z.infer<typeof announcementSchema>) {
+  await requireSuperAdmin()
+  const { title, body } = announcementSchema.parse(data)
+  await requireBusinessOwner(ownerId)
+  await enqueueAnnouncement({ staffId: ownerId, kind: 'GENERIC', title, body: body || null })
+  revalidatePath('/app/accounts')
+  return { ok: true as const }
 }
 
 const teamMemberSelect = {
