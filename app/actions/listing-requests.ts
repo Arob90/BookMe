@@ -5,6 +5,9 @@ import { revalidatePath } from 'next/cache'
 import { db } from '@/lib/db'
 import { sendEmail } from '@/lib/email'
 import { requireSuperAdmin } from '@/lib/authz'
+import { getSessionStaffId } from '@/lib/session-staff'
+import { createClient } from '@/app/actions/clients'
+import { createProject } from '@/app/actions/projects'
 
 /** Where new leads are emailed. */
 const ADMIN_INBOX = 'sasoandco.ltd@gmail.com'
@@ -99,5 +102,73 @@ export async function deleteListingRequest(id: string) {
   await requireSuperAdmin()
   await db.listingRequest.delete({ where: { id } })
   revalidatePath('/app/listing-requests')
+  return { ok: true as const }
+}
+
+function splitName(full: string): { firstName: string; lastName: string } {
+  const parts = full.trim().split(/\s+/).filter(Boolean)
+  const firstName = parts.shift() || full.trim() || 'Lead'
+  return { firstName, lastName: parts.join(' ') }
+}
+
+function leadNotes(r: { source: string | null; message: string | null; email: string; phone: string | null }): string {
+  return [
+    'Added from a listing/advertising request.',
+    r.source ? `Interested in: ${r.source}` : null,
+    r.message ? `Message: ${r.message}` : null,
+  ].filter(Boolean).join('\n')
+}
+
+/** Convert a lead into a client in the admin's own CRM. */
+export async function convertRequestToClient(id: string) {
+  await requireSuperAdmin()
+  const r = await db.listingRequest.findUnique({ where: { id } })
+  if (!r) throw new Error('Request not found')
+
+  const { firstName, lastName } = splitName(r.fullName)
+  await createClient({
+    type: 'INDIVIDUAL',
+    firstName,
+    lastName,
+    email: r.email || '',
+    phone: r.phone || undefined,
+    notes: leadNotes(r),
+    tags: ['Lead'],
+  })
+
+  await db.listingRequest.update({ where: { id }, data: { status: 'CONTACTED' } })
+  revalidatePath('/app/listing-requests')
+  revalidatePath('/app/clients')
+  return { ok: true as const }
+}
+
+/** Convert a lead into a card in the admin's own project pipeline (first stage). */
+export async function convertRequestToProject(id: string) {
+  const session = await requireSuperAdmin()
+  const r = await db.listingRequest.findUnique({ where: { id } })
+  if (!r) throw new Error('Request not found')
+
+  const staffId = getSessionStaffId(session)
+  if (!staffId) throw new Error('No business context')
+
+  const stage = await db.pipelineStage.findFirst({
+    where: { staffId },
+    orderBy: { sortOrder: 'asc' },
+    select: { id: true },
+  })
+  if (!stage) {
+    throw new Error('No pipeline stage yet — open the Projects page to set up your pipeline first.')
+  }
+
+  await createProject({
+    title: r.source ? `${r.source} — ${r.fullName}` : `Lead: ${r.fullName}`,
+    description: leadNotes(r),
+    clientName: r.fullName,
+    stageId: stage.id,
+  })
+
+  await db.listingRequest.update({ where: { id }, data: { status: 'CONTACTED' } })
+  revalidatePath('/app/listing-requests')
+  revalidatePath('/app/projects')
   return { ok: true as const }
 }

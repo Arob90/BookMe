@@ -17,7 +17,9 @@ import {
 import { Inbox, Mail, Phone, Trash2, Tag } from 'lucide-react'
 import {
   getListingRequests, updateListingRequestStatus, deleteListingRequest,
+  convertRequestToClient, convertRequestToProject,
 } from '@/app/actions/listing-requests'
+import { UserPlus, KanbanSquare } from 'lucide-react'
 
 type Request = Awaited<ReturnType<typeof getListingRequests>>[number]
 type Status = 'NEW' | 'CONTACTED' | 'CLOSED'
@@ -65,6 +67,36 @@ export function ListingRequestsList({ initialRequests }: { initialRequests: Requ
       router.refresh()
     } catch (e: any) {
       toast({ title: 'Error', description: e?.message ?? 'Failed', variant: 'destructive' })
+    }
+  }
+
+  const [busyId, setBusyId] = useState<string | null>(null)
+
+  const addAsClient = async (id: string) => {
+    setBusyId(id)
+    try {
+      await convertRequestToClient(id)
+      setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'CONTACTED' } : r)))
+      toast({ title: 'Added as client', description: 'Saved to your Clients (tagged “Lead”).' })
+      router.refresh()
+    } catch (e: any) {
+      toast({ title: 'Could not add client', description: e?.message ?? 'Failed', variant: 'destructive' })
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  const addToPipeline = async (id: string) => {
+    setBusyId(id)
+    try {
+      await convertRequestToProject(id)
+      setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'CONTACTED' } : r)))
+      toast({ title: 'Added to pipeline', description: 'Created a card in your first pipeline stage.' })
+      router.refresh()
+    } catch (e: any) {
+      toast({ title: 'Could not add to pipeline', description: e?.message ?? 'Failed', variant: 'destructive' })
+    } finally {
+      setBusyId(null)
     }
   }
 
@@ -141,6 +173,22 @@ export function ListingRequestsList({ initialRequests }: { initialRequests: Requ
                         <SelectItem value="CLOSED">Closed</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={busyId === r.id}
+                      onClick={() => addAsClient(r.id)}
+                    >
+                      <UserPlus className="mr-1 h-4 w-4" /> Add as client
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={busyId === r.id}
+                      onClick={() => addToPipeline(r.id)}
+                    >
+                      <KanbanSquare className="mr-1 h-4 w-4" /> Add to pipeline
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="outline" size="sm" className="text-red-700 border-red-200 hover:bg-red-50">
