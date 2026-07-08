@@ -3,6 +3,7 @@
 import { db } from '@/lib/db'
 import { requireSuperAdmin } from '@/lib/authz'
 import { revalidatePath } from 'next/cache'
+import { BillingHistoryEventType, recordBillingHistoryEvent } from '@/lib/billing-history'
 
 const PLAN_SEATS: Record<string, number> = { Basic: 1, Pro: 5, Business: 10 }
 
@@ -49,8 +50,14 @@ export async function getPendingUpgradePayments(): Promise<UpgradePaymentRow[]> 
 
 /** Verify payment and activate the chosen plan: sets seats + active status, clears the proof. */
 export async function activateUpgradePlan(ownerId: string, plan: string) {
-  await requireSuperAdmin()
+  const session = await requireSuperAdmin()
   const seats = PLAN_SEATS[plan] ?? 1
+
+  // Keep the proof URL for the history record before we clear it.
+  const settings = await db.settings.findFirst({
+    where: { staffId: ownerId },
+    select: { planPaymentProofUrl: true },
+  })
 
   await db.settings.updateMany({
     where: { staffId: ownerId },
@@ -64,6 +71,21 @@ export async function activateUpgradePlan(ownerId: string, plan: string) {
       planPaymentSubmittedAt: null,
     },
   })
+
+  // Record on the account's billing history so it shows for the admin (account
+  // detail → History) and the provider (Settings → Subscription payments).
+  try {
+    await recordBillingHistoryEvent({
+      staffId: ownerId,
+      eventType: BillingHistoryEventType.PLAN_ACTIVATED,
+      title: `Payment approved — ${plan} plan`,
+      detail: `Payment verified. ${plan} plan activated (${seats} seat${seats === 1 ? '' : 's'}).`,
+      metadata: { plan, maxUsers: seats, proofUrl: settings?.planPaymentProofUrl ?? null },
+      actorUserId: session.user?.id ?? null,
+    })
+  } catch (e) {
+    console.error('[activateUpgradePlan] failed to record billing history', e)
+  }
 
   revalidatePath('/app/accounts')
   revalidatePath('/app')

@@ -8,11 +8,15 @@ import { AccountRequestsList, type AccountRequestRow } from '@/components/accoun
 import { PendingApprovalsList, type PendingApproval } from '@/components/pending-approvals-list'
 import { IdeasAdmin } from '@/components/ideas-admin'
 import { SupportAdmin } from '@/components/support-admin'
+import { PendingUpgradePayments } from '@/components/pending-upgrade-payments'
 
-type AdminTab = 'accounts' | 'appointments' | 'account-requests' | 'ideas' | 'support'
+type AdminTab = 'accounts' | 'payments' | 'appointments' | 'account-requests' | 'ideas' | 'support'
 
 function normalizeDefaultTab(tab: string | undefined): AdminTab {
-  if (tab === 'appointments' || tab === 'account-requests' || tab === 'accounts' || tab === 'ideas' || tab === 'support') {
+  if (
+    tab === 'payments' || tab === 'appointments' || tab === 'account-requests' ||
+    tab === 'accounts' || tab === 'ideas' || tab === 'support'
+  ) {
     return tab
   }
   return 'accounts'
@@ -24,18 +28,20 @@ export interface AccountsAdminTabsProps {
   requests: AccountRequestRow[]
   ideas: ComponentProps<typeof IdeasAdmin>['ideas']
   reports: ComponentProps<typeof SupportAdmin>['reports']
+  upgradePayments: ComponentProps<typeof PendingUpgradePayments>['initial']
   /** From URL `?tab=`, e.g. `account-requests` */
   defaultTab?: string
 }
 
-export function AccountsAdminTabs({ users, approvals, requests, ideas, reports, defaultTab }: AccountsAdminTabsProps) {
+export function AccountsAdminTabs({ users, approvals, requests, ideas, reports, upgradePayments, defaultTab }: AccountsAdminTabsProps) {
   const initialTab = normalizeDefaultTab(defaultTab)
   const pendingIdeas = ideas.filter((i) => i.status === 'PENDING').length
   const openReports = reports.filter((r) => r.status !== 'COMPLETED').length
+  const pendingPayments = upgradePayments.length
 
   return (
     <Tabs key={initialTab} defaultValue={initialTab} className="mx-auto w-full max-w-5xl">
-      <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1.5 sm:grid-cols-5">
+      <TabsList className="grid h-auto w-full grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1.5 sm:grid-cols-3 lg:grid-cols-6">
         <TabsTrigger
           value="accounts"
           className="flex flex-wrap items-center justify-center gap-1.5 py-2.5 text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm sm:text-sm"
@@ -44,6 +50,17 @@ export function AccountsAdminTabs({ users, approvals, requests, ideas, reports, 
           <Badge variant="secondary" className="h-5 px-1.5 text-[10px] font-semibold tabular-nums">
             {users.length}
           </Badge>
+        </TabsTrigger>
+        <TabsTrigger
+          value="payments"
+          className="flex flex-wrap items-center justify-center gap-1.5 py-2.5 text-xs font-medium data-[state=active]:bg-white data-[state=active]:text-pink-600 data-[state=active]:shadow-sm sm:text-sm"
+        >
+          <span className="text-center leading-tight">Payment requests</span>
+          {pendingPayments > 0 && (
+            <Badge className="h-5 border-0 bg-pink-500 px-1.5 text-[10px] font-semibold text-white tabular-nums">
+              {pendingPayments}
+            </Badge>
+          )}
         </TabsTrigger>
         <TabsTrigger
           value="appointments"
@@ -93,6 +110,9 @@ export function AccountsAdminTabs({ users, approvals, requests, ideas, reports, 
 
       <TabsContent value="accounts" className="mt-6 outline-none focus-visible:ring-0">
         <AccountManagement initialUsers={users} />
+      </TabsContent>
+      <TabsContent value="payments" className="mt-6 outline-none focus-visible:ring-0">
+        <PendingUpgradePayments initial={upgradePayments} />
       </TabsContent>
       <TabsContent value="appointments" className="mt-6 outline-none focus-visible:ring-0">
         <PendingApprovalsList initialApprovals={approvals} />

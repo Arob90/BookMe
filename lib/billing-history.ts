@@ -12,6 +12,7 @@ export const BillingHistoryEventType = {
   SUBSCRIPTION_RENEWED: 'SUBSCRIPTION_RENEWED',
   SUBSCRIPTION_CLEARED: 'SUBSCRIPTION_CLEARED',
   FREE_DAYS_GRANTED: 'FREE_DAYS_GRANTED',
+  PLAN_ACTIVATED: 'PLAN_ACTIVATED',
 } as const
 
 export type BillingHistoryEventTypeValue = (typeof BillingHistoryEventType)[keyof typeof BillingHistoryEventType]

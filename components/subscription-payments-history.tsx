@@ -76,6 +76,16 @@ function buildRowsFromBillingHistory(items: BillingHistoryRow[]): SubscriptionPa
         paidAt: new Date(e.createdAt),
       })
     }
+    if (e.eventType === 'PLAN_ACTIVATED') {
+      const s = seats ?? 1
+      rows.push({
+        id: `plan_${e.id}`,
+        label: `Payment approved${s ? ` (${s} seats)` : ''}`,
+        detail: e.detail || 'Plan payment verified and activated.',
+        amount: seatsToPrice(s),
+        paidAt: new Date(e.createdAt),
+      })
+    }
   }
   return rows.sort((a, b) => b.paidAt.getTime() - a.paidAt.getTime())
 }
