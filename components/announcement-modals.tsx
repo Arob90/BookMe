@@ -37,6 +37,12 @@ export function AnnouncementModals() {
   const style = STYLE[current.kind] ?? STYLE.GENERIC
   const days = typeof current.meta?.days === 'number' ? (current.meta.days as number) : null
 
+  // A trailing "XoXo,\n<name>" paragraph renders as a handwritten sign-off.
+  const paragraphs = current.body?.split('\n\n') ?? []
+  const hasSignOff = paragraphs.length > 0 && paragraphs[paragraphs.length - 1].startsWith('XoXo,')
+  const bodyText = hasSignOff ? paragraphs.slice(0, -1).join('\n\n') : current.body
+  const signOffLines = hasSignOff ? paragraphs[paragraphs.length - 1].split('\n') : null
+
   const next = async () => {
     try { await acknowledgeAnnouncement(current.id) } catch { /* ignore */ }
     setIdx((i) => i + 1)
@@ -50,10 +56,18 @@ export function AnnouncementModals() {
             <style.Icon className="h-8 w-8" />
           </span>
           <DialogTitle className="mt-4 text-xl">{current.title}</DialogTitle>
-          {current.body && (
+          {bodyText && (
             <DialogDescription className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
-              {current.body}
+              {bodyText}
             </DialogDescription>
+          )}
+          {signOffLines && (
+            <div className="mt-1 text-center text-sm leading-relaxed text-slate-600">
+              <p>{signOffLines[0]}</p>
+              {signOffLines[1] && (
+                <p className="mt-0.5 font-dancing text-3xl leading-tight text-violet-700">{signOffLines[1]}</p>
+              )}
+            </div>
           )}
         </DialogHeader>
 

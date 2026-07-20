@@ -6,7 +6,8 @@ export type AnnouncementKind = 'IDEA_APPROVED' | 'IDEA_REWARD' | 'SUPPORT_REWARD
 export const WELCOME_ANNOUNCEMENT_TITLE = 'Welcome to BookMe.bz!'
 export const WELCOME_ANNOUNCEMENT_BODY =
   "BookMe gives you your own booking page. Clients pick a service and time online, while you manage appointments, payments, loyalty and reports in one app.\n\n" +
-  "Thanks for downloading — we hope you enjoy it! If you run into any errors, report them on the Tech Support page. And if there's a feature that would help run your business better, let us know on the Ideas page."
+  "Thanks for downloading — we hope you enjoy it! If you run into any errors, report them on the Tech Support page. And if there's a feature that would help run your business better, let us know on the Ideas page.\n\n" +
+  "XoXo,\nSaSo & Co. Ltd."
 
 /** Queue the one-time welcome modal for a newly created business owner. */
 export async function enqueueWelcomeAnnouncement(staffId: string | null | undefined): Promise<void> {
