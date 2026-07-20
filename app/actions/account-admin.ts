@@ -20,7 +20,7 @@ import {
 import { ensureOwnerDefaultClients } from '@/lib/owner-default-clients'
 import { computeRenewalDate } from '@/lib/subscription'
 import { grantFreeDaysToBusiness } from '@/lib/rewards'
-import { enqueueAnnouncement } from '@/lib/announcements'
+import { enqueueAnnouncement, enqueueWelcomeAnnouncement } from '@/lib/announcements'
 import { format } from 'date-fns'
 
 function isSuperAdminEmail(email: string) {
@@ -257,6 +257,8 @@ export async function createManagedUser(data: z.infer<typeof createManagedUserSc
     phone: v.phone,
     businessName: v.businessName,
   })
+
+  await enqueueWelcomeAnnouncement(user.id)
 
   await recordBillingHistoryEvent({
     staffId: user.id,

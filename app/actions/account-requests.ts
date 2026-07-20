@@ -5,6 +5,7 @@ import { requireSuperAdmin } from '@/lib/authz'
 import { revalidatePath } from 'next/cache'
 import { BillingHistoryEventType, recordBillingHistoryEvent } from '@/lib/billing-history'
 import { ensureOwnerDefaultClients } from '@/lib/owner-default-clients'
+import { enqueueWelcomeAnnouncement } from '@/lib/announcements'
 
 export type PlanType = 'SINGLE' | 'MULTI_5' | 'MULTI_10'
 
@@ -77,6 +78,8 @@ export async function approveAccountRequest(id: string, plan: PlanType) {
     phone: request.phone,
     businessName: request.businessName,
   })
+
+  await enqueueWelcomeAnnouncement(user.id)
 
   await recordBillingHistoryEvent({
     staffId: user.id,

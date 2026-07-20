@@ -5,7 +5,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { PartyPopper, Gift, Heart, Sparkles } from 'lucide-react'
+import { PartyPopper, Gift, Heart, Sparkles, CalendarDays } from 'lucide-react'
 import {
   getPendingAnnouncements, acknowledgeAnnouncement, type PendingAnnouncement,
 } from '@/app/actions/announcements'
@@ -15,6 +15,7 @@ const STYLE: Record<string, { Icon: typeof PartyPopper; ring: string; cta: strin
   IDEA_REWARD: { Icon: Gift, ring: 'bg-emerald-100 text-emerald-600', cta: 'Thank you! 💜' },
   SUPPORT_REWARD: { Icon: Heart, ring: 'bg-rose-100 text-rose-600', cta: 'Appreciate it 🙏' },
   GENERIC: { Icon: Sparkles, ring: 'bg-violet-100 text-violet-600', cta: 'Got it' },
+  WELCOME: { Icon: CalendarDays, ring: 'bg-violet-100 text-violet-600', cta: "Let's go! 🎉" },
 }
 
 /** Shows queued celebratory modals to the provider, one at a time, then acknowledges each. */
@@ -50,7 +51,7 @@ export function AnnouncementModals() {
           </span>
           <DialogTitle className="mt-4 text-xl">{current.title}</DialogTitle>
           {current.body && (
-            <DialogDescription className="text-sm leading-relaxed text-slate-600">
+            <DialogDescription className="whitespace-pre-line text-sm leading-relaxed text-slate-600">
               {current.body}
             </DialogDescription>
           )}
