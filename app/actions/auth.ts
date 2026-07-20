@@ -6,6 +6,12 @@ import { z } from 'zod'
 import { randomBytes } from 'crypto'
 import { revalidatePath } from 'next/cache'
 import { sendEmail, passwordResetEmail } from '@/lib/email'
+import { ensureOwnerDefaultClients } from '@/lib/owner-default-clients'
+import { enqueueWelcomeAnnouncement } from '@/lib/announcements'
+import { BillingHistoryEventType, recordBillingHistoryEvent } from '@/lib/billing-history'
+
+/** Self-serve signups start on a single-user seat plan; upgrade later from Billing. */
+const SELF_SERVE_MAX_USERS = 1
 
 const signupSchema = z.object({
   businessName: z.string().min(1, 'Business name is required'),
@@ -21,12 +27,6 @@ const signupSchema = z.object({
 export async function createAccount(data: z.infer<typeof signupSchema>) {
   const validated = signupSchema.parse(data)
 
-  if (!(db as { pendingAccountRequest?: unknown }).pendingAccountRequest) {
-    throw new Error(
-      'Account signup is not fully set up yet. Please ask the administrator to run: npx prisma db push && npx prisma generate, then restart the server.'
-    )
-  }
-
   const existingUser = await db.user.findUnique({
     where: { email: validated.email },
   })
@@ -34,19 +34,13 @@ export async function createAccount(data: z.infer<typeof signupSchema>) {
     throw new Error('User with this email already exists')
   }
 
-  const existingRequest = await db.pendingAccountRequest.findUnique({
-    where: { email: validated.email },
-  })
-  if (existingRequest) {
-    throw new Error('An account request with this email is already pending. Please wait for approval.')
-  }
-
   const passwordHash = await bcrypt.hash(validated.password, 10)
 
-  const created = await db.pendingAccountRequest.create({
+  const user = await db.user.create({
     data: {
       email: validated.email,
       passwordHash,
+      role: 'ADMIN',
       businessName: validated.businessName,
       businessCategory: validated.businessCategory || null,
       district: validated.district || null,
@@ -54,13 +48,54 @@ export async function createAccount(data: z.infer<typeof signupSchema>) {
       lastName: validated.lastName,
       phone: validated.phone || null,
     },
-    select: { id: true },
   })
 
-  revalidatePath('/api/notifications')
-  revalidatePath('/api/pending-account-requests')
+  const defaultBusinessHours = {
+    MONDAY: { start: '09:00', end: '18:00' },
+    TUESDAY: { start: '09:00', end: '18:00' },
+    WEDNESDAY: { start: '09:00', end: '18:00' },
+    THURSDAY: { start: '09:00', end: '18:00' },
+    FRIDAY: { start: '09:00', end: '18:00' },
+    SATURDAY: { start: '09:00', end: '18:00' },
+    SUNDAY: { start: '09:00', end: '18:00' },
+  }
+  await db.settings.create({
+    data: {
+      staffId: user.id,
+      maxUsers: SELF_SERVE_MAX_USERS,
+      businessHours: defaultBusinessHours,
+      businessDays: ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
+      // Start the 14-day free trial immediately. Account locks after this unless
+      // the owner picks a plan (which sets planStatus = 'active').
+      planStatus: 'trialing',
+      trialEndsAt: new Date(Date.now() + 14 * 86_400_000),
+    },
+  })
 
-  return { success: true, pending: true, requestId: created.id, firstName: validated.firstName }
+  await ensureOwnerDefaultClients({
+    staffId: user.id,
+    firstName: validated.firstName,
+    lastName: validated.lastName,
+    email: validated.email,
+    phone: validated.phone,
+    businessName: validated.businessName,
+  })
+
+  await enqueueWelcomeAnnouncement(user.id)
+
+  await recordBillingHistoryEvent({
+    staffId: user.id,
+    eventType: BillingHistoryEventType.ACCOUNT_CREATED,
+    title: 'Account created',
+    detail: `Self-serve signup with initial ${SELF_SERVE_MAX_USERS}-seat plan.`,
+    metadata: { maxUsers: SELF_SERVE_MAX_USERS },
+    actorUserId: null,
+  })
+
+  revalidatePath('/app/accounts')
+  revalidatePath('/app')
+
+  return { success: true, pending: false, firstName: validated.firstName }
 }
 
 export async function requestPasswordReset(email: string) {
