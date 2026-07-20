@@ -2085,6 +2085,46 @@ export default function BookPage() {
               </Card>
             )}
 
+            {/* Services preview — lets the client see what's on offer while filling out their info */}
+            {step === 'client' && selectedBusiness && services.length > 0 && (
+              <Card className="border-gray-200 shadow-sm">
+                <CardHeader>
+                  <CardTitle>Services offered</CardTitle>
+                  <CardDescription>You&apos;ll pick services on the next step.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {servicesByCategory.map(([categoryName, categoryServices]) => (
+                    <div key={categoryName}>
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-violet-600">{categoryName}</p>
+                      <ul className="divide-y divide-gray-100 rounded-lg border border-gray-100">
+                        {categoryServices.map((service) => {
+                          const priceLabel = (service as any).hidePrice
+                            ? 'Price on request'
+                            : service.price != null && !Number.isNaN(Number(service.price))
+                            ? `$${Number(service.price).toFixed(2)}`
+                            : '—'
+                          return (
+                            <li key={service.id} className="flex items-center justify-between gap-3 px-3 py-2.5">
+                              <div className="min-w-0">
+                                <p className="truncate text-sm font-medium text-slate-900">{service.name}</p>
+                                <p className="flex items-center gap-1 text-xs text-slate-500">
+                                  <Clock className="h-3 w-3" />
+                                  {formatDuration(service.durationMinutes, service.durationUnit)}
+                                </p>
+                              </div>
+                              <span className="shrink-0 rounded-full border border-slate-200 bg-white px-2.5 py-0.5 text-xs font-semibold text-slate-800">
+                                {priceLabel}
+                              </span>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
             {/* Step 3: Select products & services */}
             {step === 'services' && client && (
               <Card className="rounded-[22px] border-2 border-violet-300 shadow-sm">
