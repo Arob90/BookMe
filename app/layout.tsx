@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Space_Grotesk, Fraunces } from 'next/font/google'
+import { Inter, Space_Grotesk, Fraunces, Beau_Rivage } from 'next/font/google'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
 
@@ -16,6 +16,13 @@ const serif = Fraunces({
   weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
   variable: '--font-serif',
+  display: 'swap',
+})
+// Flowing handwritten signature style, used for sign-offs like "SaSo & Co. Ltd."
+const signature = Beau_Rivage({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-signature',
   display: 'swap',
 })
 
@@ -65,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable} ${serif.variable}`}>
+    <html lang="en" className={`${inter.variable} ${display.variable} ${serif.variable} ${signature.variable}`}>
       <body className={inter.className}>
         <script
           type="application/ld+json"

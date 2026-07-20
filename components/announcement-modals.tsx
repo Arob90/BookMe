@@ -65,7 +65,7 @@ export function AnnouncementModals() {
             <div className="mt-1 text-center text-sm leading-relaxed text-slate-600">
               <p>{signOffLines[0]}</p>
               {signOffLines[1] && (
-                <p className="mt-0.5 font-dancing text-3xl leading-tight text-violet-700">{signOffLines[1]}</p>
+                <p className="mt-0.5 font-signature text-4xl leading-tight text-violet-700">{signOffLines[1]}</p>
               )}
             </div>
           )}

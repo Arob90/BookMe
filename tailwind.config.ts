@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        dancing: ['var(--font-dancing)', 'cursive'],
+        signature: ['var(--font-signature)', 'cursive'],
         display: ['var(--font-display)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         serif: ['var(--font-serif)', 'ui-serif', 'Georgia', 'serif'],
       },
