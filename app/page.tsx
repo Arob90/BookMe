@@ -68,7 +68,7 @@ function Hero() {
               Start free — 14 days <ArrowRight className="h-4 w-4" />
             </BtnPrimary>
             <Link href="/book" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-7 py-3.5 text-base font-semibold text-slate-800 transition-colors hover:border-violet-200 hover:bg-violet-50">
-              Book a demo
+              Book now
             </Link>
           </div>
           <div className="mt-8 flex items-center gap-4">

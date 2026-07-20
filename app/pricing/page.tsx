@@ -56,8 +56,8 @@ const TIERS = [
     id: 'basic',
     name: 'Basic',
     blurb: 'For solo owners getting started.',
-    monthly: 22.5,
-    annual: 225, // ~2 months free (10× monthly)
+    monthly: 9.99,
+    annual: 99.9, // ~2 months free (10× monthly)
     seats: '1 user',
     highlight: false,
     features: [
@@ -72,8 +72,8 @@ const TIERS = [
     id: 'pro',
     name: 'Pro',
     blurb: 'For growing teams that need more.',
-    monthly: 34.5,
-    annual: 345,
+    monthly: 15,
+    annual: 150,
     seats: 'Up to 5 users',
     highlight: true,
     features: [
@@ -89,8 +89,8 @@ const TIERS = [
     id: 'business',
     name: 'Business',
     blurb: 'For established businesses at scale.',
-    monthly: 60,
-    annual: 600,
+    monthly: 65,
+    annual: 650,
     seats: 'Up to 10 users',
     highlight: false,
     features: [
@@ -179,7 +179,7 @@ export default function PricingPage() {
                   <span className={tier.highlight ? 'text-white/70' : 'text-slate-400'}>/mo</span>
                 </div>
                 <p className={`mt-1 h-4 text-xs ${tier.highlight ? 'text-white/70' : 'text-slate-400'}`}>
-                  {billing === 'annual' ? `Billed $${tier.annual}/year` : `or $${tier.annual}/yr — save 2 months`}
+                  {billing === 'annual' ? `Billed $${fmtPrice(tier.annual)}/year` : `or $${fmtPrice(tier.annual)}/yr — save 2 months`}
                 </p>
                 <p className={`mt-3 text-sm font-semibold ${tier.highlight ? 'text-amber-200' : 'text-violet-600'}`}>{tier.seats}</p>
 

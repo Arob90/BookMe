@@ -7,9 +7,9 @@ import { BillingPlans, type BillingPlan } from '@/components/billing-plans'
 export const dynamic = 'force-dynamic'
 
 const PLANS: BillingPlan[] = [
-  { name: 'Basic', price: 45, seats: '1 user', highlight: false, features: ['1 staff login', 'Calendar & scheduling', 'Client CRM', 'Online booking page'] },
-  { name: 'Pro', price: 65, seats: 'Up to 5 users', highlight: true, features: ['Up to 5 staff logins', 'Everything in Basic', 'Loyalty, inventory & projects', 'Analytics & payments'] },
-  { name: 'Business', price: 99, seats: 'Up to 10 users', highlight: false, features: ['Up to 10 staff logins', 'Everything in Pro', 'Advanced reports', 'Priority support'] },
+  { name: 'Basic', price: 9.99, seats: '1 user', highlight: false, features: ['1 staff login', 'Calendar & scheduling', 'Client CRM', 'Online booking page'] },
+  { name: 'Pro', price: 15, seats: 'Up to 5 users', highlight: true, features: ['Up to 5 staff logins', 'Everything in Basic', 'Loyalty, inventory & projects', 'Analytics & payments'] },
+  { name: 'Business', price: 65, seats: 'Up to 10 users', highlight: false, features: ['Up to 10 staff logins', 'Everything in Pro', 'Advanced reports', 'Priority support'] },
 ]
 
 const CONTACT_EMAIL = 'sasoandco.ltd@gmail.com'
