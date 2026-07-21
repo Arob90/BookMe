@@ -339,8 +339,8 @@ function FinalCta() {
           <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl">
             Get started free <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link href="/pricing" className="inline-flex items-center justify-center rounded-full border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10">
-            See pricing
+          <Link href="/book" className="inline-flex items-center justify-center rounded-full border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10">
+            Book service
           </Link>
         </div>
       </div>
