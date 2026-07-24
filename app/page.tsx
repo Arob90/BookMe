@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import {
-  CalendarDays, ArrowRight, Check, ShieldCheck, Globe, Clock, Zap, Star, MapPin,
+  CalendarDays, ArrowRight, Check, Globe, Briefcase, MessageCircleOff, BadgeCheck, Search,
 } from 'lucide-react'
 import { MarketingNav, MarketingFooter } from '@/components/marketing-chrome'
-import { DISTRICTS } from '@/lib/districts'
+import { BUSINESS_CATEGORIES } from '@/lib/business-categories'
 
 export const metadata = {
-  title: 'BookMe — Your booking link for clients',
+  title: 'BookMe — Get More Bookings. Grow Your Business.',
   description:
-    'BookMe gives service providers a personal booking page. Clients book themselves online while you manage appointments, payments, loyalty and reports in one app.',
+    'Create a free BookMe business profile where customers can discover your services and request appointments — all in one place. The marketplace for local services in Belize.',
 }
 
 export default function HomePage() {
@@ -16,10 +16,10 @@ export default function HomePage() {
     <div className="min-h-screen bg-white text-slate-900 antialiased">
       <MarketingNav />
       <Hero />
-      <Districts />
-      <TrustStrip />
-      <AboutSection />
-      <StatsBand />
+      <WhyBookMe />
+      <HowItWorks />
+      <FindService />
+      <Categories />
       <Faq />
       <FinalCta />
       <MarketingFooter />
@@ -38,7 +38,7 @@ function BtnPrimary({ href, children, className = '' }: { href: string; children
   )
 }
 
-/* ───────────────────────── hero ───────────────────────── */
+/* ───────────────────────── hero (businesses first) ───────────────────────── */
 
 function Hero() {
   return (
@@ -52,32 +52,23 @@ function Hero() {
         <div className="animate-fade-up">
           <span className="inline-flex items-center gap-2 rounded-full border border-violet-200 bg-violet-50 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-violet-700">
             <span className="h-1.5 w-1.5 rounded-full bg-violet-600" />
-            Online booking for service providers
+            For local service businesses
           </span>
           <h1 className="mt-6 font-display text-[2.6rem] font-bold leading-[1.05] tracking-tight text-slate-900 sm:text-6xl">
-            Manage your bookings. Let clients{' '}
-            <span className="text-violet-600">book themselves</span>.
+            Get More Bookings.{' '}
+            <span className="text-violet-600">Grow Your Business.</span>
           </h1>
           <p className="mt-6 max-w-md text-base leading-relaxed text-slate-600 sm:text-lg">
-            BookMe gives you your own booking page. Clients pick a service and
-            time online, while you manage appointments, payments, loyalty and
-            reports in one app.
+            Create a free business profile where customers can discover your
+            services and request appointments — all in one place.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <BtnPrimary href="/signup" className="px-7 py-3.5 text-base">
-              Start free — 14 days <ArrowRight className="h-4 w-4" />
+              Create Free Business Profile <ArrowRight className="h-4 w-4" />
             </BtnPrimary>
             <Link href="/book" className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-7 py-3.5 text-base font-semibold text-slate-800 transition-colors hover:border-violet-200 hover:bg-violet-50">
-              Book now
+              Find a Business
             </Link>
-          </div>
-          <div className="mt-8 flex items-center gap-4">
-            <div className="flex">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
-              ))}
-            </div>
-            <p className="text-sm text-slate-500"><span className="font-semibold text-slate-800">Loved</span> by service providers</p>
           </div>
         </div>
 
@@ -139,86 +130,67 @@ function HeroMockup() {
   )
 }
 
-/* ───────────────────────── trust strip ───────────────────────── */
+/* ───────────────────────── why bookme (section 2) ───────────────────────── */
 
-function TrustStrip() {
-  const kinds = ['Salons', 'Spas', 'Barbers', 'Clinics', 'Studios', 'Freelancers']
-  return (
-    <section className="border-y border-slate-100 bg-slate-50/60">
-      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
-        <p className="text-center text-xs font-semibold uppercase tracking-[0.16em] text-slate-400">
-          A booking page for every kind of service provider
-        </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {kinds.map((k) => (
-            <span key={k} className="font-display text-lg font-semibold text-slate-300">{k}</span>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
+function WhyBookMe() {
+  const reasons = [
+    [CalendarDays, 'Accept booking requests 24/7', 'Never miss a request — customers can book anytime, even after hours.'],
+    [Globe, 'Get discovered by new customers', 'Your business shows up where local customers are already looking.'],
+    [Briefcase, 'Showcase your services and pricing', 'A clean profile with your services, prices and photos, always up to date.'],
+    [MessageCircleOff, 'Reduce back-and-forth messages', 'Skip the DMs — requests land straight on your calendar with the details you need.'],
+    [BadgeCheck, 'Build trust with a professional online presence', 'A polished booking page makes your business look established from the first visit.'],
+  ] as const
 
-/* ───────────────────────── about ───────────────────────── */
-
-function AboutSection() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-      <div className="grid items-center gap-12 lg:grid-cols-2">
-        <div className="order-2 lg:order-1">
-          <div className="relative rounded-3xl bg-violet-600 p-8 shadow-xl">
-            <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
-              <div className="grid grid-cols-2 gap-3">
-                {[['98%', 'On-time'], ['1-click', 'Rebook'], ['24/7', 'Online booking'], ['0', 'Double-bookings']].map(([a, b]) => (
-                  <div key={b} className="rounded-xl bg-white/90 p-4">
-                    <p className="font-display text-2xl font-bold text-violet-700">{a}</p>
-                    <p className="text-xs text-slate-500">{b}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+      <div className="mx-auto max-w-2xl text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Why BookMe?</p>
+        <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          Why businesses choose BookMe
+        </h2>
+      </div>
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {reasons.map(([Icon, title, body]) => (
+          <div key={title} className="rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">
+            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100 text-violet-600">
+              <Icon className="h-5 w-5" />
+            </span>
+            <h3 className="mt-4 font-display font-semibold text-slate-900">{title}</h3>
+            <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{body}</p>
           </div>
-        </div>
-        <div className="order-1 lg:order-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">About BookMe</p>
-          <h2 className="mt-4 font-display text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
-            Your booking page — and everything behind it.
-          </h2>
-          <p className="mt-4 text-slate-600">
-            Clients book themselves online, 24/7 — no more back-and-forth
-            messages. Behind the scenes, BookMe pulls your whole operation
-            together so nothing slips through the cracks.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2">
-            {[
-              [<ShieldCheck key="s" className="h-5 w-5" />, 'Secure & multi-tenant', 'Each business is fully isolated and protected.'],
-              [<Globe key="g" className="h-5 w-5" />, 'Works everywhere', 'Desktop, tablet and phone — no installs.'],
-            ].map(([icon, t, b]) => (
-              <div key={t as string} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-100 text-violet-600">{icon}</span>
-                <h3 className="mt-3 font-semibold text-slate-900">{t as string}</h3>
-                <p className="mt-1 text-sm text-slate-500">{b as string}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
       </div>
     </section>
   )
 }
 
-/* ───────────────────────── stats band ───────────────────────── */
+/* ───────────────────────── how it works (section 3) ───────────────────────── */
 
-function StatsBand() {
-  const stats = [['10k+', 'Appointments booked'], ['99.9%', 'Uptime'], ['14 days', 'Free to try'], ['1 app', 'For your whole business']]
+function HowItWorks() {
+  const steps = [
+    ['Create your free business profile.', 'Sign up in minutes — no card required.'],
+    ['Add your services, photos, and business details.', 'Show customers exactly what you offer and what it costs.'],
+    ['Customers discover your business.', 'Your profile appears where local customers are searching.'],
+    ['Receive booking requests and grow your business.', 'New appointments land straight on your calendar.'],
+  ] as const
+
   return (
-    <section className="px-5 pb-4 sm:px-8">
-      <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-violet-600 px-6 py-12 sm:px-12">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
-          {stats.map(([a, b]) => (
-            <div key={b} className="text-center">
-              <p className="font-display text-3xl font-bold text-white sm:text-4xl">{a}</p>
-              <p className="mt-1 text-sm text-white/75">{b}</p>
+    <section className="border-y border-slate-100 bg-slate-50/60">
+      <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">How it works</p>
+          <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+            Up and running in four steps
+          </h2>
+        </div>
+        <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {steps.map(([title, body], i) => (
+            <div key={title} className="relative text-center sm:text-left">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-600 font-display text-base font-bold text-white sm:mx-0 mx-auto">
+                {i + 1}
+              </span>
+              <h3 className="mt-4 font-display font-semibold text-slate-900">{title}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{body}</p>
             </div>
           ))}
         </div>
@@ -227,45 +199,60 @@ function StatsBand() {
   )
 }
 
-/* ───────────────────────── districts ───────────────────────── */
+/* ───────────────────────── find a service (section 4, customers) ───────────────────────── */
 
-function Districts() {
+function FindService() {
   return (
-    <section id="districts" className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-      <div className="mx-auto max-w-2xl text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Find a business</p>
-        <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Browse by district
-        </h2>
-        <p className="mt-4 text-slate-600">
-          Discover and book service businesses near you, anywhere in Belize.
-        </p>
-      </div>
-      <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {DISTRICTS.map((d) => (
-          <Link
-            key={d.slug}
-            href={`/district/${d.slug}`}
-            className="glass-card group relative overflow-hidden rounded-2xl p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-violet-600/10"
-          >
-            <div aria-hidden className="pointer-events-none absolute -right-5 -top-5 h-14 w-14 rounded-full bg-violet-100 opacity-70 transition-transform duration-300 group-hover:scale-150" />
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-violet-600 text-white shadow-sm">
-              <MapPin className="h-4 w-4" />
-            </span>
-            <h3 className="relative mt-3 font-display text-sm font-bold text-slate-900">{d.label}</h3>
-            <p className="relative mt-0.5 text-[11px] text-slate-400">{d.blurb}</p>
-          </Link>
-        ))}
-      </div>
-      <div className="mt-8 text-center">
-        <Link href="/districts" className="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-700">
-          Browse all districts <ArrowRight className="h-4 w-4" />
+    <section className="mx-auto max-w-4xl px-5 py-20 text-center sm:px-8 lg:py-24">
+      <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-600">
+        <Search className="h-6 w-6" />
+      </span>
+      <h2 className="mt-5 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        Looking for a service?
+      </h2>
+      <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+        Whether you need a barber, nail technician, photographer, tutor,
+        mechanic, tour guide, or another local professional, BookMe makes it
+        easy to discover businesses and request appointments.
+      </p>
+      <div className="mt-7">
+        <Link href="/book" className="inline-flex items-center justify-center gap-2 rounded-full bg-violet-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-600/25 transition-all hover:-translate-y-0.5 hover:shadow-xl">
+          Find a Business <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
     </section>
   )
 }
 
+/* ───────────────────────── categories (section 5) ───────────────────────── */
+
+function Categories() {
+  return (
+    <section className="border-y border-slate-100 bg-slate-50/60">
+      <div className="mx-auto max-w-5xl px-5 py-20 text-center sm:px-8 lg:py-24">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-violet-600">Categories</p>
+        <h2 className="mt-4 font-display text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+          A marketplace for local services
+        </h2>
+        <p className="mx-auto mt-4 max-w-2xl text-slate-600">
+          Discover and book local businesses across dozens of categories —
+          from salons and spas to mechanics and tutors.
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
+          {BUSINESS_CATEGORIES.filter((c) => c !== 'Other').map((c) => (
+            <Link
+              key={c}
+              href="/book"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700"
+            >
+              {c}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
 
 /* ───────────────────────── faq ───────────────────────── */
 
@@ -273,7 +260,7 @@ function Faq() {
   const faqs = [
     [
       'What exactly is BookMe?',
-      'An all-in-one booking and client-management app built for service providers in Belize. You get your own online booking page plus everything behind it — appointments, client records, payments, loyalty and reports — in one place.',
+      'A marketplace for local services — service businesses in Belize get their own booking page and everything behind it (appointments, client records, payments, loyalty and reports), while customers can discover and book them in one place.',
     ],
     [
       'How do my clients actually book me?',
@@ -293,7 +280,7 @@ function Faq() {
     ],
     [
       'How do people find my business?',
-      'Every business is listed in its Belize district directory, so nearby clients can discover and book you. You can also feature your business or post promotions to stand out even more.',
+      'Every business gets a free profile on BookMe\'s local marketplace, organized by district, so nearby customers can discover and book you. You can also feature your business or post promotions to stand out even more.',
     ],
     [
       'What if I have an idea or run into a problem?',
@@ -321,7 +308,7 @@ function Faq() {
   )
 }
 
-/* ───────────────────────── final cta ───────────────────────── */
+/* ───────────────────────── final cta (section 6) ───────────────────────── */
 
 function FinalCta() {
   return (
@@ -332,15 +319,12 @@ function FinalCta() {
           <div className="absolute -bottom-12 left-10 h-56 w-56 rounded-full bg-fuchsia-300/20 blur-2xl" />
         </div>
         <h2 className="relative mx-auto max-w-2xl font-display text-3xl font-bold leading-tight text-white sm:text-5xl">
-          Join the service providers growing with BookMe.
+          Ready to get more bookings?
         </h2>
-        <p className="relative mx-auto mt-5 max-w-md text-white/80">Set up in minutes. Your first 14 days are on us.</p>
-        <div className="relative mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <p className="relative mx-auto mt-5 max-w-md text-white/80">Join BookMe today and create your free business profile.</p>
+        <div className="relative mt-9 flex items-center justify-center">
           <Link href="/signup" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl">
-            Get started free <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link href="/book" className="inline-flex items-center justify-center rounded-full border border-white/30 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/10">
-            Book service
+            Get Started <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </div>
